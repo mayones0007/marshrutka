@@ -27,6 +27,7 @@ export default {
       this.$store.commit('setLoginPopup', false);
     },
     async registration(){
+      console.log('Hello');
       const response = await fetch('http://localhost:3000/user',{
         method: 'POST',
         headers: {
