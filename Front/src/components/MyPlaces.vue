@@ -1,4 +1,5 @@
 <template>
+<div>
   <div class="welcome-image">
     <div class="welcome-image__text">Создай свой маршрут</div>
   </div>
@@ -14,61 +15,73 @@
       </select>
     </div>
     <div class="gallery">
-      <div v-for="(place, index) in filteredPlaces" :key="`place-${index}`" class="gallery__item" @click="openModal(place.eng)">
+      <div
+        v-for="(place, index) in filteredPlaces"
+        :key="`place-${index}`"
+        class="gallery__item"
+        @click="openModal(place.eng)"
+      >
         <div class="gallery__item-container">
-          <img class="item__image" :src="`http://localhost:3000/img/`+place.eng+`/image-1.jpeg`" alt="avt">
-          <div class="item__name">{{place.name}}</div>
+          <img
+            class="item__image"
+            :src="`http://localhost:3000/img/` + place.eng + `/image-1.jpeg`"
+            alt="avt"
+          />
+          <div class="item__name">{{ place.name }}</div>
         </div>
-      </div> 
+      </div>
     </div>
   </div>
+</div>
 </template>
 
 <script>
-import {router} from '../router'
+import { router } from "../router";
 export default {
   data() {
     return {
       Pfilter: "all",
-    }
+    };
   },
-  computed:{
-    filteredPlaces(){
-    if (this.selectedCity === "" && this.Pfilter === "all"){
-      return this.places;
-    } else if (this.selectedCity === ""){
-      return this.places.filter(item => item.tag === this.Pfilter);
-    } else if (this.Pfilter === "all"){
-      return this.places.filter(item => item.region === this.selectedCity);
-    }
-      return this.places.filter(item => item.tag === this.Pfilter && item.region === this.selectedCity);
+  computed: {
+    filteredPlaces() {
+      if (this.selectedCity === "" && this.Pfilter === "all") {
+        return this.places;
+      } else if (this.selectedCity === "") {
+        return this.places.filter((item) => item.tag === this.Pfilter);
+      } else if (this.Pfilter === "all") {
+        return this.places.filter((item) => item.region === this.selectedCity);
+      }
+      return this.places.filter(
+        (item) => item.tag === this.Pfilter && item.region === this.selectedCity
+      );
     },
     selectedCity() {
-      return this.$store.state.selectedCity
+      return this.$store.state.selectedCity;
     },
     places() {
-      return this.$store.state.places
+      return this.$store.state.places;
     },
   },
-  methods:{
-    openModal(eng){
-      router.push({name: "Description",params:{eng}});
-      }
+  methods: {
+    openModal(eng) {
+      router.push({ name: "Description", params: { eng } });
+    },
   },
-  created(){
-    this.$store.dispatch("getPlaces")
-  }
-}
+  created() {
+    this.$store.dispatch("getPlaces");
+  },
+};
 </script>
 
 <style scoped>
-.gallery { 
+.gallery {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 15px;
   padding: 20px 0;
-  }
+}
 
 .item__image {
   width: 300px;
@@ -77,7 +90,7 @@ export default {
   object-fit: cover;
 }
 
-.gallery__item-container:hover{
+.gallery__item-container:hover {
   transform: scale(1.1);
 }
 
@@ -87,9 +100,9 @@ export default {
   height: 50%;
   bottom: 0;
   line-height: 130px;
-  color:white;
+  color: white;
   font-weight: 900;
-  background: linear-gradient(transparent,rgba(0, 0, 0, 0.591));
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.591));
 }
 
 .gallery__item {
@@ -99,7 +112,7 @@ export default {
   border: solid 1px rgba(0, 0, 0, 0.076);
 }
 
-.gallery__item-container{
+.gallery__item-container {
   position: relative;
   transition: 300ms;
 }
@@ -108,7 +121,6 @@ export default {
   height: 450px;
   background: url("http://localhost:3000/img/chelovek-gora.jpeg") center -280px;
   position: relative;
-
 }
 
 .welcome-image__text {
@@ -120,10 +132,15 @@ export default {
   text-align: center;
   line-height: 450px;
   font-weight: 900;
+  user-select: none;
 }
 
 .menu__filters {
-  background: linear-gradient(to bottom, rgb(255, 255, 255), rgb(242, 242, 242));
+  background: linear-gradient(
+    to bottom,
+    rgb(255, 255, 255),
+    rgb(242, 242, 242)
+  );
 }
 
 .region-name {
@@ -142,5 +159,4 @@ export default {
   height: 33px;
   padding: 0 10px;
 }
-
 </style>

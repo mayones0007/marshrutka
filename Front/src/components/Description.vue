@@ -42,11 +42,11 @@
 
   <div class="login--background" v-if="this.$store.state.showGalleryPopup" @click.self="closeGalleryPopup">
     <div class="picture-window">
-      <button class="picture-window__close-btn" @click="closeGalleryPopup"> </button>
+      <div class="picture-window__close-btn" @click="closeGalleryPopup"> </div>
       <div class="picture-window__slider">
-        <div class="slider-btn" @click="changeGallaryPicture(-1)">&lt;</div>
+        <div class="slider-btn slider-btn-left" @click="changeGallaryPicture(-1)"><div class="slider-btn-icon slider-btn-icon-left"/></div>
         <img :src="`http://localhost:3000/img/${currentRoute}/image-${currentPicture}.jpeg`" class="picture-window__image">
-        <div class="slider-btn" @click="changeGallaryPicture(1)">&gt;</div>
+        <div class="slider-btn slider-btn-right" @click="changeGallaryPicture(1)"><div class="slider-btn-icon slider-btn-icon-right"/></div>
       </div>
     </div>
   </div>
@@ -162,11 +162,7 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.image-gallery__item--large:hover {
   cursor: pointer;
-  filter:brightness(0.9);
 }
 
 .image-gallery__item--last {
@@ -300,13 +296,10 @@ export default {
 
 .picture-window {
   position: fixed;
-  display:flex;
   width: 70%;
-  height: 70%;
-  padding: 25px 50px;
+  height: 80%;
   top: 10%;
-  left: 10%;
-  user-select: none;
+  left: 15%;
 }
 
 .picture-window__slider {
@@ -314,41 +307,69 @@ export default {
   height: 100%;
   width: 100%;
 }
+
 .slider-btn {
-  margin: auto 10px;
-  background-color: rgba(0, 0, 0, 0.384);
-  padding: 5px;
-  border-radius: 50%;
-  min-width: 50px;
-  line-height: 50px;
-  font-weight: 900;
-  font-size: 30px;
-  border: solid white 4px;
-  color: white;
-  transition: 500ms;
+  width: 40%;
+  z-index: 2;
+  cursor: pointer;
 }
 
-.slider-btn:hover {
-  background-color: rgba(0, 0, 0, 0.704);
-  cursor: pointer;
+.slider-btn-right {
+  margin-left: -40%;
+  background: linear-gradient(90deg,transparent,rgba(0, 0, 0, 0.1));
+}
+
+.slider-btn-left {
+  margin-right: -40%;
+  background: linear-gradient(-90deg,transparent,rgba(0, 0, 0, 0.1));
+}
+
+.slider-btn-icon{
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  border-left: solid rgba(255, 255, 255, 0.7) 5px;
+  border-top: solid rgba(255, 255, 255, 0.7) 5px;
+  top: 48%;
+}
+
+.slider-btn:hover .slider-btn-icon{
+  border-left: solid rgba(255, 255, 255, 0.9) 5px;
+  border-top: solid rgba(255, 255, 255, 0.9) 5px;
+}
+
+.slider-btn-icon-left {
+  left: 5%;
+  transform: rotate(-45deg);
+}
+
+.slider-btn-icon-right {
+  right: 5%;
+  transform: rotate(135deg);
+
+}
+
+.slider-btn-right:hover {
+  background: linear-gradient(90deg,transparent,rgba(0, 0, 0, 0.3));
+}
+
+.slider-btn-left:hover {
+  background: linear-gradient(-90deg,transparent,rgba(0, 0, 0, 0.3));
 }
 
 .picture-window__image {
   object-fit: cover;
-  overflow: hidden;
   width: 100%;
-  box-shadow: 0 0 30px black;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 }
 
 .picture-window__close-btn{
   position: absolute;
-  border: none;
   background: url("http://localhost:3000/icons/close-btn.png") center/100% no-repeat;
   width: 25px;
   height: 25px;
-  padding: 0;
-  right: 80px;
-  top: 0;
+  right: -50px;
+  cursor: pointer;
 }
 
 .picture-window__close-btn:hover {

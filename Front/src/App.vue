@@ -14,18 +14,18 @@
         </datalist>
         <button class="search-form__btn btn" @click="changeFilter">Поиск</button>
       </div>
-      <div class="login-panel">
-        <img class="login-panel__avatar" :src="`http://localhost:3000/avatars/${user[0].avatar}`" alt="avt">
         <div class="login-panel__dropdown">
-          <button class="dropbtn">{{user[0].name}}</button>
-          <div class="dropdown-content">
-            <p><router-link to="/myroute" class="dropdown-content__link">Мой маршрут</router-link></p>
-            <p><router-link to="/myfavorites" class="dropdown-content__link">Избранное</router-link></p>
-            <p><router-link to="/settings" class="dropdown-content__link">Настройки</router-link></p>
-            <p v-if="isAdmin"><router-link to="/admin" class="dropdown-content__link">Добавить место</router-link></p>
-           </div>
-        </div>
-        <button class="login-panel__enter--btn" @click="openLoginPopup">{{isLogIn}}</button>
+          <img class="login-panel__avatar" :src="`http://localhost:3000/avatars/${user[0].avatar}`" alt="avt">
+          <div class="login-panel__name">{{user[0].name}}</div>
+          <div class="login-panel__arrow" v-if="isLogIn"></div>
+          <div class="dropdown-content" v-if="isLogIn">
+            <router-link to="/myroute" class="dropdown-content__link">Мой маршрут</router-link>
+            <router-link to="/myfavorites" class="dropdown-content__link">Избранное</router-link>
+            <router-link to="/settings" class="dropdown-content__link">Настройки</router-link>
+            <router-link to="/admin" class="dropdown-content__link" v-if="isAdmin">Добавить место</router-link>
+            <div class="dropdown-content__link" @click="openLoginPopup">Выйти</div>
+          </div>
+        <div class="login-panel__enter--btn" @click="openLoginPopup" v-if="!isLogIn">Войти</div>
       </div>
   </div>
 
@@ -78,9 +78,9 @@ export default {
     },
     isLogIn(){
       if (this.$store.state.user[0].name === "Неопознанный турист"){
-        return "Войти"
+        return false
       } else {
-        return "Выйти"
+        return true
       }
     },
     isAdmin(){
@@ -237,29 +237,39 @@ body {
   border-radius: 0 5px 5px 0;
 }
 
-.login-panel {
-  display: flex;
-  text-align: end;
-}
-
 .login-panel__avatar {
   margin: auto;
   height: 45px;
   width: 45px;
   border-radius: 50%;
-  border: solid rgb(0, 0, 0) 1px;
+  object-fit: cover;
+}
+
+.login-panel__name {
+  line-height: 80px;
+  cursor: default;
+  font-weight: 500;
+}
+
+.login-panel__arrow {
+  border-bottom: solid 2px black;
+  border-left: solid 2px black;
+  width: 10px;
+  height: 10px;
+  transform: rotate(135deg);
+  margin-top: 35px;
+  transition-duration: 400ms;
 }
 
 .login-panel__enter--btn {
-  border: 0;
-  padding: 10px;
-  font-size: 15px;
-  background-color: transparent;
+  border-left: solid black 2px;
+  padding: 15px;
+  margin: auto;
   cursor: pointer;
 }
 
 .login-panel__enter--btn:hover {
-  color: red;
+  color: green;
 }
 
 .login--background {
@@ -269,6 +279,7 @@ body {
   height:100%;
   top:0;
   min-height: 100vh;
+  z-index: 1;
 }
 
 .login--window {
@@ -344,7 +355,6 @@ body {
 .contacts__typical-item {
   text-decoration: none;
   color: #000000;
-
 }
 
 .contacts__typical-item:hover {
@@ -366,53 +376,58 @@ body {
 
 .contacts__social-item:hover {
   background-color: #a0a0a0;
+  transition: 500ms;
 }
 
 .logo__name--footer {
   width: 190px;
 }
 
-.dropbtn {
-    background-color: transparent;
-    padding: 15px;
-    font-size: 18px;
-    border: none;
-    border-right: solid rgb(140, 140, 140) 2px;
-}
-
 .login-panel__dropdown {
     position: relative;
-    display: inline-block;
-    margin: auto;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    right: 2px;
-    top: 50px;
-    background-color: #f1f1f1;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    display: flex;
+    gap: 15px;
     z-index: 1;
 }
 
-.dropdown-content p {
-    padding: 20px 16px;
-    display: block;
-    margin:0;
+.dropdown-content {
+    line-height: 0%;
+    position: absolute;
+    top: 80px;
+    right: -10px;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 8px 0px rgba(0,0,0,0.1);
+    border-radius: 0 0 5px 5px;
 }
 
 .dropdown-content__link {
+  display: grid;
   text-decoration: none;
+  color: transparent;
+  cursor: pointer;
+  transition-duration: 300ms;
+  text-align: end;
+  padding: 0 15px;
+}
+
+.dropdown-content__link:hover {
+  background-color: #ddd;
+}
+
+.dropdown-content__link:last-child:hover {
+  border-radius: 0 0 5px 5px;
+  color: red !important;
+}
+
+.login-panel__dropdown:hover .login-panel__arrow {
+  transform: rotate(-45deg);
+  margin-top: 30px;
+}
+
+.login-panel__dropdown:hover .dropdown-content__link {
+  line-height: 300%;
   color: black;
 }
 
-.dropdown-content p:hover {background-color: #ddd;}
-
-.login-panel__dropdown:hover .dropdown-content {display: block;}
-
-.login-panel__dropdown:hover .dropbtn {
-  color: green;
-}
 </style>

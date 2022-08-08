@@ -94,26 +94,37 @@ app.post('/login', corsMiddleware, (req, res) => {
   })
 })
 
-app.post('/user', corsMiddleware, (req, res) => {
+app.post('/registration', corsMiddleware, (req, res) => {
   const name = req.body.name ? req.body.name : ''
   const email = req.body.email ? req.body.email : ''
   const password = req.body.password ? req.body.password : ''
+  const avatar = "tourist.png"
 
 if (!name || !email || !password) {
     return res.json({success: false, message: 'Заполните все поля'});
 }
-
+knex('users').where({ name })
+  .then((users) => {
+    if (users.length > 0) {
+      return res.json({ success: false, message: 'Пользователь с таким именем уже существует' })}
+  })
+knex('users').where({ email })
+  .then((users) => {
+    if (users.length > 0) {
+      return res.json({ success: false, message: 'Пользователь с таким email уже существует' })
+    }
+  })
 knex('users')
-    .insert({name, email, password})
+    .insert({name, email, password, avatar})
     .then((id) => {
     knex('users')
         .where({id})
         .then((user) => {
-        return res.json({success: true, message: 'Успешная регистрация', user});
+        return res.json({success: true, message: 'Успешная регистрация', user})
     })
 })
     .catch((err) => {
-    console.error(err);
+    console.error(err)
     return res.json({success: false, message: 'An error occurred, please try again later.'});
 });
 });
@@ -267,7 +278,7 @@ app.post('/settings', corsMiddleware, (req, res) => {
   const password = req.body.password ? req.body.password : ''
   const newEmail = req.body.newEmail ? req.body.newEmail : ''
   const newPassword = req.body.newPassword ? req.body.newPassword : ''
-  const avatar = 'a-' + name + '.jpeg'
+  const avatar = 'avt-' + name + '.jpeg'
   const path = __dirname + '/public/avatars/' + avatar
 
 
