@@ -11,14 +11,18 @@
         <input class="form__input--text" v-model="newEmail" type="email" placeholder="Новый e-mail">
         <input class="form__input--text" v-model="oldPassword" type="password" placeholder="Старый пароль">
         <input class="form__input--text" v-model="newPassword" type="password" placeholder="Новый пароль">
-        <button class="btn" @click="settingsAccept">Применить изменения</button>
+        <MyButton title="Применить изменения" @click="settingsAccept"/>
       </div>
     </section>
 </template>
 
 <script>
 import axios from 'axios'
+import MyButton from './CustomComponents/MyButton.vue'
 export default {
+  components: {
+    MyButton,
+  },
   data: () => ({
     oldEmail: '',
     newEmail: '',

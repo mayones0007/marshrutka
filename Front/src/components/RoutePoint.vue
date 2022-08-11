@@ -6,10 +6,10 @@
   >
     <div class="route-point__name">{{routePoint.name}}</div>
     <div class="route-point__time">{{routePoint.time}}</div>
-    <button class="btn" @click="removeInMyRoute(routePoint.eng)">Убрать из маршрута</button>
+    <MyButton title="Убрать из маршрута" @click="removeInMyRoute(routePoint.eng)"/>
     <div class="gallery__item" @click="openModal(routePoint.eng)">
       <div class="gallery__item-container">
-        <img class="item__image" :src="`http://localhost:3000/img/`+routePoint.eng+`/image-1.jpeg`" alt="avt">
+        <img class="item__image" :src="`http://localhost:3000/img/`+routePoint.eng+`.jpeg`" alt="avt">
       </div>
     </div>
     <div class="item__description">{{routePoint.description}}</div>
@@ -19,7 +19,11 @@
 
 <script>
 import {router} from '../router'
+import MyButton from './CustomComponents/MyButton.vue'
 export default {
+  components: {
+    MyButton,
+  },
 props: ['routePoint'],
 data(){
   return {

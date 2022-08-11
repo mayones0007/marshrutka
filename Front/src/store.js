@@ -12,6 +12,7 @@ export const store = createStore({
       places: [],
       place: [],
       reviews: [],
+      pictures: [],
       user: [{name:'Неопознанный турист', avatar:'tourist.png'}],
       myOptimalRoute: [],
     }
@@ -41,9 +42,18 @@ export const store = createStore({
       const response = await fetch(`http://localhost:3000/reviews?id=${place}`,{
         method: 'GET',
         })
-        const data = await response.json();
+        const data = await response.json()
       if (data.success) {
-        this.commit('setReviews', data.reviews);
+        this.commit('setReviews', data.reviews)
+      }
+    },
+    async getPictures(_context, place) {
+      const response = await fetch(`http://localhost:3000/pictures?id=${place}`, {
+        method: 'GET',
+      })
+      const data = await response.json()
+      if (data.success) {
+        this.commit('setPictures', data.pictures.map(item => item.id +".jpeg"))
       }
     },
     async getFavorites(){
@@ -111,8 +121,8 @@ export const store = createStore({
     setSelectedCity (state, payload) {
       state.selectedCity = payload
     },
-    setLoginPopup (state, payload) {
-      state.showLoginPopup = payload
+    setLoginPopup (state) {
+      state.showLoginPopup = !state.showLoginPopup
     },
     setGalleryPopup (state, payload) {
       state.showGalleryPopup = payload
@@ -149,6 +159,9 @@ export const store = createStore({
     },
     setReviews (state, reviews) {
       state.reviews = reviews
+    },
+    setPictures(state, pictures) {
+      state.pictures = pictures
     },
   }
 })

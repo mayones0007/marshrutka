@@ -47,14 +47,19 @@
         <textarea class="input-rewiew__input" type="text" placeholder="Описание" v-model="description"></textarea>
         <input class="form__input--text" type="text" placeholder="43.434954,40.442885" v-model="coords">
         <input type="file" id="files" ref="files" multiple accept="image/jpeg" @change="handleFilesUploads()">
-        <button class="btn" @click="addNewPlace">Добавить Обьект</button>
+        <MyButton title="Добавить Обьект" @click="addNewPlace"/>
       </div>
     </section>
 </template>
 
 <script>
 import axios from 'axios'
+import MyButton from './CustomComponents/MyButton.vue'
+
 export default {
+  components: {
+    MyButton
+  },
   data: () => ({
     eng: '',
     name: '',

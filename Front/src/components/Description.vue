@@ -1,21 +1,24 @@
 <template>
+<div class="app-container">
   <div class="description-page" v-if="currentPlace">
-    <div class="image-gallery"> 
-      <img :src="`http://localhost:3000/img/${currentRoute}/image-1.jpeg`" class="image-gallery__item--large" @click="openGalleryPopup(1)">
-      <div class="image-gallery__container"> 
-        <img :src="`http://localhost:3000/img/${currentRoute}/image-2.jpeg`" class="image-gallery__item" @click="openGalleryPopup(2)">
-        <img :src="`http://localhost:3000/img/${currentRoute}/image-3.jpeg`" class="image-gallery__item" @click="openGalleryPopup(3)">
-        <div class="image-gallery__item" @click="openGalleryPopup(4)">
-          <img :src="`http://localhost:3000/img/${currentRoute}/image-4.jpeg`" class="image-gallery__item--last">
-          <div class="image-gallery__item--last-text">+{{currentPlace.pictures-4}}</div>
-        </div>
-      </div>     
+    <div class="image-gallery">
+      <div v-if="currentPictures.length" class="image-gallery__container">
+        <img v-for='picture in 4' :key="picture" 
+          :src="`http://localhost:3000/img/${currentPictures[picture-1]}`" 
+          class="image-gallery__item" 
+          @click="openGalleryPopup(picture-1)">
+      </div>
+      <div class="image-gallery__item--last-text">+{{currentPictures.length-4}}</div>
     </div>
     <div class="save-panel">
       <div>Доступность: {{currentPlace.availability}}</div>
       <div :class="`save-panel__difficalty save-panel__difficalty--${currentPlace.difficulty}`">Сложность: {{currentPlace.difficulty}}</div>
       <div class="save-panel__time">Время:<br>{{currentPlace.time}}</div>
-      <button class="btn" :class="{'btn--disabled': isAddedInRoute}" :disabled="isAddedInRoute" @click="addInMyRoute(currentPlace.eng)">{{isAddedInRouteTextButton}}</button>
+      <MyButton
+        :title="isAddedInRouteTextButton"
+        :isDisabled="isAddedInRoute"
+        @click="addInMyRoute(currentPlace.eng)"
+      />
       <img :class="`save-panel__hert save-panel__hert--${isFavorite}`" src="http://localhost:3000/icons/heart.png" alt="heart" @click="addInMyFavorites(currentPlace.eng)">
     </div>   
   <div class="description-text">
@@ -23,7 +26,14 @@
   </div>
     <div class="input-rewiew">
       <textarea class="input-rewiew__input" type="text" placeholder="Введите отзыв" v-model="inputValue" v-on:keydown.ctrl.enter="saveRewiew"></textarea>
-      <button class="input-rewiew__btn btn" @click="saveRewiew">Добавить отзыв</button>
+      <MyButton
+        title="Отправить отзыв"
+        :noLeftRadius="true"
+        @click="saveRewiew"
+      />
+    </div>
+    <div class="rewiew-rating">Ваша оценка:
+      <img v-for='star in 5' :key="'star'+star" class="icon-star" :class="{'icon-star--hovered': star <= starHovered}" @mouseover="onStarHover(star)" @mouseleave="onStarHover(null)" src="http://localhost:3000/icons/star.png" alt="star">
     </div>
 
   <div class="rewiew-count"> Отзывы: {{currentReviews.length}}</div>
@@ -33,35 +43,38 @@
         <img class="rewiew-user__avatar" src="http://localhost:3000/icons/tourist.png" alt="avt">
         <label class="rewiew-user__name">{{note.userName}}</label>
       </div>
-      <div class="rewiew-text">
-        {{note.text}}
-      </div>
+        <div class="rewiew-text">{{note.text}}</div>
     </div>
   </div>
 </div>
-
-  <div class="login--background" v-if="this.$store.state.showGalleryPopup" @click.self="closeGalleryPopup">
-    <div class="picture-window">
-      <div class="picture-window__close-btn" @click="closeGalleryPopup"> </div>
-      <div class="picture-window__slider">
-        <div class="slider-btn slider-btn-left" @click="changeGallaryPicture(-1)"><div class="slider-btn-icon slider-btn-icon-left"/></div>
-        <img :src="`http://localhost:3000/img/${currentRoute}/image-${currentPicture}.jpeg`" class="picture-window__image">
-        <div class="slider-btn slider-btn-right" @click="changeGallaryPicture(1)"><div class="slider-btn-icon slider-btn-icon-right"/></div>
-      </div>
-    </div>
-  </div>
+<Gallery
+  v-if="showGallery"
+  :images="currentPictures"
+  :openedPicture="currentPicture"
+/>
+</div>
 </template>
 
 <script>
 import {router} from '../router'
+import MyButton from './CustomComponents/MyButton.vue'
+import Gallery from './CustomComponents/Gallery.vue'
+
 export default {
+  components: {
+    MyButton,
+    Gallery,
+  },
   data() {
     return {
       inputValue: '',
-      currentPicture: 1
+      starHovered: null,
     }
   },
   computed: {
+    showGallery() {
+      return this.$store.state.showGalleryPopup
+    },
     currentRoute() {
       return router.currentRoute.value.params.eng
     },
@@ -70,6 +83,9 @@ export default {
     },
     currentReviews() {
       return this.$store.state.reviews
+    },
+    currentPictures() {
+      return this.$store.state.pictures
     },
     isFavorite(){
       return !!this.$store.state.myFavorites.find(el => el.eng === this.currentRoute)
@@ -89,6 +105,9 @@ export default {
     },
   },
   methods: {
+    onStarHover(star) {
+      this.starHovered = star;
+    },
     async saveRewiew(){
       if (this.inputValue !== ''){
         await this.$store.dispatch('newReview', this.inputValue)
@@ -98,18 +117,6 @@ export default {
     openGalleryPopup(i){
       this.currentPicture = i;
       this.$store.commit('setGalleryPopup', true);
-    },
-    closeGalleryPopup(){
-      this.$store.commit('setGalleryPopup', false);
-    },
-    changeGallaryPicture(i){
-      this.currentPicture = this.currentPicture + i
-      if (this.currentPicture > this.currentPlace.pictures) {
-        this.currentPicture = 1
-      }
-      if (this.currentPicture < 1) {
-        this.currentPicture = this.currentPlace.pictures
-      }
     },
     async addInMyRoute(placeName){
       await this.$store.dispatch('newPointInRoute', placeName)
@@ -123,62 +130,66 @@ export default {
   created(){
     this.$store.dispatch("getPlace", this.currentRoute)
     this.$store.dispatch("getReviews", this.currentRoute)
+    this.$store.dispatch("getPictures", this.currentRoute)
     this.$store.dispatch("getFavorites")
     this.$store.dispatch("getRoute")
   },
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .description-page {
   padding: 20px 240px 20px 80px;
 }
 
 .image-gallery {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 10px;
+  position: relative;
 }
 
 .image-gallery__container {
   display: grid;
   grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: 3fr 1fr;
   gap: 10px;
 }
 
 .image-gallery__item {
   width: 100%;
   height: 100%;
-  position: relative;
-  object-fit: cover;
-}
-
-.image-gallery__item:hover {
-  cursor: pointer;
-  filter:brightness(0.9);
-}
-
-.image-gallery__item--large {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
   cursor: pointer;
-}
 
-.image-gallery__item--last {
-  filter:brightness(0.5);
-  height: 100%;
-  width: 100%;
+  &:first-child {
+    grid-row: 1 / span 3;
+
+    &:hover {
+      filter:none;
+    }
+  }
+
+  &:last-child {
+    filter:brightness(0.5);
+
+    &:hover {
+      filter:brightness(0.4);
+    }
+  }
+
+  &:hover {
+    filter:brightness(0.9);
+  }
 }
 
 .image-gallery__item--last-text {
   position: absolute;
-  top: 50%;
+  top: 84%;
+  right: -38%;
   color: white;
   font-weight: 500;
   font-size: 40px;
   line-height: 0;
   width: 100%;
+  cursor: pointer;
 }
 
 .save-panel {
@@ -292,23 +303,20 @@ export default {
 
 .rewiew-text {
   margin-left: 20px;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  white-space: pre-line;
 }
 
-.picture-window {
+.gallery-window {
   position: fixed;
+  display:flex;
   width: 70%;
   height: 80%;
   top: 10%;
   left: 15%;
 }
 
-.picture-window__slider {
-  display:flex;
-  height: 100%;
-  width: 100%;
-}
-
-.slider-btn {
+.gallery-window__slider {
   width: 40%;
   z-index: 2;
   cursor: pointer;
@@ -339,12 +347,12 @@ export default {
 }
 
 .slider-btn-icon-left {
-  left: 5%;
+  left: 3%;
   transform: rotate(-45deg);
 }
 
 .slider-btn-icon-right {
-  right: 5%;
+  right: 3%;
   transform: rotate(135deg);
 
 }
@@ -357,35 +365,50 @@ export default {
   background: linear-gradient(-90deg,transparent,rgba(0, 0, 0, 0.3));
 }
 
-.picture-window__image {
+.gallery-window__image {
   object-fit: cover;
   width: 100%;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 }
 
-.picture-window__close-btn{
+.gallery-window__close-button{
   position: absolute;
-  background: url("http://localhost:3000/icons/close-btn.png") center/100% no-repeat;
+  background: url("http://localhost:3000/icons/close-btn.png") center/100%;
   width: 25px;
   height: 25px;
-  right: -50px;
+  right: 20px;
+  top: 20px;
   cursor: pointer;
+  z-index: 3;
 }
 
-.picture-window__close-btn:hover {
-  filter: brightness(0);
+.gallery-window__close-button:hover {
+  filter: brightness(0.2);
 }
 
 .rewiew-user__avatar {
-  margin: auto;
   height: 40px;
   border-radius: 50%;
   border: solid black 1px;
 }
 
 .rewiew-user__name {
-
   padding: 10px;
-  margin: auto 0;
+
+}
+
+.icon-star {
+  height: 25px;
+  padding: 2px;
+  filter:grayscale(1);
+
+  &--hovered {
+    filter:grayscale(0);
+  }
+}
+
+.rewiew-rating {
+  display: flex;
+  line-height: 30px;
 }
 </style>

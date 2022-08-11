@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
   <div class="header panel">
-    <router-link to="/" class="header__logo logo">
+    <router-link to="/" class="logo">
       <img class="logo__icon--header" src="http://localhost:3000/icons/logo.svg" alt="Маршрутка">
       <p class="logo__name logo__name--header">Маршрутка</p>
     </router-link>
@@ -12,7 +12,7 @@
           <option value="Сочи">Sochi</option>
           <option value="Красная Поляна">Krasnaia Polyana</option>
         </datalist>
-        <button class="search-form__btn btn" @click="changeFilter">Поиск</button>
+        <MyButton title="Поиск" :noLeftRadius="true" @click="changeFilter"/>
       </div>
         <div class="login-panel__dropdown">
           <img class="login-panel__avatar" :src="`http://localhost:3000/avatars/${user[0].avatar}`" alt="avt">
@@ -23,23 +23,23 @@
             <router-link to="/myfavorites" class="dropdown-content__link">Избранное</router-link>
             <router-link to="/settings" class="dropdown-content__link">Настройки</router-link>
             <router-link to="/admin" class="dropdown-content__link" v-if="isAdmin">Добавить место</router-link>
-            <div class="dropdown-content__link" @click="openLoginPopup">Выйти</div>
+            <div class="dropdown-content__link" @click="setLoginPopup">Выйти</div>
           </div>
-        <div class="login-panel__enter--btn" @click="openLoginPopup" v-if="!isLogIn">Войти</div>
+        <div class="login-panel__enter--btn" @click="setLoginPopup" v-if="!isLogIn">Войти</div>
       </div>
   </div>
 
   <router-view></router-view>
 
-  <div class="login--background" v-if="this.$store.state.showLoginPopup" @click.self="closeLoginPopup">
+  <div class="login--background" v-if="this.$store.state.showLoginPopup" @click.self="setLoginPopup">
     <section class="login--window">
       <div class="login--window__title title">Вход</div>
-      <button class="login--window__close--btn" @click="closeLoginPopup"> </button>
+      <button class="login--window__close--btn" @click="setLoginPopup"/>
       <div class="login--window__form form">
         <input class="form__input--text" v-model="name" type="text" placeholder="Логин">
         <input class="form__input--text" v-model="password" type="password" placeholder="Пароль">
-        <button class="btn" @click="login">Войти</button>
-        <p>Впервые у нас? <router-link to="/registration" @click="closeLoginPopup">Зарегистрируйтесь</router-link></p>
+        <MyButton @click="login" title="Войти"/>
+        <p>Впервые у нас? <router-link to="/registration" @click="setLoginPopup">Зарегистрируйтесь</router-link></p>
       </div>
     </section>
   </div>
@@ -63,8 +63,12 @@
 </template>
 
 <script>
+import MyButton from './components/CustomComponents/MyButton.vue'
 export default {
   name: 'App',
+  components: {
+    MyButton,
+  },
   data: () => ({
     name: '',
     email: '',
@@ -93,15 +97,12 @@ export default {
   },
 
   methods: {
-    openLoginPopup(){
+    setLoginPopup(){
       if (this.$store.state.user[0].name === "Неопознанный турист"){
-      this.$store.commit('setLoginPopup', true)
+      this.$store.commit('setLoginPopup')
       } else {
         this.$store.state.user = [{name:'Неопознанный турист', avatar:'tourist.png'}]
       }
-    },
-    closeLoginPopup(){
-      this.$store.commit('setLoginPopup', false);
     },
     changeFilter(){
       this.$store.commit('setSelectedCity', this.selectedCity);
@@ -119,7 +120,7 @@ export default {
       if (data.success) {
         this.$store.commit('setUser', data.users);
         this.name = this.password = "";
-        this.closeLoginPopup()
+        this.$store.commit('setLoginPopup')
       }
       alert(data.message);
       this.name = this.password = "";
@@ -135,21 +136,12 @@ export default {
   color: #2c3e50;
 }
 
-.app-container{
-  height: 100%;
-  position: relative;
-}
-
-body {
-  margin:0;
-  padding:0;
-}
 
 .panel {
   display: flex;
-  justify-content: space-between;
-  padding: 0 80px;
-  height: 80px;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  min-height: 80px;
 }
 
 .header {
@@ -162,17 +154,18 @@ body {
 
 .logo {
   display: flex;
+  height: 80px;
   text-decoration: none;
   cursor: pointer;
   margin: auto 0;
 }
 
 .logo__icon--header {
-  height: 40px;
-  margin-right: 10px;
+  padding: 20px 10px 20px 0;
 }
 
 .logo__name {
+  display: flex;
   margin: auto 0;
   font-family: Avenir, Helvetica, Arial, sans-serif;
 }
@@ -183,11 +176,12 @@ body {
 }
 
 .search-form {
-  width: 50%;
-  margin: auto;
+  margin: auto 0;
+  display: flex;
 }
 
 .form__input--text {
+  min-width: 230px;
   height: 35px;
   padding: 0 10px;
   border-color: #e4e4e4;
@@ -197,7 +191,6 @@ body {
 }
 
 .search-form__input {
-  width: 50%;
   border-radius: 5px 0 0 5px;
 }
 
@@ -206,49 +199,18 @@ body {
     outline-offset: 0;
 }
 
-.btn {
-  padding: 10px;
-  background-color: rgb(0, 212, 141);
-  color: white;
-  border: 0px;
-  border-radius: 5px;
-  box-shadow: inset 0px 0px 5px rgba(193, 193, 193, 0.691);
-  cursor: pointer;
-}
-
-.btn:hover {
-  background-color: rgb(0, 201, 134);
-}
-
-.btn--disabled {
-  padding: 10px;
-  background-color: rgb(147, 147, 147);
-  color: white;
-  border: 0px;
-  border-radius: 5px;
-  box-shadow: inset 0px 0px 5px rgba(193, 193, 193, 0.691);
-}
-.btn--disabled:hover {
-  cursor: auto;
-  background-color: rgb(147, 147, 147);
-}
-
-.search-form__btn {
-  border-radius: 0 5px 5px 0;
-}
-
 .login-panel__avatar {
-  margin: auto;
   height: 45px;
   width: 45px;
   border-radius: 50%;
-  object-fit: cover;
+  margin: auto;
 }
 
 .login-panel__name {
-  line-height: 80px;
   cursor: default;
   font-weight: 500;
+  display: flex;
+  align-items: center; 
 }
 
 .login-panel__arrow {
@@ -262,10 +224,10 @@ body {
 }
 
 .login-panel__enter--btn {
-  border-left: solid black 2px;
-  padding: 15px;
-  margin: auto;
+  border-left: solid rgba(100, 100, 100, 0.5) 2px;
   cursor: pointer;
+  padding: 10px;
+  margin: auto;
 }
 
 .login-panel__enter--btn:hover {
@@ -273,23 +235,22 @@ body {
 }
 
 .login--background {
-  position:absolute;
+  position: fixed;
   background-color: rgba(49, 49, 49, 0.65);
   width:100%;
   height:100%;
   top:0;
-  min-height: 100vh;
   z-index: 1;
 }
 
 .login--window {
   position: fixed;
-  top: 25%;
-  left: 34%;
-  width: 350px;
+  top: 50%;
+  left: 50%;
   background-color: white;
-  padding: 25px 50px;
   border-radius: 10px;
+  padding: 30px;
+  transform:translate(-50%,-50%);
 }
 
 .title {
@@ -302,7 +263,6 @@ body {
 
 .form {
   display: grid;
-  width: auto;
   gap: 20px;
 }
 
@@ -312,7 +272,6 @@ body {
   background: url("http://localhost:3000/icons/close-btn.png") center/100% no-repeat;
   width: 25px;
   height: 25px;
-  padding: 0;
   right: 20px;
   top: 20px;
 }
@@ -347,7 +306,6 @@ body {
 .contacts__typical {
   display: grid;
   text-align: start;
-  width: 190px;
   height: 50px;
   margin: auto 0;
 }
@@ -365,7 +323,7 @@ body {
 .contacts__social {
   display: flex;
   gap: 20px;
-  margin: auto;
+  margin: auto 0;
 }
 .contacts__social-item {
   height: 30px;
@@ -388,6 +346,7 @@ body {
     display: flex;
     gap: 15px;
     z-index: 1;
+    height: 80px;
 }
 
 .dropdown-content {

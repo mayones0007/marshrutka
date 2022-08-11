@@ -5,18 +5,17 @@
   <div class="favirites-item" v-for='favorite in myFavorites' :key="favorite">
         <div class="gallery__item" @click="openModal(favorite.eng)">
           <div class="gallery__item-container">
-            <img class="item__image" :src="`http://localhost:3000/img/`+favorite.eng+`/image-1.jpeg`" alt="avt">
+            <img class="item__image" :src="`http://localhost:3000/img/`+favorite.eng+`.jpeg`" alt="avt">
             <div class="item__name">{{favorite.name}}</div>
           </div>
         </div>
           <div class="item__description">{{favorite.description}}</div>
         <div class="item__container-panel">
-          <button
-            class="btn" 
-            :class="{'btn--disabled': addToRouteButtonDisabled(favorite)}" 
-            :disabled="addToRouteButtonDisabled(favorite)" 
-            @click="addInMyRoute(favorite.eng)">{{isAddedInRouteTextButton(favorite)}}
-          </button>
+          <MyButton
+            :title="isAddedInRouteTextButton(favorite)"
+            :isDisabled="addToRouteButtonDisabled(favorite)"
+            @click="addInMyRoute(favorite.eng)"
+          />
           <img class="save-panel__hert" src="http://localhost:3000/icons/heart.png" alt="heart" @click="removeInMyFavorites(favorite.eng)">
         </div>
   </div>
@@ -25,7 +24,11 @@
 
 <script>
 import {router} from '../router'
+import MyButton from './CustomComponents/MyButton.vue'
 export default {
+  components: {
+    MyButton,
+  },
   computed: {
     myFavorites(){
       return this.$store.state.myFavorites

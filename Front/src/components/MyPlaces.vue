@@ -1,18 +1,18 @@
 <template>
 <div>
-  <div class="welcome-image">
-    <div class="welcome-image__text">Создай свой маршрут</div>
-  </div>
+  <div class="welcome-image__text">Создай свой маршрут</div>
   <div class="places-container">
     <div class="menu__filters panel">
-      <div class="region-name">{{ selectedCity }}</div>
-      <select class="places-filter" name="filter" v-model="Pfilter">
-        <option value="all" selected>Все</option>
-        <option value="waterfall">Водопады</option>
-        <option value="lake">Озера</option>
-        <option value="mountain">Горы</option>
-        <option value="abonded">Заброшки</option>
-      </select>
+      <div class="region-name" v-if="selectedCity">{{ selectedCity }}</div>
+      <div class="filter-name">Фильтр:
+        <select class="places-filter" name="filter" v-model="Pfilter">
+          <option value="all" selected>Все</option>
+          <option value="waterfall">Водопады</option>
+          <option value="lake">Озера</option>
+          <option value="mountain">Горы</option>
+          <option value="abonded">Заброшки</option>
+        </select>
+      </div>
     </div>
     <div class="gallery">
       <div
@@ -24,7 +24,7 @@
         <div class="gallery__item-container">
           <img
             class="item__image"
-            :src="`http://localhost:3000/img/` + place.eng + `/image-1.jpeg`"
+            :src="`http://localhost:3000/img/` + place.eng + `.jpeg`"
             alt="avt"
           />
           <div class="item__name">{{ place.name }}</div>
@@ -90,7 +90,7 @@ export default {
   object-fit: cover;
 }
 
-.gallery__item-container:hover {
+.gallery__item-container:hover{
   transform: scale(1.1);
 }
 
@@ -117,22 +117,17 @@ export default {
   transition: 300ms;
 }
 
-.welcome-image {
-  height: 450px;
-  background: url("http://localhost:3000/img/chelovek-gora.jpeg") center -280px;
-  position: relative;
-}
-
 .welcome-image__text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 70px;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   color: white;
-  position: absolute;
-  width: 100%;
-  text-align: center;
-  line-height: 450px;
+  height: 450px;
   font-weight: 900;
   user-select: none;
+  background: url("http://localhost:3000/img/chelovek-gora.jpeg") center -280px;
 }
 
 .menu__filters {
@@ -147,6 +142,10 @@ export default {
   font-size: 23px;
   font-weight: 600;
   color: rgb(105, 105, 105);
+  margin: auto 0;
+}
+
+.filter-name {
   margin: auto 0;
 }
 

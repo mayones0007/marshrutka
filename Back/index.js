@@ -53,6 +53,18 @@ app.get('/reviews', corsMiddleware, (req, res) => {
   })
 })
 
+app.get('/pictures', corsMiddleware, (req, res) => {
+  const place = req.query.id ? req.query.id : ''
+  knex('pictures').where('eng', place).select('id')
+    .then((pictures) => {
+      return res.json({ success: true, message: 'Список картинок загружен', pictures })
+    })
+    .catch((err) => {
+      console.error(err)
+      return res.json({ success: false, message: 'An error occurred, please try again later.' })
+    })
+})
+
 app.get('/favorites', corsMiddleware, (req, res) => {
   knex('favorites').join('places', 'favorites.eng', '=', 'places.eng').where('userName', 'sf')
   .then((favorites) => {
@@ -233,27 +245,27 @@ app.post('/newplace', corsMiddleware, (req, res) => {
   const time = req.body.time ? req.body.time : ''
   const description = req.body.description ? req.body.description : ''
   const coords = req.body.coords ? req.body.coords : ''
-  const pictures = req.body.pictures ? req.body.pictures : ''
-  let counter = 1
 
-  fs.mkdir(__dirname + '/public/img/'+ req.body.eng, err => {
-    if(err) throw err; // не удалось создать папку
-    console.log('Папка успешно создана');
-  })
+  const fileName = eng + '.jpeg'
+  const path = __dirname + '/public/img/' + fileName
+  req.files.images[0].mv(path)
+
   req.files.images.forEach(image => {
-    const fileName = 'image-' + counter + '.jpeg'
-    const path = __dirname + '/public/img/' + req.body.eng + '/' + fileName
-    image.mv(path)
-    counter ++
+    knex('pictures')
+      .insert({ eng })
+      .then((id) => {
+        const fileName = id[0] + '.jpeg'
+        const path = __dirname + '/public/img/' + fileName
+        image.mv(path)
+      })
   })
 
 knex('places')
     .insert({eng, name, tag, region, city, difficulty, availability, time, description, coords, pictures})
     .then((id) => {
-    knex('places')
-        .where({id})
-        .then((place) => {
-        return res.json({success: true, message: 'Место добавлено', place});
+      knex('places').select('places.coords')
+        .then((places) => {
+        return res.json({success: true, message: 'Место добавлено', places});
     })
 })
     .catch((err) => {
@@ -296,7 +308,7 @@ knex('users').where({name})
     } else {
       knex('users').update({'password': newPassword}).where({name}).catch(err => console.log(err))
     }}
-  if (req.files){knex('users').where({name}).update({avatar}), req.files.image.mv(path)}
+  if (req.files){knex('users').where({name}).update({'avatar':avatar}), req.files.image.mv(path)}
   return res.json({success: true, message: 'Данные обновлены'})
   })
 .catch((err) => {

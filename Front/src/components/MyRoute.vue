@@ -14,11 +14,11 @@
     />
     </yandex-map>
   </div>
-  <button class="btn" @click="routeCreate">Постороить маршрут</button>
+  <MyButton title="Постороить маршрут" @click="routeCreate" />
   <div class="route-point--start">
     <div>Выбери точку старта</div>
     <div></div>
-    <button class="btn" @click="addStartPoint">Установить точку старта</button>
+    <MyButton title="Установить точку старта" @click="addStartPoint" />
   </div>
   <RoutePoint
     v-for='routePoint in myRoute'
@@ -30,10 +30,12 @@
 
 <script>
 import RoutePoint from './RoutePoint.vue'
+import MyButton from './CustomComponents/MyButton.vue'
 let myMap = null;
 export default {
 components: {
   RoutePoint,
+  MyButton,
 },
 data(){
   return{
