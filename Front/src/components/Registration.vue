@@ -1,15 +1,18 @@
 <template>
-    <section class="registration--window">
-      <div class="registration--window__title title">Регистрация</div>
+    <div class="registration--window">
+      <div class="form">
+      <Title
+        text="Регистрация"
+      />
       <div class="registration--window__form form">
         <input
-          class="form__input--text"
+          class="form__input"
           v-model="name" type="text"
           placeholder="Логин"
         >
         <input
           v-model="email"
-          class="form__input--text"
+          class="form__input"
           type="email"
           placeholder="E-mail"
           @input="clearEmailValidation"
@@ -22,7 +25,7 @@
         </div>
         <div class="form__password">
           <input
-            class="form__input--password"
+            class="form__input"
             v-model="password"
             @input="clearPasswordValidation"
             @blur="validatePassword"
@@ -44,7 +47,7 @@
         <div class="form__password">
           <input
             v-model="rePassword"
-            class="form__input--password" 
+            class="form__input" 
             :type="typePassword"
             placeholder="Повторно введите пароль"
           >
@@ -68,15 +71,18 @@
           <a class="registration--window__link" @click="openLoginPopup">Войти</a>
         </p>
       </div>
-    </section>
+      </div>  
+    </div>
 </template>
 
 <script>
 import {router} from '../router'
 import MyButton from './CustomComponents/MyButton.vue'
+import Title from './CustomComponents/Title.vue'
 export default {
   components: {
     MyButton,
+    Title,
   },
   data: () => ({
     name: '',
@@ -152,7 +158,12 @@ export default {
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.form {
+  display: grid;
+  gap: 20px;
+}
+
 .registration--window__link {
   color: green;
   cursor: pointer;
@@ -171,17 +182,8 @@ export default {
 }
 
 .form__password {
-  display: flex;
-}
-
-.form__input--password {
-  width: 330px;
-  height: 35px;
-  padding: 0 10px;
-  border-color: #e4e4e4;
-  border: 2px;
-  border-radius: 5px;
-  box-shadow: inset 0px 0px 5px rgba(193, 193, 193, 0.691);
+  display: grid;
+  grid-template-columns: 1fr 0;
 }
 
 .password-eye {
@@ -190,5 +192,9 @@ export default {
   margin: auto 0;
   margin-left: -30px;
   cursor: pointer;
+}
+
+.form__input {
+  @include input;
 }
 </style>

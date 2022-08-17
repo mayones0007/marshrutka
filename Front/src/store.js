@@ -100,7 +100,7 @@ export const store = createStore({
         headers: {
         'Content-Type': 'application/json;charset=utf-8'
         },
-        body: JSON.stringify({userName: this.state.user[0].name, eng: placeName})
+        body: JSON.stringify({userName: this.state.user.user.name, eng: placeName})
         });
         const data = await response.json();
         alert(data.message);
@@ -111,7 +111,7 @@ export const store = createStore({
         headers: {
         'Content-Type': 'application/json;charset=utf-8'
         },
-        body: JSON.stringify({userName: this.state.user[0].name, eng: placeName})
+        body: JSON.stringify({userName: this.state.user.user.name, eng: placeName})
         });
         const data = await response.json();
         alert(data.message);

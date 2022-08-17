@@ -7,6 +7,10 @@ const knex = require('knex')(knexConfig[process.env.NODE_ENV])
 const corsMiddleware = require('./middleware/cors')
 const fileupload = require('express-fileupload')
 const fs = require('fs')
+const jwt = require('jsonwebtoken')
+const jwtSecret = require('./config/default.json').jwtSecret
+const authMiddleware = require('./middleware/auth')
+
 
 app.use(bodyParser.json(), express.static('public'), fileupload())
 
@@ -98,7 +102,12 @@ app.post('/login', corsMiddleware, (req, res) => {
     if (users[0].password !== password) {
       return res.json({success: false, message: 'Неверный пароль'})
     }
-      return res.json({success: true, message: 'Успешный вход', users})
+    const token = jwt.sign(
+      { userId: users[0].id},
+      jwtSecret,
+      {expiresIn: '1h'}
+      )
+    return res.json({success: true, message: 'Успешный вход', token, users})
     })
   .catch((err) => {
     console.error(err)

@@ -1,10 +1,21 @@
 <template>
-  <div class="login--background"  @click.self="closeGalleryPopup">
-    <div class="gallery-window">
-      <div class="gallery-window__close-button" @click="closeGalleryPopup"/>
-      <div class="gallery-window__slider slider-btn-left" @click="switchGallaryPicture(-1)"><div class="slider-btn-icon slider-btn-icon-left"/></div>
+  <div class="background"  @click.self="closeGalleryPopup">
+    <div
+      class="gallery-window"
+      tabindex="-1"
+      @keyup.right.stop="switchGallaryPicture(1)"
+      @keyup.left.stop="switchGallaryPicture(-1)"
+      @keyup.esc.stop="closeGalleryPopup"
+      ref="gallaryWindow"
+    >
+      <div class="gallery-window__button-close" @click="closeGalleryPopup"/>
+      <div class="gallery-window__slider slider-left" @click="switchGallaryPicture(-1)">
+        <div class="slider-btn-icon slider-btn-icon-left"/>
+      </div>
       <img class="gallery-window__image" :src="imageSrc" >
-      <div class="gallery-window__slider slider-btn-right" @click="switchGallaryPicture(1)"><div class="slider-btn-icon slider-btn-icon-right"/></div>
+      <div class="gallery-window__slider slider-right" @click="switchGallaryPicture(1)">
+        <div class="slider-btn-icon slider-btn-icon-right"/>
+      </div>
     </div>
   </div>
 </template>
@@ -39,11 +50,20 @@ export default {
   },
   created() {
     this.currentPicture = this.openedPicture
+  },
+
+  mounted() {
+    this.$refs.gallaryWindow.focus();
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+
+.background {
+  @include background_popup;
+}
+
 .gallery-window {
   position: fixed;
   display:flex;
@@ -51,6 +71,7 @@ export default {
   height: 80%;
   top: 10%;
   left: 15%;
+  outline: none;
 }
 
 .gallery-window__slider {
@@ -59,12 +80,12 @@ export default {
   cursor: pointer;
 }
 
-.slider-btn-right {
+.slider-right {
   margin-left: -40%;
   background: linear-gradient(90deg,transparent,rgba(0, 0, 0, 0.1));
 }
 
-.slider-btn-left {
+.slider-left {
   margin-right: -40%;
   background: linear-gradient(-90deg,transparent,rgba(0, 0, 0, 0.1));
 }
@@ -75,7 +96,7 @@ export default {
   width: 20px;
   border-left: solid rgba(255, 255, 255, 0.7) 5px;
   border-top: solid rgba(255, 255, 255, 0.7) 5px;
-  top: 48%;
+  top: 50%;
 }
 
 .slider-btn:hover .slider-btn-icon{
@@ -93,11 +114,11 @@ export default {
   transform: rotate(135deg);
 }
 
-.slider-btn-right:hover {
+.slider-right:hover {
   background: linear-gradient(90deg,transparent,rgba(0, 0, 0, 0.3));
 }
 
-.slider-btn-left:hover {
+.slider-left:hover {
   background: linear-gradient(-90deg,transparent,rgba(0, 0, 0, 0.3));
 }
 
@@ -107,7 +128,7 @@ export default {
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 }
 
-.gallery-window__close-button{
+.gallery-window__button-close{
   position: absolute;
   background: url("http://localhost:3000/icons/close-btn.png") center/100%;
   width: 25px;
@@ -118,7 +139,7 @@ export default {
   z-index: 3;
 }
 
-.gallery-window__close-button:hover {
+.gallery-window__button-close:hover {
   filter: brightness(0.2);
 }
 </style>

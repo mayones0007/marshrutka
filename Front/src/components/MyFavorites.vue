@@ -1,7 +1,8 @@
 <template>
-<div class="favorite-list">
-  <div class="favorite-list-title" v-if="myFavorites.length === 0">Пока здесь пусто</div>
-  <div class="favorite-list-title" v-else>Избранное: {{myFavorites.length}}</div>
+<div class="favorite-page">
+  <Title
+    :text="titleText"
+  />
   <div class="favirites-item" v-for='favorite in myFavorites' :key="favorite">
         <div class="gallery__item" @click="openModal(favorite.eng)">
           <div class="gallery__item-container">
@@ -16,7 +17,12 @@
             :isDisabled="addToRouteButtonDisabled(favorite)"
             @click="addInMyRoute(favorite.eng)"
           />
-          <img class="save-panel__hert" src="http://localhost:3000/icons/heart.png" alt="heart" @click="removeInMyFavorites(favorite.eng)">
+          <img 
+            class="save-panel__hert"
+            src="http://localhost:3000/icons/heart.png"
+            alt="heart"
+            @click="removeInMyFavorites(favorite.eng)"
+          >
         </div>
   </div>
 </div>
@@ -25,14 +31,22 @@
 <script>
 import {router} from '../router'
 import MyButton from './CustomComponents/MyButton.vue'
+import Title from './CustomComponents/Title.vue'
 export default {
   components: {
     MyButton,
+    Title
   },
   computed: {
     myFavorites(){
       return this.$store.state.myFavorites
     },
+    titleText() {
+      if(this.myFavorites.length === 0){
+        return "Пока здесь пусто"
+      }
+      return "Избранное: "+this.myFavorites.length
+    }
   },
   methods: {
     async addInMyRoute(placeName){
@@ -65,17 +79,12 @@ export default {
 </script>
 
 <style scoped>
-.favorite-list {
+.favorite-page{
   padding: 20px 80px;
 }
 
-.favorite-list-title {
-  font-weight: 900;
-  font-size: 20px;
-}
 
 .favirites-item {
-  font-family: Museo Sans Cyrl,Arial,Helvetica Neue,sans-serif;
   text-align: start;
   font-weight: 100;
   font-size: 18px;
@@ -95,7 +104,6 @@ export default {
   border: solid red 1px;
   border-radius: 50%;
   padding: 8px;
-  fill: white;
   cursor: pointer;
   margin: auto;
 }

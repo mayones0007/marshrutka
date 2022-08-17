@@ -1,0 +1,52 @@
+@mixin reset {
+  margin: 0;
+  padding: 0;
+};
+
+@mixin panel($to) {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  min-height: 80px;
+  justify-content: space-evenly;
+  background: linear-gradient($to, rgb(255, 255, 255), rgb(242, 242, 242));
+};
+
+@mixin input {
+  border-color: #e4e4e4;
+  border: 2px;
+  border-radius: 5px;
+  box-shadow: inset 0px 0px 5px rgba(193, 193, 193, 0.691);
+  height: 35px;
+  padding: 0 10px;
+  &:focus {
+    outline: 0;
+  }
+};
+
+@mixin background_popup {
+  position: fixed;
+  background-color: rgba(49, 49, 49, 0.65);
+  width:100%;
+  height:100%;
+  top:0;
+  z-index: 1;  
+};
+
+@mixin flex-between-center-g15 {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+};
+
+@mixin link-reset {
+  text-decoration: none;
+  color: #777777;
+  font-size: 15px;
+};
+
+@mixin grid-g20 {
+  display: grid;
+  gap: 20px;
+  text-align: center;
+};

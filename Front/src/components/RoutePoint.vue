@@ -4,8 +4,10 @@
     :class="{'route-point--full-size': isFullSize}"
     @click.self="toggleSize"
   >
-    <div class="route-point__name">{{routePoint.name}}</div>
-    <div class="route-point__time">{{routePoint.time}}</div>
+    <div class="route-point__name" @click.self="toggleSize">{{routePoint.name}}
+      <div class="user-menu__arrow" :class="{'user-menu__arrow-down': isFullSize}"/>
+    </div>
+    <div class="route-point__time" @click.self="toggleSize">{{routePoint.time}}</div>
     <MyButton title="Убрать из маршрута" @click="removeInMyRoute(routePoint.eng)"/>
     <div class="gallery__item" @click="openModal(routePoint.eng)">
       <div class="gallery__item-container">
@@ -13,7 +15,13 @@
       </div>
     </div>
     <div class="item__description">{{routePoint.description}}</div>
-    <img class="save-panel__hert" :class="{'save-panel__hert--false': isFavorite(routePoint.eng)}" src="http://localhost:3000/icons/heart.png" alt="heart" @click="addInMyFavorites(routePoint.eng)">
+    <img
+      class="save-panel__hert"
+      :class="{'save-panel__hert--false': isFavorite(routePoint.eng)}"
+      src="http://localhost:3000/icons/heart.png"
+      alt="heart"
+      @click="addInMyFavorites(routePoint.eng)"
+    >
   </div>
 </template>
 
@@ -56,9 +64,8 @@ data(){
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .route-point {
-  font-family: Museo Sans Cyrl,Arial,Helvetica Neue,sans-serif;
   text-align: start;
   font-weight: 100;
   font-size: 18px;
@@ -74,15 +81,24 @@ data(){
   gap: 20px;
   border: solid 1px rgba(0, 0, 0, 0.076);
   transition: 500ms;
+  &:hover {
+    background-color:rgb(228, 243, 255);
+  }
 }
 
 .route-point__name {
   margin: auto 0;
   font-weight: 500;
+  cursor: default;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  gap: 20px;
 }
 
 .route-point__time {
   margin: auto 0;
+  cursor: default;
 }
 
 .route-point--full-size {
@@ -147,6 +163,21 @@ data(){
 .item__description {
   overflow: hidden;
   height: 195px;
+}
+
+.user-menu__arrow {
+  border-bottom: solid 2px black;
+  border-left: solid 2px black;
+  width: 10px;
+  height: 10px;
+  transform: rotate(135deg);
+  transition-duration: 400ms;
+  margin-top: 6px;
+}
+
+.user-menu__arrow-down {
+  transform: rotate(-45deg);
+  margin-top: 3px;
 }
 
 </style>

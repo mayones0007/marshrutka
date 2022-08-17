@@ -1,27 +1,36 @@
 <template>
     <section class="registration--window">
-      <div class="registration--window__title title">Настройки</div>
-      <div class="form__input--avatar-change">
-        <img class="settings__avatar" :src="`http://localhost:3000/avatars/${user[0].avatar}`" alt="avt">
+      <Title
+        text="Настройки"
+      />
+      <div class="form">
+        <Avatar
+          :user="user[0].name"
+          :vertical="true"
+          :hideName="true"
+          :big="true"
+        />
         <input class="form__input--file" type="file" id="file" ref="file" accept="image/jpeg" @change="handleFilesUploads()">
         <label class="form__input--btn" for="file">Изменить аватар</label>
-      </div>
-      <div class="registration--window__form form">
-        <input class="form__input--text" v-model="oldEmail" type="email" placeholder="Старый e-mail">
-        <input class="form__input--text" v-model="newEmail" type="email" placeholder="Новый e-mail">
-        <input class="form__input--text" v-model="oldPassword" type="password" placeholder="Старый пароль">
-        <input class="form__input--text" v-model="newPassword" type="password" placeholder="Новый пароль">
+        <input class="form__input-text" v-model="oldEmail" type="email" placeholder="Старый e-mail">
+        <input class="form__input-text" v-model="newEmail" type="email" placeholder="Новый e-mail">
+        <input class="form__input-text" v-model="oldPassword" type="password" placeholder="Старый пароль">
+        <input class="form__input-text" v-model="newPassword" type="password" placeholder="Новый пароль">
         <MyButton title="Применить изменения" @click="settingsAccept"/>
-      </div>
+      </div>  
     </section>
 </template>
 
 <script>
 import axios from 'axios'
 import MyButton from './CustomComponents/MyButton.vue'
+import Avatar from './CustomComponents/Avatar.vue'
+import Title from './CustomComponents/Title.vue'
 export default {
   components: {
     MyButton,
+    Avatar,
+    Title
   },
   data: () => ({
     oldEmail: '',
@@ -53,14 +62,14 @@ export default {
   },
   computed: {
     user() {
-      return this.$store.state.user
+      return this.$store.state.user.user
     },
   }
 }
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .registration--window__link {
   color: green;
   cursor: pointer;
@@ -70,12 +79,7 @@ export default {
 .registration--window {
   width: 350px;
   margin: 100px auto;
-}
-
-.form__input--avatar-change{
-  display: grid;
-  gap: 10px;
-  margin: 30px;
+  text-align: center;
 }
 
 .form__input--file {
@@ -83,8 +87,7 @@ export default {
 }
 
 .form__input--btn {
-  width: 100px;
-  margin: auto;
+  margin: 10px;
   cursor: pointer;
 }
 
@@ -92,11 +95,12 @@ export default {
   color: red;
 }
 
-.settings__avatar {
-  margin: auto;
-  height: 100px;
-  width: 100px;
-  border-radius: 50%;
-  object-fit: cover;
+.form {
+  display: grid;
+  gap: 20px;
+}
+
+.form__input-text {
+  @include input;
 }
 </style>
