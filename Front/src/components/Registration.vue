@@ -1,78 +1,78 @@
 <template>
-    <div class="registration--window">
-      <div class="form">
-      <Title
-        text="Регистрация"
-      />
-      <div class="registration--window__form form">
-        <input
-          class="form__input"
-          v-model="name" type="text"
-          placeholder="Логин"
-        >
-        <input
-          v-model="email"
-          class="form__input"
-          type="email"
-          placeholder="E-mail"
-          @input="clearEmailValidation"
-          @blur="validateEmail"
-        >
-        <div
-          v-if="emailValidated && !isValidEmail"
-          class="input-text-wrong"
-        >Введите корректный email
-        </div>
-        <div class="form__password">
-          <input
-            class="form__input"
-            v-model="password"
-            @input="clearPasswordValidation"
-            @blur="validatePassword"
-            :type="typePassword"
-            placeholder="Пароль"
-          >
-          <img
-            class="password-eye"
-            :src="`http://localhost:3000/icons/${eyeIconPassword}.png`"
-            @click="togglePasswordVisibility"
-          >
-        </div>
-        <div
-          v-if="passwordValidated && !isValidPassword"
-          class="input-text-wrong"
-        >
-          Пароль должен быть больше 6 символов и включать латниские буквы и цифры
-        </div>
-        <div class="form__password">
-          <input
-            v-model="rePassword"
-            class="form__input" 
-            :type="typePassword"
-            placeholder="Повторно введите пароль"
-          >
-          <img
-            class="password-eye"
-            @click="togglePasswordVisibility"
-            :src="`http://localhost:3000/icons/${eyeIconPassword}.png`"
-          >
-        </div>
-         <div
-          v-if="password !== rePassword && rePassword.length > 6"
-          class="input-text-wrong" >
-          Пароли не совпадают
-         </div>
-         <MyButton 
-          title="Зарегистрироваться"
-          :isDisabled="!inputIsCorrect"
-          @click="registration"
-         />
-        <p>Уже зарегистрированы? 
-          <a class="registration--window__link" @click="openLoginPopup">Войти</a>
-        </p>
+  <div class="registration--window">
+    <div class="form">
+    <Title
+      text="Регистрация"
+    />
+    <div class="registration--window__form form">
+      <input
+        class="form__input"
+        v-model="name" type="text"
+        placeholder="Логин"
+      >
+      <input
+        v-model="email"
+        class="form__input"
+        type="email"
+        placeholder="E-mail"
+        @input="clearEmailValidation"
+        @blur="validateEmail"
+      >
+      <div
+        v-if="emailValidated && !isValidEmail"
+        class="input-text-wrong"
+      >Введите корректный email
       </div>
-      </div>  
+      <div class="form__password">
+        <input
+          class="form__input"
+          v-model="password"
+          @input="clearPasswordValidation"
+          @blur="validatePassword"
+          :type="typePassword"
+          placeholder="Пароль"
+        >
+        <img
+          class="password-eye"
+          :src="`http://localhost:3000/icons/${eyeIconPassword}.png`"
+          @click="togglePasswordVisibility"
+        >
+      </div>
+      <div
+        v-if="passwordValidated && !isValidPassword"
+        class="input-text-wrong"
+      >
+        Пароль должен быть больше 6 символов и включать латниские буквы и цифры
+      </div>
+      <div class="form__password">
+        <input
+          v-model="rePassword"
+          class="form__input" 
+          :type="typePassword"
+          placeholder="Повторно введите пароль"
+        >
+        <img
+          class="password-eye"
+          @click="togglePasswordVisibility"
+          :src="`http://localhost:3000/icons/${eyeIconPassword}.png`"
+        >
+      </div>
+        <div
+        v-if="password !== rePassword && rePassword.length > 6"
+        class="input-text-wrong" >
+        Пароли не совпадают
+        </div>
+        <MyButton 
+        title="Зарегистрироваться"
+        :isDisabled="!inputIsCorrect"
+        @click="registration"
+        />
+      <p>Уже зарегистрированы? 
+        <a class="registration--window__link" @click="setLoginPopup">Войти</a>
+      </p>
     </div>
+    </div>  
+  </div>
 </template>
 
 <script>
@@ -123,11 +123,8 @@ export default {
     clearEmailValidation() {
       this.emailValidated = false;
     },
-    openLoginPopup(){
-      this.$store.commit('setLoginPopup', true);
-    },
-    closeLoginPopup(){
-      this.$store.commit('setLoginPopup', false);
+    setLoginPopup(){
+      this.$store.commit('setLoginPopup')
     },
     togglePasswordVisibility(){
       if (this.typePassword === "text") {
@@ -139,20 +136,11 @@ export default {
       }
     },
     async registration(){
-      const response = await fetch('http://localhost:3000/registration',{
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json;charset=utf-8'
-        },
-        body: JSON.stringify({name:this.name, email:this.email, password:this.password})
-        });
-        const data = await response.json();
-      if (data.success) {
-        this.$store.commit('setUser', data.user);
-        router.push({name: "MyPlaces"});
+      const inputs = {name:this.name, email:this.email, password:this.password}
+      if (await this.$store.dispatch('registration', inputs)) {
+        router.push({name: "MyPlaces"})
       }
-        alert(data.message);
-    },
+    }
   }
 }
 

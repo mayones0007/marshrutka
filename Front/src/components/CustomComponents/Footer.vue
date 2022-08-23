@@ -9,23 +9,24 @@
       </a>
     </div>
     <div class="footer__contacts-social">
-      <a href="https://vk.com">
-        <img src="http://localhost:3000/icons/vk.png" alt="vk" class="contacts-social__item">
-      </a>
-      <a href="https://www.instagram.com">
-        <img src="http://localhost:3000/icons/instagram.png" alt="inst" class="contacts-social__item">
-      </a>
-      <a href="https://tlgg.ru/likhachev_maxim">
-        <img src="http://localhost:3000/icons/telegram.png" alt="tele" class="contacts-social__item">
-      </a>
-      <a href="https://wa.me/+79014534841">
-        <img src="http://localhost:3000/icons/whatsapp.png" alt="wa" class="contacts-social__item">
+      <a v-for="social in socials" :key="social.alt" :href="social.ref">
+        <img :src="social.icon" :alt="social.alt" class="contacts-social__item">
       </a>
     </div>
     <router-link to="/" class="footer__logo-name">© 2022, Marshrutka Limited Sochifornia</router-link>
   </div>
 </template>
 
+<script>
+import { socials } from '../../data/socials.data'
+export default {
+  data() {
+    return {
+        socials: socials,
+    };
+  },
+}
+</script>
 <style lang="scss" scoped> 
 
 .footer {
@@ -36,11 +37,17 @@
   @include link-reset;
   width: 200px;
   text-align: end;
+  height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .footer__contacts-typical {
-  display: grid;
-  text-align: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 80px;
 }
 
 .contacts-typical__item {
@@ -53,6 +60,7 @@
 
 .footer__contacts-social {
   @include flex-between-center-g15;
+  height: 80px;
 }
 .contacts-social__item {
   height: 30px;

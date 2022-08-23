@@ -8,13 +8,24 @@ const authMiddleware = function (req, res, next) {
   try {
     const token = req.headers.authorization.split(' ')[1]
     if (!token) {
-      return res.status(401).json({massage: "Нет авторизации"})
+      
+      return res.status(401).json({message: "Нет авторизации"})
     }
-    const decoded = jwt.verify(token, config.get('jwtSecret'))
-    req.user = decoded
+    const decoded = jwt.decode(token, config.jwtSecret)
+    if (decoded.exp * 1000 < Date.now()) {
+      const refreshToken = jwt.sign(
+        { userId: decoded.userId },
+        config.jwtSecret,
+        { expiresIn: '30d' }
+      )
+      req.user = { userId: decoded.userId, refreshToken: refreshToken }
+    } else {
+    //const decoded = jwt.verify(token, config.jwtSecret)
+      req.user = { userId: decoded.userId }
+    }
     next()
   } catch (e) {
-    res.status(401).json({ massage: "Нет авторизации" })
+    return res.status(401).json({ message: "Нет авторизации" })
   }
 }
 

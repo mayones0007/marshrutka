@@ -19,17 +19,18 @@ export default {
     Footer,
     LoginPopup
   },
-    created(){
-      if(JSON.parse(localStorage.getItem('userData'))){
-        this.$store.commit('setUser', JSON.parse(localStorage.getItem('userData')))
-      } else {
-        this.$store.state.user.user = [{name:'Неопознанный турист', avatar:'tourist.png'}]
-      }
+  async created(){
+    if(JSON.parse(localStorage.getItem('userData'))){
+      await this.$store.dispatch('getUser')
+    } else {
+      this.$store.dispatch('logOut')
+    }
   },
 }
 </script>
 
 <style lang="scss"> 
+
 @import "./styles/main.scss";
 
 </style>

@@ -13,9 +13,10 @@ export default {
 
 <style lang="scss" scoped>
   .title {
+    text-align: center;
     color: #2c3e50;
     font-size: 24px;
     font-weight: 700;
-    margin: 20px 0;
+    margin-bottom: 20px;
 }
 </style>

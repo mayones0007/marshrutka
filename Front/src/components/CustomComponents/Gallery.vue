@@ -1,37 +1,62 @@
 <template>
-  <div class="background"  @click.self="closeGalleryPopup">
-    <div
-      class="gallery-window"
-      tabindex="-1"
-      @keyup.right.stop="switchGallaryPicture(1)"
-      @keyup.left.stop="switchGallaryPicture(-1)"
-      @keyup.esc.stop="closeGalleryPopup"
-      ref="gallaryWindow"
-    >
-      <div class="gallery-window__button-close" @click="closeGalleryPopup"/>
-      <div class="gallery-window__slider slider-left" @click="switchGallaryPicture(-1)">
-        <div class="slider-btn-icon slider-btn-icon-left"/>
+  <div>
+    <div class="gallery-container" :class="{'gallery-container-vertical': vertical}">
+      <img
+        v-for="(n, i) in 3"
+        :key="i"
+        :src="`http://localhost:3000/img/${this.images[i]}`" 
+        class="gallery-container__item"
+        @click="openGalleryPopup(i)"
+      >
+      <div class="gallery-container__item" @click="openGalleryPopup(3)">
+        <img
+          :src="`http://localhost:3000/img/${this.images[3]}`" 
+          class="gallery-container__item gallery-container__item-last-image" 
+        >
+        <div class="gallery-container__item-last-text">{{ picturesCount }}</div>
       </div>
-      <img class="gallery-window__image" :src="imageSrc" >
-      <div class="gallery-window__slider slider-right" @click="switchGallaryPicture(1)">
-        <div class="slider-btn-icon slider-btn-icon-right"/>
+    </div>
+    <div class="background"  @click.self="closeGalleryPopup" v-if="showGallery">
+      <div
+        class="gallery-window"
+        tabindex="-1"
+        @keyup.right.stop="switchGallaryPicture(1)"
+        @keyup.left.stop="switchGallaryPicture(-1)"
+        @keyup.esc.stop="closeGalleryPopup"
+        ref="gallary"
+      >
+        <div class="gallery-window__button-close" @click="closeGalleryPopup"/>
+        <div class="gallery-window__slider slider-left" @click="switchGallaryPicture(-1)">
+          <div class="slider-btn-icon slider-btn-icon-left"/>
+        </div>
+        <img class="gallery-window__image" :src="imageSrc" >
+        <div class="gallery-window__slider slider-right" @click="switchGallaryPicture(1)">
+          <div class="slider-btn-icon slider-btn-icon-right"/>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { nextTick } from '@vue/runtime-core'
 export default {
   name: 'Gallery',
-  props: ['images', 'openedPicture'],
+  props: ['images','vertical'],
   data() {
     return {
       currentPicture: 0,
     }
   },
   computed: {
+    showGallery() {
+      return this.$store.state.showGalleryPopup
+    },
     imageSrc(){
       return `http://localhost:3000/img/${this.images[this.currentPicture]}`
+    },
+    picturesCount() {
+      return `+${this.images.length - 4}`
     },
   },
   methods: {
@@ -47,18 +72,76 @@ export default {
         this.currentPicture = this.images.length -1
       }
     },
+    openGalleryPopup(i){
+      this.currentPicture = i;
+      this.$store.commit('setGalleryPopup', true)
+      nextTick(() => {
+        this.$refs.gallary.focus()
+      })
+    },
   },
-  created() {
-    this.currentPicture = this.openedPicture
-  },
-
-  mounted() {
-    this.$refs.gallaryWindow.focus();
-  }
 }
 </script>
 
 <style lang="scss" scoped>
+
+.gallery-container {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: 3fr 1fr;
+  gap: 10px;
+}
+
+.gallery-container-vertical {
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 3fr 1fr;
+}
+
+.gallery-container-vertical .gallery-container__item:first-child{
+  grid-column: 1 / span 3;
+}
+
+.gallery-container__item {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+
+  &:hover {
+    filter:brightness(0.9);
+  }
+
+  &:first-child {
+    grid-row: 1 / span 3;
+
+    &:hover {
+      filter:none;
+    }
+  }
+
+  &:last-child {
+    position: relative;
+
+    &:hover .gallery-container__item-last-image{
+    filter:brightness(0.3);
+    }
+  }
+}
+
+.gallery-container__item-last-image {
+  filter:brightness(0.4);
+}
+
+.gallery-container__item-last-text {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  color: white;
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 0;
+  text-align: center;
+}
 
 .background {
   @include background_popup;

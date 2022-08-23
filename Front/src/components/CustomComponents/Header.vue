@@ -10,20 +10,24 @@
           <option value="Абхазия">Abkhazia</option>
           <option value="Сочи">Sochi</option>
           <option value="Красная Поляна">Krasnaia Polyana</option>
+          <option value="Все">All</option>
         </datalist>
-        <MyButton title="Поиск" :noLeftRadius="true" @click="changeFilter"/>
+        <MyButton title="Поиск" :noLeftRadius="true" @click="setSelectedCity"/>
       </div>
       <div class="user-menu">
-        <Avatar :user="user[0].name"/>
-        <div class="user-menu__arrow" v-if="isLogIn"></div>
-        <div class="user-menu__dropdown-content" v-if="isLogIn">
+        <Avatar
+          :userName="userInfo.name"
+          :userImg="userInfo.avatar"
+        />
+        <div class="user-menu__arrow" v-if="!isLogIn"></div>
+        <div class="user-menu__dropdown-content" v-if="!isLogIn">
           <router-link to="/myroute" class="dropdown-content__link">Мой маршрут</router-link>
           <router-link to="/myfavorites" class="dropdown-content__link">Избранное</router-link>
           <router-link to="/settings" class="dropdown-content__link">Настройки</router-link>
           <router-link to="/admin" class="dropdown-content__link" v-if="isAdmin">Добавить место</router-link>
           <div class="dropdown-content__link" @click="setLoginPopup">Выйти</div>
         </div>
-        <div class="login-panel__button-login" @click="setLoginPopup" v-if="!isLogIn">Войти</div>
+        <div class="login-panel__button-login" @click="setLoginPopup" v-if="isLogIn">Войти</div>
       </div>
   </div>
 </template>
@@ -44,17 +48,23 @@ export default {
 
   computed:{
     user() {
-      return this.$store.state.user.user
+      return this.$store.state.user
     },
     isLogIn(){
-      if (this.user[0].name === "Неопознанный турист"){
+      if (Object.keys(this.user).length){
         return false
       } else {
         return true
       }
     },
+    userInfo() {
+      return {
+        name: this.user.name ? this.user.name : 'Неопознанный турист',
+        avatar: this.user.avatar ? this.user.avatar : 'tourist.png'
+      }
+    },
     isAdmin(){
-      if(this.user[0].name === "Admin"){
+      if(this.user.name === "Admin"){
         return true
       } else {
         return false
@@ -64,15 +74,14 @@ export default {
 
   methods: {
     setLoginPopup(){
-      if (this.user[0].name === "Неопознанный турист"){
-      this.$store.commit('setLoginPopup')
+      if (this.isLogIn){
+        this.$store.commit('setLoginPopup')
       } else {
-        localStorage.removeItem('userData')
-        this.$store.state.user.user = [{name:'Неопознанный турист', avatar:'tourist.png'}]
+        this.$store.dispatch('logOut')
         router.push({ name: "MyPlaces" })
       }
     },
-    changeFilter(){
+    setSelectedCity () {
       this.$store.commit('setSelectedCity', this.selectedCity);
       this.selectedCity = "";
     },
@@ -105,6 +114,7 @@ export default {
 .search-form__input-text {
   @include input;
   border-radius: 5px 0 0 5px;
+  width: 250px;
 }
 
 .user-menu__name {

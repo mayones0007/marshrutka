@@ -1,7 +1,7 @@
 <template>
     <button
       class="button"
-      :class="{'button_disabled': isDisabled, 'button_no-left-radius': noLeftRadius}"
+      :class="{'button_disabled': isDisabled, 'button_no-left-radius': noLeftRadius,'button_red': isRed}"
       :disabled="isDisabled">{{ title }}
     </button>
 </template>
@@ -9,7 +9,7 @@
 <script>
 export default {
   name: 'MyButton',
-  props: ['title', 'isDisabled', 'noLeftRadius'],
+  props: ['title', 'isDisabled', 'noLeftRadius', 'isRed'],
 }
 </script>
 
@@ -24,16 +24,15 @@ export default {
   cursor: pointer;
 
   &:hover {
-    background-color: rgb(0, 201, 134);
+    filter: grayscale(0.2);
   }
 
   &_disabled {
     background-color: rgb(147, 147, 147);
     cursor: default;
-
-    &:hover {
-      background-color: rgb(147, 147, 147);
-    }
+  }
+  &_red {
+    background-color: rgb(255, 98, 98);
   }
 
   &_no-left-radius {

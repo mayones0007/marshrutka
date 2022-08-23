@@ -5,7 +5,8 @@
       />
       <div class="form">
         <Avatar
-          :user="user[0].name"
+          :userName="user.name"
+          :userImg="user.avatar"
           :vertical="true"
           :hideName="true"
           :big="true"
@@ -45,24 +46,25 @@ export default {
     },
     async settingsAccept(){
       const formData = new FormData()
-      formData.append('name', this.user[0].name)
-      formData.append('email', this.oldEmail)
-      formData.append('password', this.oldPassword)
-      formData.append('newEmail', this.newEmail)
-      formData.append('newPassword', this.newPassword)
+      formData.append('name', this.user.name)
+      formData.append('oldEmail', this.oldEmail)
+      formData.append('oldPassword', this.oldPassword)
+      formData.append('email', this.newEmail)
+      formData.append('password', this.newPassword)
       formData.append('image', this.file)
 
       const response = await axios.post('http://localhost:3000/settings', formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
-        }
+          'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userData')).token
+        },
       });
         alert(response.data.message);
+        this.oldEmail = this.newEmail = this.oldPassword = this.newPassword = this.file = ''
     },
   },
   computed: {
     user() {
-      return this.$store.state.user.user
+      return this.$store.state.user
     },
   }
 }

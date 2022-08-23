@@ -3,7 +3,7 @@
   <div class="welcome-image__text">Создай свой маршрут</div>
   <div class="places-container">
     <div class="menu__filters panel">
-      <div class="region-name" v-if="selectedCity">{{ selectedCity }}</div>
+      <div class="region-name">Регион: {{ selectedCity }}</div>
       <div class="filter-name">Фильтр:
         <select class="places-filter" name="filter" v-model="Pfilter">
           <option value="all" selected>Все</option>
@@ -15,29 +15,23 @@
       </div>
     </div>
     <div class="gallery">
-      <div
-        v-for="(place, index) in filteredPlaces"
-        :key="`place-${index}`"
-        class="gallery__item"
-        @click="openModal(place.eng)"
-      >
-        <div class="gallery__item-container">
-          <img
-            class="item__image"
-            :src="`http://localhost:3000/img/` + place.eng + `.jpeg`"
-            alt="avt"
-          />
-          <div class="item__name">{{ place.name }}</div>
-        </div>
-      </div>
+      <PlacePreview
+        v-for="place in filteredPlaces"
+        :key="`place + ${place.id}`"
+        :routePoint="place"
+        :ShowText="true"
+      />
     </div>
   </div>
 </div>
 </template>
 
 <script>
-import { router } from "../router";
+import PlacePreview from './CustomComponents/PlacePreview.vue'
 export default {
+  components: {
+    PlacePreview
+  },
   data() {
     return {
       Pfilter: "all",
@@ -45,16 +39,16 @@ export default {
   },
   computed: {
     filteredPlaces() {
-      if (this.selectedCity === "" && this.Pfilter === "all") {
+      if (this.selectedCity === "Все" && this.Pfilter === "all") {
         return this.places;
-      } else if (this.selectedCity === "") {
+      } else if (this.selectedCity === "Все") {
         return this.places.filter((item) => item.tag === this.Pfilter);
       } else if (this.Pfilter === "all") {
         return this.places.filter((item) => item.region === this.selectedCity);
       }
       return this.places.filter(
         (item) => item.tag === this.Pfilter && item.region === this.selectedCity
-      );
+      )
     },
     selectedCity() {
       return this.$store.state.selectedCity;
@@ -63,15 +57,10 @@ export default {
       return this.$store.state.places;
     },
   },
-  methods: {
-    openModal(eng) {
-      router.push({ name: "Description", params: { eng } })
-    },
-  },
   created() {
-    this.$store.dispatch("getPlaces");
-  },
-};
+    this.$store.dispatch("getPlaces")
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -84,45 +73,11 @@ export default {
   padding: 20px 0;
 }
 
-.item__image {
-  width: 300px;
-  height: 200px;
-  vertical-align: middle;
-  object-fit: cover;
-}
-
-.gallery__item-container:hover{
-  transform: scale(1.1);
-}
-
-.item__name {
-  position: absolute;
-  text-align: center;
-  width: 100%;
-  height: 50%;
-  bottom: 0;
-  line-height: 130px;
-  color: white;
-  font-weight: 900;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.591));
-}
-
-.gallery__item {
-  overflow: hidden;
-  border-radius: 10px;
-  cursor: pointer;
-  border: solid 1px rgba(0, 0, 0, 0.076);
-}
-
-.gallery__item-container {
-  position: relative;
-  transition: 300ms;
-}
-
 .welcome-image__text {
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
   font-size: 70px;
   color: white;
   height: 450px;

@@ -1,44 +1,43 @@
 <template>
-<div :class="{'user': !hideName, 'user-vertical': vertical}">
-  <img 
-    class='user__avatar'
-    :class="{'user__avatar-big': big}" 
-    :src="`http://localhost:3000/avatars/avt-` + user + `.jpeg`"
-    onerror="this.src = 'http://localhost:3000/avatars/tourist.png'"
-    alt="avt">
-  <div v-if="!hideName" class="user__name">{{user}}</div>
-</div>
+  <div :class="{'avatar': !hideName, 'avatar-vertical': vertical}" v-if="userImg">
+    <img 
+      class='avatar__image'
+      :class="{'avatar__image-big': big}" 
+      :src="`http://localhost:3000/avatars/`+ userImg"
+      alt="avt">
+    <div v-if="!hideName" class="avatar__name">{{userName}}</div>
+  </div>
 </template>
 
 <script>
 export default {
   name: 'Avatar',
-  props: ['user','hideName','vertical','big'],
+  props: ['userName', 'userImg', 'hideName','vertical','big'],
 }
 </script>
 
 <style lang="scss" scoped>
-.user{
+.avatar{
   @include flex-between-center-g15;
 }
 
-.user-vertical {
+.avatar-vertical {
   @include flex-between-center-g15;
   flex-direction: column;
 }
 
-.user__avatar{
+.avatar__image{
   height: 50px;
   width: 50px;
   border-radius: 50%;
 }
 
-.user__avatar-big{
+.avatar__image-big{
   height: 100px;
   width: 100px;
 }
 
-.user__name {
+.avatar__name {
   cursor: default;
   font-size: 18px;
   font-weight: 400;

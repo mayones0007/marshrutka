@@ -9,7 +9,7 @@
         <input class="form__input-text" ref="name" type="text" placeholder="Логин" tabindex="-1">
         <input class="form__input-text" ref="password" type="password" placeholder="Пароль">
         <MyButton @click="login" title="Войти"/>
-        <p>Впервые у нас? <router-link to="/registration" @click="setLoginPopup">Зарегистрируйтесь</router-link></p>
+        <div>Впервые у нас? <router-link to="/registration" @click="setLoginPopup">Зарегистрируйтесь</router-link></div>
       </div>
     </div>
   </div>
@@ -30,22 +30,8 @@ export default {
       this.$store.commit('setLoginPopup')
     },
     async login(){
-      const response = await fetch('http://localhost:3000/login',{
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json;charset=utf-8'
-        },
-        body: JSON.stringify({name:this.$refs.name.value, password:this.$refs.password.value})
-        })
-        const data = await response.json();
-      if (data.success) {
-        localStorage.setItem('userData', JSON.stringify({token:data.token, user:data.users}))
-        this.$store.commit('setUser', data.users)
-        this.$store.commit('setLoginPopup')
-      } else {
-        alert(data.message)
-      }
-      this.$refs.name.value = this.$refs.password.value = ""
+      const inputs = {name:this.$refs.name.value, password:this.$refs.password.value}
+      await this.$store.dispatch('login', inputs)
     },
   },
   mounted() {

@@ -18,7 +18,7 @@
   <div class="route-point--start">
     <div>Выбери точку старта</div>
     <div></div>
-    <MyButton title="Установить точку старта" @click="addStartPoint" />
+    <MyButton title="Установить точку старта"/>
   </div>
   <RoutePoint
     v-for='routePoint in myRoute'
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import RoutePoint from './RoutePoint.vue'
+import RoutePoint from './CustomComponents/RoutePoint.vue'
 import MyButton from './CustomComponents/MyButton.vue'
 let myMap = null;
 export default {
@@ -122,16 +122,12 @@ data(){
       myMap = e;
     },
   },
-    created(){
-    this.$store.dispatch("getFavorites")
-    this.$store.dispatch("getRoute")
-  },
 }
 </script>
 
 <style scoped>
 .myRoute-page{
-  padding: 20px 80px 20px 80px;
+  padding: 2%;
 }
 
 .map {
@@ -146,7 +142,6 @@ data(){
 }
 
 .route-point--start{
-  font-family: Museo Sans Cyrl,Arial,Helvetica Neue,sans-serif;
   text-align: start;
   font-weight: 100;
   font-size: 18px;
