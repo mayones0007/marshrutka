@@ -29,11 +29,8 @@ export default {
   },
   methods: {
     async addInMyRoute(){
-      if (await this.$store.dispatch('newPointInRoute', this.placeId)) {
-        await this.$store.dispatch("getRoute")
-      } else {
-        alert('Для добавления в маршрут авторизуйтесь')
-      }
+      await this.$store.dispatch('newPointInRoute', this.placeId)
+      await this.$store.dispatch("getRoute")
     },
   },
 }

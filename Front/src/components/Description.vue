@@ -1,16 +1,13 @@
 <template>
-  <div class="description-page" v-if="currentPlace">
+  <div class="description-page" :class="{'description-page-mobile': !isDesktop}" v-if="currentPlace">
     <Gallery
       :images="currentPictures"
-      v-if="currentPictures.length"
+      :vertical="!isDesktop"
     />  
-    <SavePanel
-      :hide="false"
-    />  
-  <div class="description-text">
-    {{currentPlace.description}}
-    {{currentPlace.id}}
-  </div>
+    <SavePanel/>
+    <div class="description-text">
+      {{currentPlace.description}}
+    </div>
     <div class="input-rewiew">
       <textarea 
         class="input-rewiew__input"
@@ -28,17 +25,18 @@
     <div class="rewiew-rating">Ваша оценка:
       <img
         v-for='star in 5' :key="'star'+star"
-        src="http://localhost:3000/icons/star.png"
+        :src="`${$baseUrl}/icons/star.png`"
         alt="star"
         class="icon-star"
         :class="{'icon-star--hovered': star <= starHovered}"
         @click="onStarHover(star)"
       >
     </div>
-  <ReviewMessages
-  :horizontal="true"
-  />
-</div>
+    <ReviewMessages
+      :reviews="currentReviews"
+      :horizontal="!isDesktop"
+    />
+  </div>
 </template>
 
 <script>
@@ -74,6 +72,12 @@ export default {
     currentPictures() {
       return this.$store.state.pictures
     },
+    isDesktop(){
+      return this.$store.state.isDesktop
+    },
+    currentRaiting() {
+      return Math.round(this.$store.state.reviews.reduce((acc, num) => acc + num.raiting,0)/this.$store.state.reviews.length)
+    },
   },
   methods: {
     onStarHover(star) {
@@ -81,26 +85,36 @@ export default {
     },
     async saveRewiew(){
       if (this.inputValue !== '' && this.starHovered !== ''){
-        if (await this.$store.dispatch('newReview', {'text':this.inputValue, 'raiting':this.starHovered})) {
-          await this.$store.dispatch("getReviews", this.currentPlace.id)
-          this.starHovered = this.inputValue = ''} else {
-            alert('Для отправки комментария авторизуйтесь')
-          }
-        }
+        await this.$store.dispatch('newReview', {'text':this.inputValue, 'raiting':this.starHovered})
+        await this.$store.dispatch("getReviews", this.currentPlace.id)
+        this.starHovered = this.inputValue = ''
+      }
     },
   },
   async created(){
     await this.$store.dispatch("getPlace", this.currentRoute)
-    this.$store.dispatch("getPictures", this.currentRoute)
-    this.$store.dispatch("getReviews", this.currentPlace.id)
+    await this.$store.dispatch("getPictures", this.currentRoute)
+    await this.$store.dispatch("getReviews", this.currentPlace.id)
   },
 }
 </script>
 
 <style scoped lang="scss">
+.save-panel__info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 30px;
+  background-color: rgb(241, 241, 241);
+  border-radius: 0 0 20px 20px;
+}
 
 .description-page {
-  padding: 2% 200px 2% 2%;
+  padding: 3% 220px 3% 3%;
+}
+
+.description-page-mobile {
+  padding: 3%;
 }
 
 .description-text {
@@ -122,7 +136,6 @@ export default {
   height: 60px;
   padding: 15px;
   width: 100%;
-  font-family: 'Roboto', Arial, sans-serif;
   font-size: 16px;
   font-weight: 300;
   };
@@ -142,5 +155,34 @@ export default {
   line-height: 30px;
   margin-top: 10px;
   font-size: 16px;
+}
+
+.raiting {
+  display: flex;
+}
+.save-panel__difficalty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20px;
+}
+
+.difficalty {
+  color: rgb(215, 0, 0);
+}
+
+.availability {
+  text-align: end;
+} 
+
+.save-panel__availability {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.raiting__star {
+  height: 19px;
+  margin-right: 4px;
 }
 </style>

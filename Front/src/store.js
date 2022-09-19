@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { createStore } from 'vuex'
+import { axiosInstance } from './httpClient'
 
 export const store = createStore({
   state () {
@@ -14,9 +14,10 @@ export const store = createStore({
       reviews: [],
       pictures: [],
       user: {},
+      isDesktop: true,
     }
   },
-  actions:{
+  actions: {
     logOut(){
       localStorage.removeItem('userData')
       this.state.user = {}
@@ -26,159 +27,123 @@ export const store = createStore({
 
     async getPlaces(){
       try {
-        const response = await axios.get('http://localhost:3000/')
+        const response = await axiosInstance.get('')
         this.commit("setPlaces", response.data)
       } catch(e) {
-        alert("Ошибка HTTP: " + e.response.data.message)
+        console.log("Ошибка HTTP: " + e)
       }
     },
 
     async getPlace(_context, place) {
       try {
-        const response = await axios.get(`http://localhost:3000/place?id=${place}`)
+        const response = await axiosInstance.get(`place?id=${place}`)
         this.commit("setPlace", response.data)
       } catch (e) {
-        alert("Ошибка HTTP: " + e.response.data.message)
+        console.log("Ошибка HTTP: " + e)
       }
     },
 
     async getReviews(_context, placeId) {
       try {
-        const response = await axios.get(`http://localhost:3000/reviews?id=${placeId}`)
+        const response = await axiosInstance.get(`review?id=${placeId}`)
         this.commit('setReviews', response.data)
       } catch (e) {
-        alert("Ошибка HTTP: " + e.response.data.message)
+        console.log("Ошибка HTTP: " + e)
       }
     },
 
     async getPictures(_context, place) {
       try {
-        const response = await axios.get(`http://localhost:3000/pictures?id=${place}`)
+        const response = await axiosInstance.get(`pictures?id=${place}`)
         this.commit('setPictures', response.data)
       } catch (e) {
-        alert("Ошибка HTTP: " + e.response.data.message)
+        console.log("Ошибка HTTP: " + e)
       }
     },
 
     async getFavorites() {
       try {
-        const response = await axios.get(`http://localhost:3000/favorites?id=${this.state.user.id}`)
+        const response = await axiosInstance.get(`favorite?id=${this.state.user.id}`)
         this.commit('setmyFavorites', response.data)
       } catch (e) {
-        alert("Ошибка HTTP: " + e.response.data.message)
+        console.log("Ошибка HTTP: " + e)
       }
     },
 
     async getRoute() {
       try {
-        const response = await axios.get(`http://localhost:3000/routes?id=${this.state.user.id}`)
+        const response = await axiosInstance.get(`route?id=${this.state.user.id}`)
         this.commit('setmyRoute', response.data)
       } catch (e) {
-        alert("Ошибка HTTP: " + e.response.data.message)
+        console.log("Ошибка HTTP: " + e)
       }
     },
 
     async getUser() {
       try {
-        const response = await axios.get('http://localhost:3000/auth', {
-          headers: {
-            'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userData')).token
-          },
-        })
+        const response = await axiosInstance.get('user')
         this.commit('setUser', response.data.user)
-        if (response.data.refreshToken) {
-          localStorage.setItem('userData', JSON.stringify({ token: response.data.refreshToken }))
-        }
         this.dispatch('getFavorites')
         this.dispatch('getRoute')
       } catch (e) {
-        //alert("Ошибка HTTP: " + e.response.data.message)
+        console.log("Ошибка HTTP: " + e)
       }
     },
 
     async newReview(_context, inputs) {
       try {
-        await axios.post('http://localhost:3000/review', {
+        await axiosInstance.post('review', {
           text: inputs.text,
           raiting: inputs.raiting,
           userId: this.state.user.id,
           placeId: this.state.place.id
-        },
-        {
-          headers: {
-            'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userData')).token
-          },
         })
-        return true
       } catch (e) {
-        this.commit('setLoginPopup')
-        return false
+        console.log("Ошибка HTTP: " + e)
       }
     },
 
     async newFavorite(_context, placeId) {
       try {
-        await axios.post('http://localhost:3000/favorite', {
-          userId: this.state.user.id,
-          placeId: placeId
-        },
-        {
-          headers: {
-            'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userData')).token
-          },
-        })
-        return true
+        await axiosInstance.post('favorite', { userId: this.state.user.id, placeId })
       } catch (e) {
-        this.commit('setLoginPopup')
-        return false
+        console.log("Ошибка HTTP: " + e)
       }
     },
 
     async newPointInRoute(_context, placeId) {
       try {
-        await axios.post('http://localhost:3000/route', {
-          userId: this.state.user.id,
-          placeId: placeId
-        },
-        {
-          headers: {
-            'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userData')).token
-          },
-        })
-        return true
+        await axiosInstance.post('route', { userId: this.state.user.id, placeId })
       } catch (e) {
-        this.commit('setLoginPopup')
-        return false
+        console.log("Ошибка HTTP: " + e)
       }
     },
 
     async login(_context, inputs) {
       try {
-        const response = await axios.post('http://localhost:3000/login', {
+        const response = await axiosInstance.post('login', {
           name: inputs.name,
           password: inputs.password
         })
-        localStorage.setItem('userData', JSON.stringify({ token: response.data.token }))
+        localStorage.setItem('userData', JSON.stringify({ token: response.data.token, refreshToken: response.data.refreshToken }))
         this.commit('setUser', response.data.user)
         this.commit('setLoginPopup')
       } catch (e) {
-        alert("Ошибка HTTP: " + e.response.data.message)
+        console.log("Ошибка HTTP: " + e)
       }
     },
 
     async registration(_context, inputs) {
       try {
-        const response = await axios.post('http://localhost:3000/registration', {
+        const response = await axiosInstance.post('registration', {
           name: inputs.name,
           password: inputs.password,
           email: inputs.email
         })
-        localStorage.setItem('userData', JSON.stringify({ token: response.data.token }))
+        localStorage.setItem('userData', JSON.stringify({ token: response.data.token, refreshToken: response.data.refreshToken }))
         this.commit('setUser', response.data.user)
-        return true
       } catch (e) {
-        alert("Ошибка HTTP: " + e.response.data.message)
-        return false
+        console.log("Ошибка HTTP: " + e)
       }
     },
   },
@@ -190,8 +155,8 @@ export const store = createStore({
     setLoginPopup (state) {
       state.showLoginPopup = !state.showLoginPopup
     },
-    setGalleryPopup (state, payload) {
-      state.showGalleryPopup = payload
+    setGalleryPopup (state) {
+      state.showGalleryPopup = !state.showGalleryPopup
     },
     setCurrentPicture (state, payload) {
       state.currentPicture = payload
@@ -204,15 +169,6 @@ export const store = createStore({
     },
     setmyFavorites (state, payload) {
       state.myFavorites = payload
-    },
-    removeFavorite (state, payload) {
-      state.myFavorites = state.myFavorites.filter(item => item.id !== payload.id);
-    },
-    removePoint (state, payload) {
-      state.myRoute = state.myRoute.filter(item => item.id !== payload.id);
-    },
-    changeRouteMap (state, km) {
-      state.routeMap = [...state.routeMap, km]
     },
     setPlaces (state, places) {
       state.places = places
@@ -228,6 +184,9 @@ export const store = createStore({
     },
     setPictures(state, pictures) {
       state.pictures = pictures
+    },
+    setIsDesktop(state, payload) {
+      state.isDesktop = payload
     },
   }
 })

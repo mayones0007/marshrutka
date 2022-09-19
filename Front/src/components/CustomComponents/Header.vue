@@ -1,34 +1,35 @@
 <template>
   <div class="header">
     <router-link to="/" class="logo">
-      <img class="logo__icon" src="http://localhost:3000/icons/logo.svg" alt="Маршрутка">
+      <img class="logo__icon" :src="`${$baseUrl}/icons/logo.svg`" alt="Маршрутка">
       <div class="logo__name">Маршрутка</div>
     </router-link>
-      <div class="search-form">
-        <input class="search-form__input-text" type="text" list="region" placeholder="Куда вы собираетесь?" v-model="selectedCity">
-        <datalist id="region">
-          <option value="Абхазия">Abkhazia</option>
-          <option value="Сочи">Sochi</option>
-          <option value="Красная Поляна">Krasnaia Polyana</option>
-          <option value="Все">All</option>
-        </datalist>
-        <MyButton title="Поиск" :noLeftRadius="true" @click="setSelectedCity"/>
+    <div v-if="isStartPage || isDesktop" class="search-form" :class="{'search-form-mobile': !isDesktop}">
+      <input class="search-form__input-text" type="text" list="region" placeholder="Куда вы собираетесь?" v-model="selectedCity">
+      <datalist id="region">
+        <option value="Абхазия">Abkhazia</option>
+        <option value="Сочи">Sochi</option>
+        <option value="Красная Поляна">Krasnaia Polyana</option>
+        <option value="Все">All</option>
+      </datalist>
+      <MyButton title="Поиск" :noLeftRadius="true" @click="setSelectedCity"/>
+    </div>
+    <div class="user-menu">
+      <Avatar
+        :userName="userInfo.name"
+        :userImg="userInfo.avatar"
+        :hideName="!isDesktop"
+      />
+      <div class="user-menu__arrow" v-if="!isLogIn"></div>
+      <div class="user-menu__dropdown-content" v-if="!isLogIn">
+        <router-link to="/myroute" class="dropdown-content__link">Мой маршрут</router-link>
+        <router-link to="/myfavorites" class="dropdown-content__link">Избранное</router-link>
+        <router-link to="/settings" class="dropdown-content__link">Настройки</router-link>
+        <router-link to="/admin" class="dropdown-content__link" v-if="isAdmin">Добавить место</router-link>
+        <div class="dropdown-content__link" @click="setLoginPopup">Выйти</div>
       </div>
-      <div class="user-menu">
-        <Avatar
-          :userName="userInfo.name"
-          :userImg="userInfo.avatar"
-        />
-        <div class="user-menu__arrow" v-if="!isLogIn"></div>
-        <div class="user-menu__dropdown-content" v-if="!isLogIn">
-          <router-link to="/myroute" class="dropdown-content__link">Мой маршрут</router-link>
-          <router-link to="/myfavorites" class="dropdown-content__link">Избранное</router-link>
-          <router-link to="/settings" class="dropdown-content__link">Настройки</router-link>
-          <router-link to="/admin" class="dropdown-content__link" v-if="isAdmin">Добавить место</router-link>
-          <div class="dropdown-content__link" @click="setLoginPopup">Выйти</div>
-        </div>
-        <div class="login-panel__button-login" @click="setLoginPopup" v-if="isLogIn">Войти</div>
-      </div>
+      <div class="login-panel__button-login" @click="setLoginPopup" v-if="isLogIn">Войти</div>
+    </div>
   </div>
 </template>
 
@@ -45,7 +46,6 @@ export default {
   data: () => ({
     selectedCity: '',
   }),
-
   computed:{
     user() {
       return this.$store.state.user
@@ -69,6 +69,12 @@ export default {
       } else {
         return false
       }
+    },
+    isDesktop(){
+      return this.$store.state.isDesktop
+    },
+    isStartPage(){
+      return this.$route.fullPath  === '/'
     }
   },
 
@@ -90,7 +96,6 @@ export default {
 </script>
 
 <style lang="scss" scoped> 
-
 .header {
   @include panel(to bottom);
 }
@@ -110,11 +115,16 @@ export default {
 .search-form {
   display: flex;
 }
-
+.search-form-mobile {
+  position: absolute;
+  top: 120px;
+}
 .search-form__input-text {
   @include input;
+  height: 40px;
   border-radius: 5px 0 0 5px;
-  width: 250px;
+  width: 20vw;
+  min-width: 200px;
 }
 
 .user-menu__name {
@@ -145,7 +155,7 @@ export default {
 .user-menu {
   @include flex-between-center-g15;
   position: relative;
-  z-index: 1;
+  z-index: 2;
   height: 80px;
 }
 

@@ -1,22 +1,28 @@
+const baseUrl = process.env.VUE_APP_BASE_URL;
+
 export const socials = [
   {
     ref: 'https://vk.com',
-    icon: 'http://localhost:3000/icons/vk.png',
+    shareref: 'http://vkontakte.ru/share.php?url=https://marshrutka.ru',
+    icon: baseUrl +'/icons/vk.png',
     alt: 'vk',
   },
   {
     ref: 'https://www.instagram.com',
-    icon: 'http://localhost:3000/icons/instagram.png',
+    shareref: 'https://telegram.me/share/url?url=https://marshrutka.ru',
+    icon: baseUrl +'/icons/instagram.png',
     alt: 'inst',
   },
   {
     ref: 'https://tlgg.ru/likhachev_maxim',
-    icon: 'http://localhost:3000/icons/telegram.png',
+    shareref: 'https://telegram.me/share/url?url=https://marshrutka.ru',
+    icon: baseUrl +'/icons/telegram.png',
     alt: 'tele',
   },
   {
     ref: 'https://wa.me/+79014534841',
-    icon: 'http://localhost:3000/icons/whatsapp.png',
+    shareref: 'whatsapp://send?text=http://marshrutka.ru',
+    icon: baseUrl +'/icons/whatsapp.png',
     alt: 'wa',
   },
 ]

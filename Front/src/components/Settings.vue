@@ -1,29 +1,29 @@
 <template>
-    <section class="registration--window">
-      <Title
-        text="Настройки"
+  <div class="registration--window">
+    <Title
+      text="Настройки"
+    />
+    <div class="form">
+      <Avatar
+        :userName="user.name"
+        :userImg="user.avatar"
+        :vertical="true"
+        :hideName="true"
+        :big="true"
       />
-      <div class="form">
-        <Avatar
-          :userName="user.name"
-          :userImg="user.avatar"
-          :vertical="true"
-          :hideName="true"
-          :big="true"
-        />
-        <input class="form__input--file" type="file" id="file" ref="file" accept="image/jpeg" @change="handleFilesUploads()">
-        <label class="form__input--btn" for="file">Изменить аватар</label>
-        <input class="form__input-text" v-model="oldEmail" type="email" placeholder="Старый e-mail">
-        <input class="form__input-text" v-model="newEmail" type="email" placeholder="Новый e-mail">
-        <input class="form__input-text" v-model="oldPassword" type="password" placeholder="Старый пароль">
-        <input class="form__input-text" v-model="newPassword" type="password" placeholder="Новый пароль">
-        <MyButton title="Применить изменения" @click="settingsAccept"/>
-      </div>  
-    </section>
+      <input class="form__input--file" type="file" id="file" ref="file" accept="image/jpeg" @change="handleFilesUploads()">
+      <label class="form__input--btn" for="file">Изменить аватар</label>
+      <input class="form__input-text" v-model="oldEmail" type="email" placeholder="Старый e-mail">
+      <input class="form__input-text" v-model="newEmail" type="email" placeholder="Новый e-mail">
+      <input class="form__input-text" v-model="oldPassword" type="password" placeholder="Старый пароль">
+      <input class="form__input-text" v-model="newPassword" type="password" placeholder="Новый пароль">
+      <MyButton title="Применить изменения" @click="settingsAccept"/>
+    </div>  
+  </div>
 </template>
 
 <script>
-import axios from 'axios'
+import { axiosInstance } from '../httpClient'
 import MyButton from './CustomComponents/MyButton.vue'
 import Avatar from './CustomComponents/Avatar.vue'
 import Title from './CustomComponents/Title.vue'
@@ -53,12 +53,7 @@ export default {
       formData.append('password', this.newPassword)
       formData.append('image', this.file)
 
-      const response = await axios.post('http://localhost:3000/settings', formData, {
-        headers: {
-          'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userData')).token
-        },
-      });
-        alert(response.data.message);
+      await axiosInstance.post($baseUrl+'/settings', formData)
         this.oldEmail = this.newEmail = this.oldPassword = this.newPassword = this.file = ''
     },
   },
@@ -68,7 +63,6 @@ export default {
     },
   }
 }
-
 </script>
 
 <style lang="scss" scoped>

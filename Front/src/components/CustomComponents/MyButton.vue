@@ -1,9 +1,9 @@
 <template>
-    <button
-      class="button"
-      :class="{'button_disabled': isDisabled, 'button_no-left-radius': noLeftRadius,'button_red': isRed}"
-      :disabled="isDisabled">{{ title }}
-    </button>
+  <button
+    class="button"
+    :class="{'button_disabled': isDisabled, 'button_no-left-radius': noLeftRadius,'button_red': isRed}"
+    :disabled="isDisabled">{{ title }}
+  </button>
 </template>
 
 <script>

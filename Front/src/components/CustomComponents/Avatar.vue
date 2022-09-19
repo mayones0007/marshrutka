@@ -3,7 +3,7 @@
     <img 
       class='avatar__image'
       :class="{'avatar__image-big': big}" 
-      :src="`http://localhost:3000/avatars/`+ userImg"
+      :src="`${$baseUrl}/avatars/`+ userImg"
       alt="avt">
     <div v-if="!hideName" class="avatar__name">{{userName}}</div>
   </div>

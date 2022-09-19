@@ -7,7 +7,7 @@
       v-for='favorite in myFavorites'
       :key="favorite"
       :routePoint="favorite"
-      :FullSize="true"
+      :FullSize="false"
       :ButtonsReverse="true"
     />
   </div>

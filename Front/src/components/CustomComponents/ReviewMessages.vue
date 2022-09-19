@@ -1,21 +1,23 @@
 <template>
   <Title
-    :text="`Отзывы: ${currentReviews.length}`"
+    :text="`Отзывы: ${reviews.length}`"
   />
   <div class="rewiew-messages">
-    <div class="rewiew-message" v-for='review in currentReviews' :key="review">
+    <div class="rewiew-message" v-for='review in reviews' :key="review">
       <Avatar
         :userName="review.name"
         :userImg="review.avatar"
       />
       <div class="review-date"  :class="{'review-date-horizontal': horizontal}">
         {{review.createdAt}}
-        <img
-          v-for='star in review.raiting' :key="'star'+star"
-          src="http://localhost:3000/icons/star.png"
-          alt="star"
-          class="icon-star"
-        >
+        <div>
+          <img
+            v-for='star in review.raiting' :key="'star'+star"
+            :src="`${$baseUrl}/icons/star.png`"
+            alt="star"
+            class="icon-star"
+          >
+        </div>
       </div>
       <div class="rewiew-text" :class="{'rewiew-text-horizontal': horizontal}" >{{review.text}}</div>
     </div>
@@ -27,18 +29,14 @@ import Avatar from './Avatar.vue'
 import Title from './Title.vue'
 export default {
   name: 'ReviewMessages',
-  props: ['horizontal'],
+  props: ['reviews','horizontal'],
   components: {
     Avatar,
     Title
   },
-  computed: {
-    currentReviews() {
-      return this.$store.state.reviews
-    },
-  },
 }
 </script>
+
 <style lang='scss' scoped>
 .rewiew-messages {
   display: flex;

@@ -1,6 +1,6 @@
 <template>
-    <div class="background" @click.self="setLoginPopup">
-    <div class="login--window" @keyup.esc.stop="setLoginPopup" @keyup.enter.stop="login">
+  <div class="background" @click.self="setLoginPopup">
+    <div class="login-window"  :class="{'login-window-mobile': !isDesktop}" @keyup.esc.stop="setLoginPopup" @keyup.enter.stop="login">
       <Title
         text="Вход"
       />
@@ -24,14 +24,18 @@ export default {
     MyButton,
     Title,
   },
-
+  computed: {
+    isDesktop(){
+      return this.$store.state.isDesktop
+    },
+  },
   methods: {
     setLoginPopup(){
       this.$store.commit('setLoginPopup')
     },
-    async login(){
+    login(){
       const inputs = {name:this.$refs.name.value, password:this.$refs.password.value}
-      await this.$store.dispatch('login', inputs)
+      this.$store.dispatch('login', inputs)
     },
   },
   mounted() {
@@ -41,21 +45,25 @@ export default {
 </script>
 
 <style lang="scss" scoped> 
-
 .background {
   @include background_popup;
 }
 
-.login--window {
+.login-window {
   position: fixed;
+  box-sizing: border-box;
   top: 50%;
   left: 50%;
   background-color: white;
   border-radius: 10px;
   padding: 30px;
   transform:translate(-50%,-50%);
+  text-align: center;
 }
 
+.login-window-mobile {
+  width: 80%;
+}
 
 .form {
   display: grid;
@@ -64,7 +72,7 @@ export default {
 
 .button-close {
   position: absolute;
-  background: url("http://localhost:3000/icons/close-btn.png") center/100% no-repeat;
+  background: url("http://134.0.116.25:3000/icons/close-btn.png") center/100% no-repeat;
   width: 25px;
   height: 25px;
   right: 20px;
@@ -87,5 +95,4 @@ export default {
 .form__input-text {
   @include input;
 }
-
 </style>

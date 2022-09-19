@@ -34,7 +34,7 @@
         >
         <img
           class="password-eye"
-          :src="`http://localhost:3000/icons/${eyeIconPassword}.png`"
+          :src="`${$baseUrl}/icons/${eyeIconPassword}.png`"
           @click="togglePasswordVisibility"
         >
       </div>
@@ -54,7 +54,7 @@
         <img
           class="password-eye"
           @click="togglePasswordVisibility"
-          :src="`http://localhost:3000/icons/${eyeIconPassword}.png`"
+          :src="`${$baseUrl}/icons/${eyeIconPassword}.png`"
         >
       </div>
         <div
@@ -137,13 +137,11 @@ export default {
     },
     async registration(){
       const inputs = {name:this.name, email:this.email, password:this.password}
-      if (await this.$store.dispatch('registration', inputs)) {
-        router.push({name: "MyPlaces"})
-      }
+      const response = await this.$store.dispatch('registration', inputs)
+      if (response.status === 200) {router.push({name: "MyPlaces"})}
     }
   }
 }
-
 </script>
 
 <style lang="scss" scoped>

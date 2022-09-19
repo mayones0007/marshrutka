@@ -1,11 +1,11 @@
 <template>
   <div class="footer">
-    <div class="footer__contacts-typical">
+    <div class="footer__contacts-typical" :class="{'footer__contacts-typical-mobile': !isDesktop}">
       <a href="tel:+79014534841" class="contacts-typical__item">
-        <img src="http://localhost:3000/icons/russia-flag.png" alt="tel"> +79014534841
+        <img :src="`${$baseUrl}/icons/russia-flag.png`" alt="tel"> +79014534841
       </a>
       <a href="mailto:macs0007@mail.ru" class="contacts-typical__item">
-        <img src="http://localhost:3000/icons/mail.png" alt="mail"> macs0007@mail.ru
+        <img :src="`${$baseUrl}/icons/mail.png`" alt="mail"> macs0007@mail.ru
       </a>
     </div>
     <div class="footer__contacts-social">
@@ -13,7 +13,7 @@
         <img :src="social.icon" :alt="social.alt" class="contacts-social__item">
       </a>
     </div>
-    <router-link to="/" class="footer__logo-name">© 2022, Marshrutka Limited Sochifornia</router-link>
+    <router-link to="/" class="footer__logo-name" :class="{'footer__logo-name-mobile': !isDesktop}">© 2022, Marshrutka Limited Sochifornia</router-link>
   </div>
 </template>
 
@@ -25,10 +25,15 @@ export default {
         socials: socials,
     };
   },
+  computed: {
+    isDesktop(){
+      return this.$store.state.isDesktop
+    }
+  }
 }
 </script>
-<style lang="scss" scoped> 
 
+<style lang="scss" scoped> 
 .footer {
   @include panel(to top);
 }
@@ -43,11 +48,27 @@ export default {
   justify-content: center;
 }
 
+.footer__logo-name-mobile{
+  width: 300px;
+  text-align: center;
+  height: 30px;
+  justify-content: flex-start;
+}
+
 .footer__contacts-typical {
   display: flex;
   flex-direction: column;
   justify-content: center;
   height: 80px;
+  margin: 0 10px;
+}
+
+.footer__contacts-typical-mobile {
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-evenly;
+  width: 100%;
+  height: 30px;
 }
 
 .contacts-typical__item {
@@ -73,5 +94,4 @@ export default {
 .contacts-social__item:hover {
   background-color: #a0a0a0;
 }
-
 </style>

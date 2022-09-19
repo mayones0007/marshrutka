@@ -1,36 +1,32 @@
 <template>
-<div class="myRoute-page">
-  <div class="map">
-    <yandex-map
-      :coords = "coords" 
-      zoom = "5"
-      :controls = "controls"
-      @map-was-initialized="mapInitialized"
-    >
-    <ymap-marker 
-      :coords="coords" 
-      marker-id="Старт" 
-      hint-content=""
+  <div class="myRoute-page">
+    <div class="map">
+      <yandex-map
+        :coords = "coords" 
+        zoom = "5"
+        :controls = "controls"
+        @map-was-initialized="mapInitialized"
+      >
+      <ymap-marker 
+        :coords="coords" 
+        marker-id="Старт" 
+        hint-content=""
+      />
+      </yandex-map>
+    </div>
+    <MyButton title="Постороить маршрут" @click="routeCreate" />
+    <RoutePoint
+      v-for='routePoint in myRoute'
+      :key="routePoint.id"
+      :routePoint="routePoint"
     />
-    </yandex-map>
   </div>
-  <MyButton title="Постороить маршрут" @click="routeCreate" />
-  <div class="route-point--start">
-    <div>Выбери точку старта</div>
-    <div></div>
-    <MyButton title="Установить точку старта"/>
-  </div>
-  <RoutePoint
-    v-for='routePoint in myRoute'
-    :key="routePoint.id"
-    :routePoint="routePoint"
-  />
-</div>
 </template>
 
 <script>
 import RoutePoint from './CustomComponents/RoutePoint.vue'
 import MyButton from './CustomComponents/MyButton.vue'
+import { axiosInstance } from '../httpClient'
 let myMap = null;
 export default {
 components: {
@@ -47,19 +43,30 @@ data(){
     
     }
   },
-  computed: {
-    myRoute(){
-      return this.$store.state.myRoute;
-    },
-    routeCoords() {
-      return this.$store.state.myRoute.map(item => item.coords)
-      },
+computed: {
+  user() {
+    return this.$store.state.user
   },
+  myRoute(){
+    return this.$store.state.myRoute;
+  },
+  routeCoords() {
+    return this.$store.state.myRoute.map(item => item.coords)
+    },
+},
   methods: {
   async getMyOptimalRoute(){
   await this.$store.dispatch("getOptimalRoute")
   },
-  async routeCreate(){
+      async routeCreate() {
+      try {
+        await axiosInstance.get(`${$baseUrl}/optimalroute?id=${this.$store.state.user.id}`)
+      } catch (e) {
+        console.log("Ошибка HTTP: " + e.response.data.message)
+      }
+    },
+
+  async routeCreate1(){
       const route = this.routeCoords
       for (let j=0; j<route.length; j++){
         for (let i=j+1; i<route.length; i++){
@@ -107,7 +114,7 @@ data(){
     },
 
     async addInRouteMap(place1, place2, distance, duration){
-      const response = await fetch('http://localhost:3000/routemap',{
+      const response = await fetch($baseUrl+'/routemap',{
         method: 'POST',
         headers: {
         'Content-Type': 'application/json;charset=utf-8'
@@ -115,7 +122,7 @@ data(){
         body: JSON.stringify({place1, place2, distance, duration})
         });
         const data = await response.json();
-        alert(data.message);
+        console.log(data.message);
     },
 
     mapInitialized(e){

@@ -1,16 +1,16 @@
 <template>
-  <div>
+  <div v-if="images.length">
     <div class="gallery-container" :class="{'gallery-container-vertical': vertical}">
       <img
         v-for="(n, i) in 3"
         :key="i"
-        :src="`http://localhost:3000/img/${this.images[i]}`" 
+        :src="`${$baseUrl}/img/${this.images[i]}`" 
         class="gallery-container__item"
         @click="openGalleryPopup(i)"
       >
       <div class="gallery-container__item" @click="openGalleryPopup(3)">
         <img
-          :src="`http://localhost:3000/img/${this.images[3]}`" 
+          :src="`${$baseUrl}/img/${this.images[3]}`" 
           class="gallery-container__item gallery-container__item-last-image" 
         >
         <div class="gallery-container__item-last-text">{{ picturesCount }}</div>
@@ -19,6 +19,7 @@
     <div class="background"  @click.self="closeGalleryPopup" v-if="showGallery">
       <div
         class="gallery-window"
+        :class="{'gallery-window-mobile': !isDesktop}"
         tabindex="-1"
         @keyup.right.stop="switchGallaryPicture(1)"
         @keyup.left.stop="switchGallaryPicture(-1)"
@@ -29,7 +30,7 @@
         <div class="gallery-window__slider slider-left" @click="switchGallaryPicture(-1)">
           <div class="slider-btn-icon slider-btn-icon-left"/>
         </div>
-        <img class="gallery-window__image" :src="imageSrc" >
+        <img class="gallery-window__image" :src="$baseUrl+imageSrc">
         <div class="gallery-window__slider slider-right" @click="switchGallaryPicture(1)">
           <div class="slider-btn-icon slider-btn-icon-right"/>
         </div>
@@ -53,15 +54,18 @@ export default {
       return this.$store.state.showGalleryPopup
     },
     imageSrc(){
-      return `http://localhost:3000/img/${this.images[this.currentPicture]}`
+      return `/img/${this.images[this.currentPicture]}`
     },
     picturesCount() {
       return `+${this.images.length - 4}`
     },
+    isDesktop(){
+      return this.$store.state.isDesktop
+    }
   },
   methods: {
     closeGalleryPopup() {
-      this.$store.commit('setGalleryPopup', false);
+      this.$store.commit('setGalleryPopup')
     },
     switchGallaryPicture(i) {
       this.currentPicture = this.currentPicture + i
@@ -74,7 +78,7 @@ export default {
     },
     openGalleryPopup(i){
       this.currentPicture = i;
-      this.$store.commit('setGalleryPopup', true)
+      this.$store.commit('setGalleryPopup')
       nextTick(() => {
         this.$refs.gallary.focus()
       })
@@ -84,7 +88,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .gallery-container {
   display: grid;
   grid-template-rows: 1fr 1fr 1fr;
@@ -145,6 +148,7 @@ export default {
 
 .background {
   @include background_popup;
+  z-index: 2;
 }
 
 .gallery-window {
@@ -155,6 +159,13 @@ export default {
   top: 10%;
   left: 15%;
   outline: none;
+}
+
+.gallery-window-mobile {
+  width: 100%;
+  height: 40%;
+  top: 30%;
+  left: 0;
 }
 
 .gallery-window__slider {
@@ -213,7 +224,7 @@ export default {
 
 .gallery-window__button-close{
   position: absolute;
-  background: url("http://localhost:3000/icons/close-btn.png") center/100%;
+  background: url("http://134.0.116.25:3000/icons/close-btn.png") center/100%;
   width: 25px;
   height: 25px;
   right: 20px;

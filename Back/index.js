@@ -6,11 +6,11 @@ const knexConfig = require('./db/knexfile')
 const knex = require('knex')(knexConfig[process.env.NODE_ENV])
 const corsMiddleware = require('./middleware/cors')
 const fileupload = require('express-fileupload')
-const fs = require('fs')
 const jwt = require('jsonwebtoken')
 const moment = require('moment')
 const jwtSecret = require('./config/default.json').jwtSecret
 const authMiddleware = require('./middleware/auth')
+const config = require('./config/default.json')
 
 
 app.use(bodyParser.json(), express.static('public'), fileupload())
@@ -44,7 +44,7 @@ app.get('/place', corsMiddleware, (req, res) => {
   })
 })
 
-app.get('/reviews', corsMiddleware, (req, res) => {
+app.get('/review', corsMiddleware, (req, res) => {
   const placeId = req.query.id ? req.query.id : ''
   knex('reviews').where({ placeId }).join('users', 'reviews.userId', '=', 'users.id').select('users.name', 'reviews.text', 'reviews.createdAt', 'users.avatar','reviews.raiting')
   .then((reviews) => {
@@ -66,7 +66,7 @@ app.get('/pictures', corsMiddleware, (req, res) => {
     })
 })
 
-app.get('/favorites', corsMiddleware, (req, res) => {
+app.get('/favorite', corsMiddleware, authMiddleware, (req, res) => {
   const userId = req.query.id
   knex('favorites').join('places', 'favorites.placeId', '=', 'places.id').where( { userId } ).select('')
   .then((favorites) => {
@@ -78,31 +78,33 @@ app.get('/favorites', corsMiddleware, (req, res) => {
   })
 })
 
-app.get('/auth', corsMiddleware, authMiddleware, (req, res) => {
+app.get('/user', corsMiddleware, authMiddleware, (req, res) => {
   const id = req.user.userId
-  const refreshToken = req.user.refreshToken ? req.user.refreshToken : ''
-  if (refreshToken) {
-  knex('users').where({ id }).first()
-    .then((user) => {
-      if (user.refreshToken === 'used') {
-        return res.status(401).json({ message: 'Логинься заново' })
-      } else {
-        knex('users').update('refreshToken', 'used').where({ id }).catch((err) => console.log(err))
-        knex('users').where({ id }).first().select('name', 'id', 'avatar')
-          .then((user) => {
-            return res.status(200).json({ user, refreshToken })
-          })
-      }
-    })
-  } else {
   knex('users').where({ id }).first().select('name', 'id', 'avatar')
     .then((user) => {
       return res.status(200).json({ user })
     })
-  }
 })
 
-app.get('/routes', corsMiddleware, (req, res) => {
+app.post('/refresh', corsMiddleware, (req, res) => {
+  const token = req.body.token;
+  const decoded = jwt.verify(token, config.jwtSecret)
+  if (decoded) {
+    const accessToken = jwt.sign(
+      { userId: decoded.userId },
+      config.jwtSecret,
+      { expiresIn: '2s' }
+    )
+    const refreshToken = jwt.sign(
+      { userId: decoded.userId },
+      config.jwtSecret,
+      { expiresIn: '14d' }
+    )
+    return res.status(200).json({ accessToken, refreshToken })
+  } else res.status(403).send()
+})
+
+app.get('/route', corsMiddleware, authMiddleware, (req, res) => {
   const userId = req.query.id
   knex('routes').join('places', 'routes.placeId', '=', 'places.id').where( { userId } )
   .then((routes) => {
@@ -114,27 +116,50 @@ app.get('/routes', corsMiddleware, (req, res) => {
   })
 })
 
+app.get('/optimalroute', corsMiddleware, (req, res) => {
+  const userId = req.query.id
+  let optimalroute = []
+  knex('routes').where({ userId })
+  //knex('routes').join('routeMap', function () {this .on('routes.placeId', '=', 'routeMap.place1') .orOn('routes.placeId', '=', 'routeMap.place2')}).where({ userId })
+  //knex('routes').join('routeMap', 'routes.placeId', '=', 'routeMap.place1').where({ userId })
+    .then((routes) => {
+      for (let i = 1; i < routes.length; i ++) {
+        knex('routes').join('routeMap', function () {this .on(routes[i - 1].placeId, '=', 'routeMap.place1').andOn(routes[i].placeId, '=', 'routeMap.place2') }).where({ userId })
+          .then((route) => {
+            optimalroute.push(route)
+          })
+      }
+      return res.status(200).json(optimalroute)
+    })
+    .catch((err) => {
+      console.error(err)
+      return res.status(400).json({ message: 'An error occurred, please try again later' })
+    })
+})
+
 app.post('/login', corsMiddleware, (req, res) => {
   const name = req.body.name ? req.body.name : ''
   const password = req.body.password ? req.body.password : ''
-  knex('users').where('name', name).first()
+  knex('users').where({ name }).first()
     .then((user) => {
       if (!user) {
-        return res.status(401).json({message: 'Неверный логин'})
+        return res.status(400).json({message: 'Неверный логин'})
       }
       if (user.password !== password) {
-        return res.status(401).json({message: 'Неверный пароль'})
-      }
-    })
-  knex('users').where({ name }).first().select('name','id','avatar')
-    .then((user) => {
-      const token = jwt.sign(
-        { userId: user.id },
-        jwtSecret,
-        { expiresIn: '1h' }
-      )
-      knex('users').update('refreshToken', '').where('id', user.id ).catch((err) => console.log(err))
-    return res.status(200).json({message: 'Успешный вход', token, user})
+        return res.status(400).json({message: 'Неверный пароль'})
+      } else {
+        const token = jwt.sign(
+          { userId: user.id },
+          jwtSecret,
+          { expiresIn: '2s' }
+        )
+        const refreshToken = jwt.sign(
+          { userId: user.id },
+          jwtSecret,
+          { expiresIn: '14d' }
+        )
+        return res.status(200).json({ message: 'Успешный вход', token, refreshToken, user: { name: user.name, id: user.id, avatar: user.avatar } })
+        }
     })
     .catch((err) => {
       console.error(err)
@@ -149,41 +174,41 @@ app.post('/registration', corsMiddleware, (req, res) => {
   const password = req.body.password ? req.body.password : ''
   const avatar = "tourist.png"
   const createdAt = moment().locale('ru').format('LLL').replace('г.,', '')
-
-  if (!name || !email || !password) {
-    return res.status(400).json({ message: 'Заполните все поля' });
-  }
-  knex('users').where({ name }).first()
+  knex('users').where({ name }).orWhere({ email }).first()
     .then((user) => {
-      if(user) {
-        return res.status(400).json({ message: 'Пользователь с таким именем уже существует' })
+      if (!user) {
+        knex('users')
+        .insert({ name, email, password, avatar, createdAt })
+        .then(() => {
+          knex('users').where({ name }).first().select('name', 'id', 'avatar')
+            .then(user => {
+              const token = jwt.sign(
+                { userId: user.id },
+                jwtSecret,
+                { expiresIn: '15m' }
+              )
+              const refreshToken = jwt.sign(
+                { userId: user.id },
+                jwtSecret,
+                { expiresIn: '14d' }
+              )
+              return res.status(200).json({ message: 'Успешная регистрация', token, refreshToken, user })
+            }
+            )
+        })
+      } else {
+        if (user.name === name) {
+          return res.status(400).json({ message: 'Пользователь с таким именем уже существует' })
+        } else {
+          return res.status(400).json({ message: 'Пользователь с таким email уже существует' })
+        }
       }
     })
-  knex('users').where({ email }).first()
-    .then((user) => {
-      if (user) {
-        return res.status(400).json({ message: 'Пользователь с таким email уже существует' })
-      }
-    })
-  knex('users')
-    .insert({ name, email, password, avatar, createdAt })
-    .then(() => {
-      knex('users').where({ name }).first().select('name', 'id', 'avatar')
-      .then(user => {
-        const token = jwt.sign(
-          { userId: user.id },
-          jwtSecret,
-          { expiresIn: '1h' }
-        )
-        knex('users').update('refreshToken', '').where('id', user.id).catch((err) => console.log(err))
-        return res.status(200).json({ message: 'Успешная регистрация', token, user })}
-      )
-    })
-    .catch((err) => {
-    console.error(err)
-      return res.status(400).json({ message: 'An error occurred, please try again later'});
-});
-});
+  .catch((err) => {
+  console.error(err)
+    return res.status(400).json({ message: 'An error occurred, please try again later'});
+  })
+})
 
 app.post('/review', corsMiddleware, authMiddleware, (req, res) => {
   const text = req.body.text ? req.body.text : ''
@@ -202,26 +227,24 @@ app.post('/review', corsMiddleware, authMiddleware, (req, res) => {
 })
 
 app.post('/favorite', corsMiddleware, authMiddleware, (req, res) => {
-  const userId = req.body.userId ? req.body.userId : ''
   const placeId = req.body.placeId ? req.body.placeId : ''
-if (userId === ''){
-  return res.status(403).json({ message: 'Для добавления в избранное авторизуйтесь'})
-}
-  knex('favorites').where({ placeId }) .andWhere({ userId }).then((favorites)=> {
-    if (favorites.length === 0){
-      knex('favorites')
-        .insert({ placeId, userId })
-        .then(() => {
-          return res.status(200).json({ message: 'Обьект успешно добавлен в избаннное'})
-        })
-    } else {
-      knex('favorites')
-        .where({ placeId }).andWhere({ userId }).del()
-        .then(() => {
-          return res.status(200).json({ message: 'Обьект успешно удален из избаннного'})
-        })
-    }
-  })
+  const userId = req.body.userId ? req.body.userId : ''
+  knex('favorites').where({ placeId }).andWhere({ userId }).first()
+    .then((favorite)=> {
+      if (!favorite){
+        knex('favorites')
+          .insert({ placeId, userId })
+          .then(() => {
+            return res.status(200).json({ message: 'Обьект успешно добавлен в избаннное'})
+          })
+      } else {
+        knex('favorites')
+          .where({ placeId }).andWhere({ userId }).del()
+          .then(() => {
+            return res.status(200).json({ message: 'Обьект успешно удален из избаннного'})
+          })
+      }
+    })
     .catch((err) => {
       console.error(err)
       return res.status(400).json({ message: 'An error occurred, please try again later'})
@@ -229,26 +252,24 @@ if (userId === ''){
 });
 
 app.post('/route', corsMiddleware, authMiddleware, (req, res) => {
-  const userId = req.body.userId ? req.body.userId : ''
   const placeId = req.body.placeId ? req.body.placeId : ''
-  if (userId === ''){
-  return res.status(403).json({ message: 'Для добавления в маршрут авторизуйтесь'})
-}
-  knex('routes').where({ placeId }).andWhere({ userId }).then((routes)=> {
-    if (routes.length === 0){
-      knex('routes')
-        .insert({ placeId, userId })
-        .then(() => {
-          return res.status(200).json({ message: 'Обьект успешно добавлен в маршрут'})
-        })
-    } else {
-      knex('routes')
-        .where( {placeId} ).andWhere({ userId }).del()
-        .then(() => {
-          return res.status(200).json({ message: 'Обьект успешно удален из маршрута'})
-        })
-    }
-  })
+  const userId = req.body.userId ? req.body.userId : ''
+  knex('routes').where({ placeId }).andWhere({ userId }).first()
+    .then((route)=> {
+      if (!route){
+        knex('routes')
+          .insert({ placeId, userId })
+          .then(() => {
+            return res.status(200).json({ message: 'Обьект успешно добавлен в маршрут'})
+          })
+      } else {
+        knex('routes')
+          .where( {placeId} ).andWhere({ userId }).del()
+          .then(() => {
+            return res.status(200).json({ message: 'Обьект успешно удален из маршрута'})
+          })
+      }
+    })
     .catch((err) => {
       console.error(err)
       return res.status(400).json({ message: 'An error occurred, please try again later.'})
@@ -256,7 +277,7 @@ app.post('/route', corsMiddleware, authMiddleware, (req, res) => {
 });
 
 
-app.post('/newplace', corsMiddleware, (req, res) => {
+app.post('/newplace', corsMiddleware, authMiddleware, (req, res) => {
   const eng = req.body.eng ? req.body.eng : ''
   const name = req.body.name ? req.body.name : ''
   const tag = req.body.tag ? req.body.tag : ''

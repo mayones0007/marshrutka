@@ -1,29 +1,29 @@
 <template>
-<div>
-  <div class="welcome-image__text">Создай свой маршрут</div>
-  <div class="places-container">
-    <div class="menu__filters panel">
-      <div class="region-name">Регион: {{ selectedCity }}</div>
-      <div class="filter-name">Фильтр:
-        <select class="places-filter" name="filter" v-model="Pfilter">
-          <option value="all" selected>Все</option>
-          <option value="waterfall">Водопады</option>
-          <option value="lake">Озера</option>
-          <option value="mountain">Горы</option>
-          <option value="abonded">Заброшки</option>
-        </select>
+  <div>
+    <div class="welcome-image__text">Создай свой маршрут</div>
+    <div class="places-container">
+      <div class="menu__filters">
+        <div>Регион: {{ selectedCity }}</div>
+        <div>Категория:
+          <select class="places-filter" name="filter" v-model="Pfilter">
+            <option value="all" selected>Все</option>
+            <option value="waterfall">Водопады</option>
+            <option value="lake">Озера</option>
+            <option value="mountain">Горы</option>
+            <option value="abonded">Заброшки</option>
+          </select>
+        </div>
+      </div>
+      <div class="gallery">
+        <PlacePreview
+          v-for="place in filteredPlaces"
+          :key="`place + ${place.id}`"
+          :routePoint="place"
+          :ShowText="true"
+        />
       </div>
     </div>
-    <div class="gallery">
-      <PlacePreview
-        v-for="place in filteredPlaces"
-        :key="`place + ${place.id}`"
-        :routePoint="place"
-        :ShowText="true"
-      />
-    </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -56,6 +56,10 @@ export default {
     places() {
       return this.$store.state.places;
     },
+    isDesktop(){
+      return this.$store.state.isDesktop
+    }
+    
   },
   created() {
     this.$store.dispatch("getPlaces")
@@ -78,28 +82,21 @@ export default {
   justify-content: center;
   align-items: center;
   text-align: center;
-  font-size: 70px;
+  font-size: min(max(50px, 6vw), 70px);
   color: white;
   height: 450px;
   font-weight: 900;
   user-select: none;
-  background: url("http://localhost:3000/img/chelovek-gora.jpeg") center -280px;
+  background: url("http://134.0.116.25:3000/img/chelovek-gora.jpeg") center -280px;
 }
 
 .menu__filters {
   @include panel(to bottom);
-}
-
-.region-name {
-  font-size: 23px;
-  font-weight: 600;
+  font-weight: 500;
   color: rgb(105, 105, 105);
-
 }
 
 .places-filter {
   @include input;
-  height: 35px;
-  padding: 0 10px;
 }
 </style>
