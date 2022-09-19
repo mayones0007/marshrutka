@@ -60,7 +60,7 @@ computed: {
   },
       async routeCreate() {
       try {
-        await axiosInstance.get(`${$baseUrl}/optimalroute?id=${this.$store.state.user.id}`)
+        await axiosInstance.get(`optimalroute?id=${this.$store.state.user.id}`)
       } catch (e) {
         console.log("Ошибка HTTP: " + e.response.data.message)
       }
@@ -114,13 +114,7 @@ computed: {
     },
 
     async addInRouteMap(place1, place2, distance, duration){
-      const response = await fetch($baseUrl+'/routemap',{
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json;charset=utf-8'
-        },
-        body: JSON.stringify({place1, place2, distance, duration})
-        });
+      const response = await axiosInstance.post('routemap',{place1, place2, distance, duration})
         const data = await response.json();
         console.log(data.message);
     },

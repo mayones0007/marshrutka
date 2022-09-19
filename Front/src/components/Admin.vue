@@ -96,7 +96,7 @@ export default {
       Object.values(this.files).forEach(file => {
         formData.append('images', file);
       })
-      await axiosInstance.post($baseUrl+'/newplace', formData, {
+      await axiosInstance.post('newplace', formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         }
