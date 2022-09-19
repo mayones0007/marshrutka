@@ -1,4 +1,4 @@
-# max-project
+# marshrutka
 
 ## Project setup
 ```
