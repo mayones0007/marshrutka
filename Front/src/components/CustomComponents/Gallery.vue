@@ -224,7 +224,7 @@ export default {
 
 .gallery-window__button-close{
   position: absolute;
-  background: url("http://134.0.116.25:3000/icons/close-btn.png") center/100%;
+  background: url("https://134.0.116.25:3000/icons/close-btn.png") center/100%;
   width: 25px;
   height: 25px;
   right: 20px;

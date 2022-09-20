@@ -72,7 +72,7 @@ export default {
 
 .button-close {
   position: absolute;
-  background: url("http://134.0.116.25:3000/icons/close-btn.png") center/100% no-repeat;
+  background: url("https://134.0.116.25:3000/icons/close-btn.png") center/100% no-repeat;
   width: 25px;
   height: 25px;
   right: 20px;
