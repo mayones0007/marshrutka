@@ -70,6 +70,6 @@
     height: 450px;
     font-weight: 900;
     user-select: none;
-    background: url("https://134.0.116.25:3000/img/chelovek-gora.jpeg") center -280px;
+    background: url("http://134.0.116.25:3000/img/chelovek-gora.jpeg") center -280px;
   }
 </style>
