@@ -4,7 +4,7 @@ import { axiosInstance } from './httpClient'
 export const store = createStore({
   state () {
     return {
-      selectedCity: 'Все',
+      selectedRegion: 'Все',
       showLoginPopup: false,
       showGalleryPopup: false,
       myRoute:[],
@@ -149,8 +149,8 @@ export const store = createStore({
   },
 
   mutations: {
-    setSelectedCity (state, payload) {
-      state.selectedCity = payload
+    setselectedRegion (state, payload) {
+      state.selectedRegion = payload
     },
     setLoginPopup (state) {
       state.showLoginPopup = !state.showLoginPopup

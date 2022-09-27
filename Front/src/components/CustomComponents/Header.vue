@@ -5,14 +5,14 @@
       <div class="logo__name">Маршрутка</div>
     </router-link>
     <div v-if="isStartPage || isDesktop" class="search-form" :class="{'search-form-mobile': !isDesktop}">
-      <input class="search-form__input-text" type="text" list="region" placeholder="Куда вы собираетесь?" v-model="selectedCity">
+      <input class="search-form__input-text" type="text" list="region" placeholder="Куда вы собираетесь?" v-model="selectedRegion">
       <datalist id="region">
         <option value="Абхазия">Abkhazia</option>
         <option value="Сочи">Sochi</option>
         <option value="Красная Поляна">Krasnaia Polyana</option>
         <option value="Все">All</option>
       </datalist>
-      <MyButton title="Поиск" :noLeftRadius="true" @click="setSelectedCity"/>
+      <MyButton title="Поиск" :noLeftRadius="true" @click="setselectedRegion"/>
     </div>
     <div class="user-menu">
       <Avatar
@@ -44,7 +44,7 @@ export default {
     Avatar
   },
   data: () => ({
-    selectedCity: '',
+    selectedRegion: '',
   }),
   computed:{
     user() {
@@ -87,9 +87,9 @@ export default {
         router.push({ name: "MyPlaces" })
       }
     },
-    setSelectedCity () {
-      this.$store.commit('setSelectedCity', this.selectedCity);
-      this.selectedCity = "";
+    setselectedRegion () {
+      this.$store.commit('setselectedRegion', this.selectedRegion);
+      this.selectedRegion = "";
     },
   },
 }
