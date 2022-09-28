@@ -27,7 +27,7 @@ export const store = createStore({
 
     async getPlaces(){
       try {
-        const response = await axiosInstance.get('')
+        const response = await axiosInstance.get('places')
         this.commit("setPlaces", response.data)
       } catch(e) {
         console.log("Ошибка HTTP: " + e)
