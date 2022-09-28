@@ -46,13 +46,24 @@ app.get('/place', corsMiddleware, (req, res) => {
 
 app.get('/review', corsMiddleware, (req, res) => {
   const placeId = req.query.id ? req.query.id : ''
-  knex('reviews').where({ placeId }).join('users', 'reviews.userId', '=', 'users.id').select('users.name', 'reviews.text', 'reviews.createdAt', 'users.avatar','reviews.raiting')
+  knex('reviews').where({ placeId }).join('users', 'reviews.userId', '=', 'users.id').select('users.name', 'reviews.id', 'reviews.text', 'reviews.createdAt', 'users.avatar','reviews.raiting')
   .then((reviews) => {
     return res.status(200).json(reviews)
   })
   .catch((err) => {
     return res.status(400).json({message: 'An error occurred, please try again later'})
   })
+})
+
+app.delete('/review', corsMiddleware, (req, res) => {
+  const reviewId = req.query.id ? req.query.id : ''
+  knex('reviews').where({ id: reviewId }).del()
+    .then(() => {
+      return res.status(200).json({ message: 'Отзыв успешно удален' })
+    })
+    .catch((err) => {
+      return res.status(400).json({ message: 'An error occurred, please try again later' })
+    })
 })
 
 app.get('/pictures', corsMiddleware, (req, res) => {
@@ -93,7 +104,7 @@ app.post('/refresh', corsMiddleware, (req, res) => {
     const accessToken = jwt.sign(
       { userId: decoded.userId },
       config.jwtSecret,
-      { expiresIn: '2s' }
+      { expiresIn: '15m' }
     )
     const refreshToken = jwt.sign(
       { userId: decoded.userId },
@@ -151,7 +162,7 @@ app.post('/login', corsMiddleware, (req, res) => {
         const token = jwt.sign(
           { userId: user.id },
           jwtSecret,
-          { expiresIn: '2s' }
+          { expiresIn: '15m' }
         )
         const refreshToken = jwt.sign(
           { userId: user.id },
