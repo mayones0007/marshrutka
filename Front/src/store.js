@@ -103,6 +103,14 @@ export const store = createStore({
       }
     },
 
+    async deleteReview(_context, id) {
+      try {
+        await axiosInstance.delete('review', { id })
+      } catch (e) {
+        console.log("Ошибка HTTP: " + e)
+      }
+    },
+
     async newFavorite(_context, placeId) {
       try {
         await axiosInstance.post('favorite', { userId: this.state.user.id, placeId })

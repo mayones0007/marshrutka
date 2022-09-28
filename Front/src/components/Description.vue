@@ -35,6 +35,7 @@
     <ReviewMessages
       :reviews="currentReviews"
       :horizontal="!isDesktop"
+      :isAdmin="isAdmin"
     />
   </div>
 </template>
@@ -77,6 +78,9 @@ export default {
     },
     currentRaiting() {
       return Math.round(this.$store.state.reviews.reduce((acc, num) => acc + num.raiting,0)/this.$store.state.reviews.length)
+    },
+    isAdmin() {
+      return this.$store.state.user.name === "Admin"
     },
   },
   methods: {

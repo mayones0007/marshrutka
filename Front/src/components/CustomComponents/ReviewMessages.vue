@@ -1,25 +1,28 @@
 <template>
-  <Title
-    :text="`Отзывы: ${reviews.length}`"
-  />
-  <div class="rewiew-messages">
-    <div class="rewiew-message" v-for='review in reviews' :key="review">
-      <Avatar
-        :userName="review.name"
-        :userImg="review.avatar"
-      />
-      <div class="review-date"  :class="{'review-date-horizontal': horizontal}">
-        {{review.createdAt}}
-        <div>
-          <img
-            v-for='star in review.raiting' :key="'star'+star"
-            :src="`${$baseUrl}/icons/star.png`"
-            alt="star"
-            class="icon-star"
-          >
+  <div>
+    <Title
+      :text="`Отзывы: ${reviews.length}`"
+    />
+    <div class="rewiew-messages">
+      <div class="rewiew-message" v-for='review in reviews' :key="review">
+        <Avatar
+          :userName="review.name"
+          :userImg="review.avatar"
+        />
+        <div class="review-date"  :class="{'review-date-horizontal': horizontal}">
+          {{review.createdAt}}
+          <div>
+            <img
+              v-for='star in review.raiting' :key="'star'+star"
+              :src="`${$baseUrl}/icons/star.png`"
+              alt="star"
+              class="icon-star"
+            >
+          </div>
         </div>
+        <div class="rewiew-text" :class="{'rewiew-text-horizontal': horizontal}" >{{review.text}}</div>
+        <div v-if="isAdmin" class="gallery-window__button-close" @click="deleteReview(review.id)"/>
       </div>
-      <div class="rewiew-text" :class="{'rewiew-text-horizontal': horizontal}" >{{review.text}}</div>
     </div>
   </div>
 </template>
@@ -29,11 +32,22 @@ import Avatar from './Avatar.vue'
 import Title from './Title.vue'
 export default {
   name: 'ReviewMessages',
-  props: ['reviews','horizontal'],
+  props: ['reviews','horizontal','isAdmin'],
   components: {
     Avatar,
     Title
   },
+  computed: {
+    currentPlace() {
+      return this.$store.state.place
+    },
+  },
+  methods: {
+    async deleteReview(id) {
+      await this.$store.dispatch("deleteReview", id)
+      await this.$store.dispatch("getReviews", this.currentPlace.id)
+    }
+  }
 }
 </script>
 
@@ -46,6 +60,7 @@ export default {
 
 .rewiew-message {
   @include grid-g20;
+  position: relative;
   gap: 10px;
   grid-template-columns: 150px 1fr;
   grid-template-rows: 50px 1fr;
@@ -92,5 +107,15 @@ export default {
 
 .icon-stars {
   margin: auto 0;  
+}
+
+.gallery-window__button-close{
+  position: absolute;
+  background: url("https://marshrutka.su/api/icons/close-btn.png") center/100%;
+  width: 20px;
+  height: 20px;
+  right: 25px;
+  top: 25px;
+  cursor: pointer;
 }
 </style>
