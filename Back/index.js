@@ -23,7 +23,7 @@ app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`)
 })
 
-app.get('/', corsMiddleware, (req, res) => {
+app.get('/places', corsMiddleware, (req, res) => {
   knex('places')
   .then((places) => {
     return res.status(200).json(places);
