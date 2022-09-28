@@ -7,7 +7,7 @@ import Settings from "./components/Settings.vue";
 import Admin from "./components/Admin.vue";
 import { createRouter, createWebHistory } from "vue-router";
 const routes = [
-  { path: '/places', name: "MyPlaces", component: MyPlaces },
+  { path: '/', name: "MyPlaces", component: MyPlaces },
   { path: '/:eng', name: "Description", component: Description },
   { path: '/registration', name: "Registration", component: Registration },
   { path: '/myroute', name: "MyRoute", component: MyRoute },
