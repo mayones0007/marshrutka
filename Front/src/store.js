@@ -45,7 +45,7 @@ export const store = createStore({
 
     async getReviews(_context, placeId) {
       try {
-        const response = await axiosInstance.get(`review?id=${placeId}`)
+        const response = await axiosInstance.get('review', {params: {id: placeId}})
         this.commit('setReviews', response.data)
       } catch (e) {
         console.log("Ошибка HTTP: " + e)
@@ -54,7 +54,7 @@ export const store = createStore({
 
     async getPictures(_context, place) {
       try {
-        const response = await axiosInstance.get(`pictures?id=${place}`)
+        const response = await axiosInstance.get('pictures', {params: {id: place}})
         this.commit('setPictures', response.data)
       } catch (e) {
         console.log("Ошибка HTTP: " + e)
@@ -63,7 +63,7 @@ export const store = createStore({
 
     async getFavorites() {
       try {
-        const response = await axiosInstance.get(`favorite?id=${this.state.user.id}`)
+        const response = await axiosInstance.get('favorite', {params: {id: this.state.user.id}})
         this.commit('setmyFavorites', response.data)
       } catch (e) {
         console.log("Ошибка HTTP: " + e)
@@ -72,7 +72,7 @@ export const store = createStore({
 
     async getRoute() {
       try {
-        const response = await axiosInstance.get(`route?id=${this.state.user.id}`)
+        const response = await axiosInstance.get('route', {params: {id: this.state.user.id}})
         this.commit('setmyRoute', response.data)
       } catch (e) {
         console.log("Ошибка HTTP: " + e)
@@ -105,7 +105,7 @@ export const store = createStore({
 
     async deleteReview(_context, id) {
       try {
-        await axiosInstance.delete('review', { id })
+        await axiosInstance.delete('review', {params: {id}})
       } catch (e) {
         console.log("Ошибка HTTP: " + e)
       }

@@ -22,6 +22,7 @@
         </div>
         <div class="rewiew-text" :class="{'rewiew-text-horizontal': horizontal}" >{{review.text}}</div>
         <div v-if="isAdmin" class="gallery-window__button-close" @click="deleteReview(review.id)"/>
+        {{review.id}}
       </div>
     </div>
   </div>
