@@ -25,7 +25,9 @@ app.listen(port, () => {
 })
 
 app.get('/places', corsMiddleware, (req, res) => {
-  knex('places')
+  knex('places').join('pictures', 'places.eng', '=', 'pictures.eng').whereIn('id',
+    knex('pictures').min('id').groupBy('eng')
+  )
   .then((places) => {
     return res.status(200).json(places)
   })
@@ -92,7 +94,7 @@ app.get('/pictures', corsMiddleware, (req, res) => {
 
 app.get('/favorite', corsMiddleware, authMiddleware, (req, res) => {
   const userId = req.query.id
-  knex('favorites').join('places', 'favorites.placeId', '=', 'places.id').where( { userId } ).select('')
+  knex('favorites').join('places', 'favorites.placeId', '=', 'places.id').where( { userId } )
   .then((favorites) => {
     return res.status(200).json(favorites)
   })

@@ -48,7 +48,7 @@
         <label v-if="place.eng" for="file" class="gallery-container__item">Добавить фото</label>
       </div>
       <MyButton title="Добавить Обьект" @click="addNewPlace"/>
-      <MyButton title="Редактировать Обьект" @click="editPlace"/>
+      <MyButton title="Сохранить Обьект" @click="editPlace"/>
       <MyButton title="Удалить Обьект" @click="deletePlace"/>
     </div>
   </div>
