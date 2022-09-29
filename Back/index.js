@@ -25,7 +25,7 @@ app.listen(port, () => {
 })
 
 app.get('/places', corsMiddleware, (req, res) => {
-  knex('pictures').groupBy('eng')
+  knex('pictures').groupBy('eng').join('places', 'places.eng', '=', 'pictures.eng')
   .then((places) => {
     return res.status(200).json(places);
   })
