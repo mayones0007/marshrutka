@@ -289,43 +289,29 @@ app.post('/route', corsMiddleware, authMiddleware, (req, res) => {
 });
 
 
-app.post('/newplace', corsMiddleware, authMiddleware, (req, res) => {
-  const eng = req.body.eng ? req.body.eng : ''
-  const name = req.body.name ? req.body.name : ''
-  const tag = req.body.tag ? req.body.tag : ''
-  const region = req.body.region ? req.body.region : ''
-  const city = req.body.city ? req.body.city : ''
-  const difficulty = req.body.difficulty ? req.body.difficulty : ''
-  const availability = req.body.availability ? req.body.availability : ''
-  const time = req.body.time ? req.body.time : ''
-  const description = req.body.description ? req.body.description : ''
-  const coords = req.body.coords ? req.body.coords : ''
-
-  const fileName = eng + '.jpeg'
-  const path = __dirname + '/public/img/' + fileName
-  req.files.images[0].mv(path)
-
-  req.files.images.forEach(image => {
-    knex('pictures')
-      .insert({ eng })
-      .then((id) => {
-        const fileName = id[0] + '.jpeg'
-        const path = __dirname + '/public/img/' + fileName
-        image.mv(path)
-      })
-  })
-
+app.post('/place', corsMiddleware, authMiddleware, (req, res) => {
+  const place = req.body.place
 knex('places')
-    .insert({eng, name, tag, region, city, difficulty, availability, time, description, coords, pictures})
-    .then((id) => {
-      knex('places').select('places.coords')
-        .then((places) => {
-          return res.status(200).json({ message: 'Место добавлено', places});
+    .insert(place)
+    .then(() => {
+      return res.status(200).json({ message: 'Место добавлено', places});
     })
-})
     .catch((err) => {
     console.error(err);
       return res.status(400).json({ message: 'An error occurred, please try again later'});
+    })
+})
+
+app.patch('/place', corsMiddleware, authMiddleware, (req, res) => {
+  const place = req.body.place
+  knex('places')
+    .update(place).where({ id: place.id }).catch((err) => console.log(err))
+    .then(() => {
+      return res.status(200).json({ message: 'Место добавлено', places });
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(400).json({ message: 'An error occurred, please try again later' });
     })
 })
 
