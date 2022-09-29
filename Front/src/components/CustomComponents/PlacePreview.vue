@@ -6,7 +6,7 @@
     <div class="gallery__item-container">
       <img
         class="item__image"
-        :src="`${$baseUrl}/img/` + routePoint.picture + `.jpeg`"
+        :src="`${$baseUrl}/img/` + picture.id + `.jpeg`"
         alt="avt"
       />
       <div v-if="ShowText" class="item__name">{{ routePoint.name }}</div>
@@ -17,7 +17,7 @@
 <script>
   export default {
     name: 'PlacePreview',
-    props: ['routePoint', 'ShowText'],
+    props: ['routePoint', 'picture', 'ShowText'],
   }
 </script>
 
