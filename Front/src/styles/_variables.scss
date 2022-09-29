@@ -13,8 +13,8 @@
 };
 
 @mixin input {
-  border-color: #e4e4e4;
-  border: 2px;
+  -webkit-appearance: none;
+  border:none;
   border-radius: 5px;
   box-shadow: inset 0px 0px 5px rgba(193, 193, 193, 0.691);
   height: 35px;

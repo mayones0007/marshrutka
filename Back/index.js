@@ -55,7 +55,7 @@ app.get('/review', corsMiddleware, (req, res) => {
   })
 })
 
-app.delete('/review', corsMiddleware, (req, res) => {
+app.delete('/review', corsMiddleware, authMiddleware, (req, res) => {
   const reviewId = req.query.id ? req.query.id : ''
   knex('reviews').where({ id: reviewId }).del()
     .then(() => {
@@ -360,4 +360,37 @@ app.post('/settings', corsMiddleware, authMiddleware, (req, res) => {
       console.error(err)
       return res.status(400).json({ message: 'An error occurred, please try again later.'})
     })
-});
+})
+
+app.post('/placeImage', corsMiddleware, authMiddleware, (req, res) => {
+  const eng = req.body.eng ? req.body.eng : ''
+
+    knex('pictures')
+      .insert({ eng })
+      .then((id) => {
+        const fileName = id + '.jpeg'
+        const path = __dirname + '/public/img/' + fileName
+        req.files.image.mv(path)
+        return res.status(200).json({ message: 'Картинка добавлена' })
+      })
+    .catch((err) => {
+      console.error(err);
+      return res.status(400).json({ message: 'An error occurred, please try again later' })
+    })
+})
+
+app.delete('/placeImage', corsMiddleware, (req, res) => {
+  const id = req.query.image.split('.')[0]
+  const fileName = id[0] + '.jpeg'
+  const path = __dirname + '/public/img/' + fileName
+  knex('pictures').where({ id }).del()
+    .then(() => {
+      fs.unlink(path, err => {
+        if (err) throw err;
+        return res.status(200).json({ message: 'Картинка удалена' })
+      })
+    })
+    .catch((err) => {
+      return res.status(400).json({ message: 'An error occurred, please try again later' })
+    })
+})
