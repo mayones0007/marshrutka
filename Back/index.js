@@ -25,9 +25,9 @@ app.listen(port, () => {
 })
 
 app.get('/places', corsMiddleware, (req, res) => {
-  knex('pictures').groupBy('eng').join('places', 'places.eng', '=', 'pictures.eng')
+  knex('places').join('pictures', 'places.eng', '=', 'pictures.eng').groupBy('eng')
   .then((places) => {
-    return res.status(200).json(places);
+    return res.status(200).json(places)
   })
   .catch((err) => {
     return res.status(400).send({message: 'An error occurred, please try again later'})
