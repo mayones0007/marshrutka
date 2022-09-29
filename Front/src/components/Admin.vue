@@ -78,10 +78,10 @@ export default {
   },
   methods: {
     async addNewPlace(){
-      await axiosInstance.post('place', { place })
+      await axiosInstance.post('place', { place: this.place })
     },
     async editPlace(){
-      await axiosInstance.patch('place', { place })
+      await axiosInstance.patch('place', { place: this.place })
     },
     async getPictures() {
       await this.$store.dispatch("getPictures", this.place.eng)
