@@ -82,7 +82,7 @@ app.get('/pictures', corsMiddleware, (req, res) => {
       knex('pictures').max('id').groupBy('eng')
     )
       .then((pictures) => {
-        return res.status(200).json(pictures.map(item => item.id + ".jpeg"))
+        return res.status(200).json(pictures)
       })
       .catch((err) => {
         return res.status(400).json({ message: 'An error occurred, please try again later' })

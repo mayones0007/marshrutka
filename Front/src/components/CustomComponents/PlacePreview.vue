@@ -6,7 +6,7 @@
     <div class="gallery__item-container">
       <img
         class="item__image"
-        :src="`${$baseUrl}/img/` + routePoint.eng + `.jpeg`"
+        :src="`${$baseUrl}/img/` + currentPicture + `.jpeg`"
         alt="avt"
       />
       <div v-if="ShowText" class="item__name">{{ routePoint.name }}</div>
@@ -17,7 +17,12 @@
 <script>
   export default {
     name: 'PlacePreview',
-    props: ['routePoint', 'ShowText'],
+    props: ['routePoint', 'picture', 'ShowText'],
+    computed: {
+      currentPicture() {
+        return this.$store.state.pictures.map(item => item[this.routePoint.eng])
+      },
+    }
   }
 </script>
 
