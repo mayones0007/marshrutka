@@ -381,7 +381,7 @@ app.post('/placeImage', corsMiddleware, authMiddleware, (req, res) => {
 
 app.delete('/placeImage', corsMiddleware, (req, res) => {
   const id = req.query.image.split('.')[0]
-  const fileName = id[0] + '.jpeg'
+  const fileName = req.query.image
   const path = __dirname + '/public/img/' + fileName
   knex('pictures').where({ id }).del()
     .then(() => {
