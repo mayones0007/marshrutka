@@ -11,6 +11,7 @@ const moment = require('moment')
 const jwtSecret = require('./config/default.json').jwtSecret
 const authMiddleware = require('./middleware/auth')
 const config = require('./config/default.json')
+const fs = require('fs')
 
 
 app.use(bodyParser.json(), express.static('public'), fileupload())
@@ -364,7 +365,6 @@ app.post('/settings', corsMiddleware, authMiddleware, (req, res) => {
 
 app.post('/placeImage', corsMiddleware, authMiddleware, (req, res) => {
   const eng = req.body.eng ? req.body.eng : ''
-
     knex('pictures')
       .insert({ eng })
       .then((id) => {
@@ -379,7 +379,7 @@ app.post('/placeImage', corsMiddleware, authMiddleware, (req, res) => {
     })
 })
 
-app.delete('/placeImage', corsMiddleware, (req, res) => {
+app.delete('/placeImage', corsMiddleware, authMiddleware, (req, res) => {
   const id = req.query.image.split('.')[0]
   const fileName = req.query.image
   const path = __dirname + '/public/img/' + fileName
