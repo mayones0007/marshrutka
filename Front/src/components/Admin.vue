@@ -50,6 +50,7 @@
         </label>
       </div>
       <MyButton title="Добавить Обьект" @click="addNewPlace"/>
+      <MyButton title="Редактировать Обьект" @click="editPlace"/>
     </div>
   </div>
 </template>
@@ -77,26 +78,10 @@ export default {
   },
   methods: {
     async addNewPlace(){
-      const formData = new FormData()
-      formData.append('eng', this.eng);
-      formData.append('name', this.name);
-      formData.append('tag', this.tag);
-      formData.append('region', this.region);
-      formData.append('city', this.city);
-      formData.append('difficulty', this.difficulty);
-      formData.append('availability', this.availability1 + ' - ' + this.availability2);
-      formData.append('time', this.time);
-      formData.append('description', this.description);
-      formData.append('coords', this.coords);
-      formData.append('pictures', this.files.length);
-      Object.values(this.files).forEach(file => {
-        formData.append('images', file);
-      })
-      await axiosInstance.post('newplace', formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        }
-      });
+      await axiosInstance.post('place', { place })
+    },
+    async editPlace(){
+      await axiosInstance.patch('place', { place })
     },
     async getPictures() {
       await this.$store.dispatch("getPictures", this.place.eng)
@@ -124,6 +109,7 @@ export default {
   },
   created() {
     this.$store.dispatch("getPlaces")
+    this.$store.state.pictures = []
   }
 }
 
