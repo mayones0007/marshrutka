@@ -25,7 +25,7 @@ app.listen(port, () => {
 })
 
 app.get('/places', corsMiddleware, (req, res) => {
-  knex('places')
+  knex('places').join('pictures', 'places.eng', '=', 'pictures.eng').as('picture')
   .then((places) => {
     return res.status(200).json(places);
   })
@@ -79,7 +79,7 @@ app.get('/pictures', corsMiddleware, (req, res) => {
       })
   } else {
     knex('pictures').whereIn('id',
-      knex('pictures').max('id').groupBy('eng')
+      knex('pictures').min('id').groupBy('eng')
     )
       .then((pictures) => {
         return res.status(200).json(pictures)
