@@ -61,8 +61,9 @@ export default {
     }
     
   },
-  created() {
-    this.$store.dispatch("getPlaces")
+  async created() {
+    await this.$store.dispatch("getPlaces")
+    await this.$store.dispatch("getPictures")
   }
 }
 </script>

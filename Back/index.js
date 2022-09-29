@@ -68,14 +68,26 @@ app.delete('/review', corsMiddleware, authMiddleware, (req, res) => {
 })
 
 app.get('/pictures', corsMiddleware, (req, res) => {
-  const place = req.query.id ? req.query.id : ''
-  knex('pictures').where('eng', place).select('id')
-    .then((pictures) => {
-      return res.status(200).json(pictures.map(item => item.id + ".jpeg"))
-    })
-    .catch((err) => {
-      return res.status(400).json({message: 'An error occurred, please try again later'})
-    })
+  const place = req.query.id
+  if (place) {
+    knex('pictures').where('eng', place).select('id')
+      .then((pictures) => {
+        return res.status(200).json(pictures.map(item => item.id + ".jpeg"))
+      })
+      .catch((err) => {
+        return res.status(400).json({ message: 'An error occurred, please try again later' })
+      })
+  } else {
+    knex('pictures').whereIn('id',
+      knex('pictures').max('id').groupBy('eng')
+    )
+      .then((pictures) => {
+        return res.status(200).json(pictures.map(item => item.id + ".jpeg"))
+      })
+      .catch((err) => {
+        return res.status(400).json({ message: 'An error occurred, please try again later' })
+      })
+  }
 })
 
 app.get('/favorite', corsMiddleware, authMiddleware, (req, res) => {
@@ -361,7 +373,7 @@ app.post('/settings', corsMiddleware, authMiddleware, (req, res) => {
     })
 })
 
-app.post('/placeImage', corsMiddleware, authMiddleware, (req, res) => {
+app.post('/pictures', corsMiddleware, authMiddleware, (req, res) => {
   const eng = req.body.eng ? req.body.eng : ''
     knex('pictures')
       .insert({ eng })
@@ -377,7 +389,7 @@ app.post('/placeImage', corsMiddleware, authMiddleware, (req, res) => {
     })
 })
 
-app.delete('/placeImage', corsMiddleware, authMiddleware, (req, res) => {
+app.delete('/pictures', corsMiddleware, authMiddleware, (req, res) => {
   const id = req.query.image.split('.')[0]
   const fileName = req.query.image
   const path = __dirname + '/public/img/' + fileName

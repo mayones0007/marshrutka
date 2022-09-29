@@ -45,9 +45,7 @@
           @click="deletePlaceImage(picture)"
         >
         <input class="new-picture" type="file" id="file" ref="file" accept="image/jpeg" @change="addPlaceImage()">
-        <label v-if="place.eng" for="file" class="gallery-container__item">
-          <img :src="`${$baseUrl}/icons/add.png`" alt="Добавить фото">
-        </label>
+        <label v-if="place.eng" for="file" class="gallery-container__item">Добавить фото</label>
       </div>
       <MyButton title="Добавить Обьект" @click="addNewPlace"/>
       <MyButton title="Редактировать Обьект" @click="editPlace"/>
@@ -94,7 +92,7 @@ export default {
       const formData = new FormData()
       formData.append('eng', this.place.eng)
       formData.append('image', this.$refs.file.files[0])
-      await axiosInstance.post('placeImage', formData, {
+      await axiosInstance.post('pictures', formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         }
@@ -103,7 +101,7 @@ export default {
     },
     async deletePlaceImage(image) {
       try {
-        await axiosInstance.delete('placeImage', {params: {image}})
+        await axiosInstance.delete('pictures', {params: {image}})
         await this.$store.dispatch("getPictures", this.place.eng)
       } catch (e) {
         console.log("Ошибка HTTP: " + e)
@@ -159,7 +157,6 @@ export default {
 .gallery {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   gap: 10px;
 }
 .new-picture {
