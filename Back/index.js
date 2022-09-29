@@ -315,6 +315,18 @@ app.patch('/place', corsMiddleware, authMiddleware, (req, res) => {
     })
 })
 
+app.delete('/place', corsMiddleware, authMiddleware, (req, res) => {
+  const id = req.query.id
+  knex('places').where({ id }).del()
+    .then(() => {
+      return res.status(200).json({ message: 'Место удалено' })
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(400).json({ message: 'An error occurred, please try again later' });
+    })
+})
+
 app.post('/settings', corsMiddleware, authMiddleware, (req, res) => {
 
   const name = req.body.name ? req.body.name : ''

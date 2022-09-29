@@ -51,6 +51,7 @@
       </div>
       <MyButton title="Добавить Обьект" @click="addNewPlace"/>
       <MyButton title="Редактировать Обьект" @click="editPlace"/>
+      <MyButton title="Удалить Обьект" @click="deletePlace"/>
     </div>
   </div>
 </template>
@@ -82,6 +83,9 @@ export default {
     },
     async editPlace(){
       await axiosInstance.patch('place', { place: this.place })
+    },
+    async deletePlace(){
+      await axiosInstance.delete('place', {params: {id: this.place.id}})
     },
     async getPictures() {
       await this.$store.dispatch("getPictures", this.place.eng)
