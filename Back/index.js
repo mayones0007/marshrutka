@@ -294,7 +294,7 @@ app.post('/place', corsMiddleware, authMiddleware, (req, res) => {
 knex('places')
     .insert(place)
     .then(() => {
-      return res.status(200).json({ message: 'Место добавлено', places});
+      return res.status(200).json({ message: 'Место добавлено'})
     })
     .catch((err) => {
     console.error(err);
@@ -307,7 +307,7 @@ app.patch('/place', corsMiddleware, authMiddleware, (req, res) => {
   knex('places')
     .update(place).where({ id: place.id }).catch((err) => console.log(err))
     .then(() => {
-      return res.status(200).json({ message: 'Место добавлено', places });
+      return res.status(200).json({ message: 'Место добавлено'})
     })
     .catch((err) => {
       console.error(err);
