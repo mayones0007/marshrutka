@@ -20,7 +20,6 @@
           :key="`place + ${place.id}`"
           :routePoint="place"
           :ShowText="true"
-          :picture="this.$store.state.pictures.find(item => item.eng === place.eng)"
         />
       </div>
     </div>
@@ -64,7 +63,6 @@ export default {
   },
   created() {
     this.$store.dispatch("getPlaces")
-    this.$store.dispatch("getPictures")
   }
 }
 </script>

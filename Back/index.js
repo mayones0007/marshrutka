@@ -26,9 +26,11 @@ app.listen(port, () => {
 
 app.get('/places', corsMiddleware, (req, res) => {
   knex('places')
+  .join('pictures', 'places.eng', 'pictures.eng')
+  .select('places.*', 'pictures.id as picture')
+  .groupBy('places.eng')
   .then((places) => {
-    return res.status(200).json(places)
-  })
+    return res.status(200).json(places)})
   .catch((err) => {
     return res.status(400).send({message: 'An error occurred, please try again later'})
   })
@@ -92,7 +94,12 @@ app.get('/pictures', corsMiddleware, (req, res) => {
 
 app.get('/favorite', corsMiddleware, authMiddleware, (req, res) => {
   const userId = req.query.id
-  knex('favorites').join('places', 'favorites.placeId', '=', 'places.id').where( { userId } )
+  knex('favorites')
+    .join('places', 'favorites.placeId', '=', 'places.id')
+    .where({ userId })
+    .join('pictures', 'places.eng', 'pictures.eng')
+    .select('places.*', 'pictures.id as picture')
+    .groupBy('places.eng')
   .then((favorites) => {
     return res.status(200).json(favorites)
   })
@@ -130,7 +137,12 @@ app.post('/refresh', corsMiddleware, (req, res) => {
 
 app.get('/route', corsMiddleware, authMiddleware, (req, res) => {
   const userId = req.query.id
-  knex('routes').join('places', 'routes.placeId', '=', 'places.id').where( { userId } )
+  knex('routes')
+    .join('places', 'routes.placeId', '=', 'places.id')
+    .where( { userId } )
+    .join('pictures', 'places.eng', 'pictures.eng')
+    .select('places.*', 'pictures.id as picture')
+    .groupBy('places.eng')
   .then((routes) => {
     return res.status(200).json(routes)
   })
