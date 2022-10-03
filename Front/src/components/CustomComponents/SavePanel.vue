@@ -4,9 +4,9 @@
       <div>Доступен</div>
       {{currentPlace.availability}}
       <div>Сложность</div>
-      <div class="difficalty">{{currentPlace.difficulty}}</div>
+      <div class="difficalty">{{currentDifficulty}}</div>
       <div>Время</div>
-      {{currentPlace.time}}
+      {{currentTime}}
       <div>Рейтинг</div>
       <div class="raiting">
         <img
@@ -58,7 +58,27 @@ export default {
       return this.$store.state.place
     },
     currentRaiting() {
-      return Math.round(this.$store.state.reviews.reduce((acc, num) => acc + num.raiting,0)/this.$store.state.reviews.length)
+      return this.$store.state.raiting
+    },
+    currentDifficulty() {
+      switch (this.$store.state.place.difficulty) {
+        case '1':
+          return ( 'Легкая' )
+        case '2':
+          return ( 'Средняя' )
+        case '3':
+          return ( 'Сложная' )
+        default:
+          return ( 'Неопределена' )
+      }
+    },
+    currentTime() {
+      if (this.$store.state.place.time < 1) {
+        return 60 * this.$store.state.place.time + ' минут'
+      } else if (this.$store.state.place.time >= 24) {
+        return this.$store.state.place.time / 24 + ' день'
+      }
+      return this.$store.state.place.time + ' час'
     },
     isDesktop(){
       return this.$store.state.isDesktop
@@ -112,6 +132,7 @@ export default {
 .save-panel__buttons-mobile {
   top: 90%;
   bottom: 0;
+  border-radius: 0;
   grid-template-columns: 1fr 40px 1fr;
   padding: 0 20px;
   width: 100%;
@@ -127,8 +148,8 @@ export default {
   display: flex;
   bottom: -65px;
   top: 35px;
-  width: 185px;
-  right: -32px;
+  width: 190px;
+  right: -35px;
   background-color: #f1f1f1;
   display: none;
   border-radius: 0 0 30px 30px;

@@ -12,6 +12,7 @@ export const store = createStore({
       places: [],
       place: {},
       reviews: [],
+      raiting: null,
       pictures: [],
       user: {},
       isDesktop: true,
@@ -189,6 +190,7 @@ export const store = createStore({
     },
     setReviews (state, reviews) {
       state.reviews = reviews
+      state.raiting = Math.round(reviews.reduce((acc, num) => acc + num.raiting, 0) / reviews.length)
     },
     setPictures(state, pictures) {
       state.pictures = pictures
