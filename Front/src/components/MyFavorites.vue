@@ -29,7 +29,7 @@ export default {
       if (this.myFavorites.length === 0) {
         return "Пока здесь пусто"
       } else {
-      return "Избранное: "+this.myFavorites.length
+      return "Избранное: " + this.myFavorites.length
       }
     }
   },

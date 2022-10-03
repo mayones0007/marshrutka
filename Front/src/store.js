@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import { axiosInstance } from './httpClient'
+import { router } from './router'
 
 export const store = createStore({
   state () {
@@ -114,7 +115,8 @@ export const store = createStore({
 
     async newFavorite(_context, placeId) {
       try {
-        await axiosInstance.post('favorite', { userId: this.state.user.id, placeId })
+        const response = await axiosInstance.post('favorite', { userId: this.state.user.id, placeId })
+        if (response) {await this.dispatch('getFavorites')}
       } catch (e) {
         console.log("Ошибка HTTP: " + e)
       }
@@ -122,7 +124,8 @@ export const store = createStore({
 
     async newPointInRoute(_context, placeId) {
       try {
-        await axiosInstance.post('route', { userId: this.state.user.id, placeId })
+        const response = await axiosInstance.post('route', { userId: this.state.user.id, placeId })
+        if (response) {await this.dispatch('getRoute')}
       } catch (e) {
         console.log("Ошибка HTTP: " + e)
       }
@@ -151,6 +154,7 @@ export const store = createStore({
         })
         localStorage.setItem('userData', JSON.stringify({ token: response.data.token, refreshToken: response.data.refreshToken }))
         this.commit('setUser', response.data.user)
+        router.push({ name: "MyPlaces" })
       } catch (e) {
         console.log("Ошибка HTTP: " + e)
       }

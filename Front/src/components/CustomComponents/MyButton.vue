@@ -22,6 +22,7 @@ export default {
   border-radius: 5px;
   box-shadow: inset 0px 0px 5px rgba(193, 193, 193, 0.691);
   cursor: pointer;
+  font-family: 'Roboto', Arial, sans-serif;
 
   &:hover {
     filter: grayscale(0.2);

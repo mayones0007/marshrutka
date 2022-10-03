@@ -30,7 +30,6 @@ export default {
   methods: {
     async addInMyRoute(){
       await this.$store.dispatch('newPointInRoute', this.placeId)
-      await this.$store.dispatch("getRoute")
     },
   },
 }

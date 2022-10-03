@@ -7,7 +7,7 @@
       <div class="rewiew-message" v-for='review in reviews' :key="review">
         <Avatar
           :userName="review.name"
-          :userImg="review.avatar"
+          :userImg="`${$baseUrl}/avatars/`+ review.avatar"
         />
         <div class="review-date"  :class="{'review-date-horizontal': horizontal}">
           {{review.createdAt}}

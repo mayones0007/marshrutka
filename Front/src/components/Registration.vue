@@ -76,7 +76,6 @@
 </template>
 
 <script>
-import {router} from '../router'
 import MyButton from './CustomComponents/MyButton.vue'
 import Title from './CustomComponents/Title.vue'
 export default {
@@ -137,8 +136,7 @@ export default {
     },
     async registration(){
       const inputs = {name:this.name, email:this.email, password:this.password}
-      const response = await this.$store.dispatch('registration', inputs)
-      if (response.status === 200) {router.push({name: "MyPlaces"})}
+      await this.$store.dispatch('registration', inputs)
     }
   }
 }
@@ -148,6 +146,7 @@ export default {
 .form {
   display: grid;
   gap: 20px;
+  text-align: center;
 }
 
 .registration--window__link {

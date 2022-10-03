@@ -1,5 +1,5 @@
 <template>
-  <div class="myRoute-page">
+  <div class="page">
     <div class="map">
       <yandex-map
         :coords = "coords" 
@@ -14,7 +14,11 @@
       />
       </yandex-map>
     </div>
-    <MyButton title="Постороить маршрут" @click="routeCreate" />
+    <MyButton 
+      title="Постороить маршрут"
+      @click="routeCreate"
+      :isDisabled="!myRoute.length"
+    />
     <RoutePoint
       v-for='routePoint in myRoute'
       :key="routePoint.id"
@@ -127,12 +131,13 @@ computed: {
 </script>
 
 <style scoped>
-.myRoute-page{
+.page {
+  display: grid;
   padding: 2%;
 }
 
 .map {
-  height: 600px;
+  height: 300px;
   width: 100%;
   margin-bottom: 20px;
 }
@@ -140,20 +145,5 @@ computed: {
 .ymap-container {
   width: 100%;
   height: 100%;
-}
-
-.route-point--start{
-  text-align: start;
-  font-weight: 100;
-  font-size: 18px;
-  margin: 20px 0;
-  padding: 20px;
-  border-radius: 20px;
-  background-color:aliceblue;
-  display: grid;
-  height: 50px;
-  grid-template-columns: 300px 1fr 150px;
-  gap: 20px;
-  border: solid 1px rgba(0, 0, 0, 0.076);
 }
 </style>

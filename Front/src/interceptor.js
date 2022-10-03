@@ -1,4 +1,4 @@
-import { showToast, toastTypes } from "./toast";
+import { showToast, toastTypes } from "./toast"
 
 export const initInterceptor = (axiosInstance) => {
   axiosInstance.interceptors.request.use(

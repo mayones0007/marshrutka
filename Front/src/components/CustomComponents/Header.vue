@@ -12,12 +12,12 @@
         <option value="Красная Поляна">Krasnaia Polyana</option>
         <option value="Все">All</option>
       </datalist>
-      <MyButton title="Поиск" :noLeftRadius="true" @click="setselectedRegion"/>
+      <MyButton title="Поиск" :noLeftRadius="true" @click="setSelectedRegion"/>
     </div>
     <div class="user-menu">
       <Avatar
         :userName="userInfo.name"
-        :userImg="userInfo.avatar"
+        :userImg="`${$baseUrl}/avatars/`+ userInfo.avatar"
         :hideName="!isDesktop"
       />
       <div class="user-menu__arrow" v-if="!isLogIn"></div>
@@ -87,9 +87,10 @@ export default {
         router.push({ name: "MyPlaces" })
       }
     },
-    setselectedRegion () {
-      this.$store.commit('setselectedRegion', this.selectedRegion);
-      this.selectedRegion = "";
+    setSelectedRegion () {
+      this.$store.commit('setselectedRegion', this.selectedRegion)
+      router.push({ name: "MyPlaces" })
+      this.selectedRegion = ""
     },
   },
 }

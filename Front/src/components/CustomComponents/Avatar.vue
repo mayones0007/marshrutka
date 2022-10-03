@@ -3,7 +3,7 @@
     <img 
       class='avatar__image'
       :class="{'avatar__image-big': big}" 
-      :src="`${$baseUrl}/avatars/`+ userImg"
+      :src="userImg"
       alt="avt">
     <div v-if="!hideName" class="avatar__name">{{userName}}</div>
   </div>
@@ -30,6 +30,7 @@ export default {
   height: 50px;
   width: 50px;
   border-radius: 50%;
+  object-fit: cover;
 }
 
 .avatar__image-big{

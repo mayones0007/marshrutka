@@ -18,7 +18,7 @@ export const showToast = (type, text, gravity, position) => {
     stopOnFocus: true, // Prevents dismissing of toast on hover
     style: {
       background: type,
-      border: '2px solid black'
+      'border-radius': '10px'
     },
     onClick: function () { } // Callback after click
   }).showToast();

@@ -20,7 +20,6 @@ export default {
   methods: {
     async addInMyFavorites(){
       await this.$store.dispatch('newFavorite', this.placeId)
-      await this.$store.dispatch("getFavorites")
     },
   }
 }

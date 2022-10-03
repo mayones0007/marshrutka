@@ -1,5 +1,4 @@
 <template>
-  <div class="save-panel">
     <div class="save-panel__info" :class="{'save-panel__info-mobile': !isDesktop}">
       <div>Доступен</div>
       {{currentPlace.availability}}
@@ -16,25 +15,24 @@
             class="raiting__star"
           >
       </div>
-    </div>
-    <div class="save-panel__buttons" :class="{'save-panel__buttons-mobile': !isDesktop}">
-      <AddInRouteButton
-        :placeId="currentPlace.id"
-      />
-      <ButtonHeart
-        :placeId="currentPlace.id"
-      />
-      <div class="user-menu">
-        Поделиться
-        <img :src="`${$baseUrl}/icons/arrow.png`" alt="star" class="user-menu__arrow">
-        <div class="user-menu__dropdown-content" :class="{'user-menu__dropdown-content-mobile': !isDesktop}">
-          <a v-for="social in socials" :key="social.alt" :href="social.shareref + this.$route.path">
-            <img :src="social.icon" :alt="social.alt" class="dropdown-content__link">
-          </a>
+      <div class="save-panel__buttons" :class="{'save-panel__buttons-mobile': !isDesktop}">
+        <AddInRouteButton
+          :placeId="currentPlace.id"
+        />
+        <ButtonHeart
+          :placeId="currentPlace.id"
+        />
+        <div class="user-menu">
+          Поделиться
+          <img :src="`${$baseUrl}/icons/arrow.png`" alt="star" class="user-menu__arrow">
+          <div class="user-menu__dropdown-content" :class="{'user-menu__dropdown-content-mobile': !isDesktop}">
+            <a v-for="social in socials" :key="social.alt" :href="social.shareref + this.$route.path" target="_blank">
+              <img :src="social.icon" :alt="social.alt" class="dropdown-content__link">
+            </a>
+          </div>
         </div>
       </div>
     </div>
-  </div> 
 </template>
 
 <script>
@@ -93,49 +91,44 @@ export default {
   display: grid;
   position: fixed;
   box-sizing: border-box;
-  justify-items: center;
-  right:0;
-  top: 100px;
-  grid-template-columns: 1fr;
+  justify-items: start;
+  right: 0;
+  top: 12%;
+  grid-template-columns: 1fr 2fr;
   gap: 20px;
   padding: 30px;
   background-color: rgb(241, 241, 241);
-  border-radius:  20px 0 0 0;
-  width: 208px;
+  border-radius: 20px 0 0 20px;
+  width: 300px;
 }
 
 .save-panel__info-mobile {
   position: relative;
-  grid-template-columns: 1fr 1fr;
-  justify-items: start;
-  top: 0;
+  border-radius: 0 0 20px 20px;
+  top: 0px;
   width: 100%;
-  border-radius:  0 0 20px 20px;
 }
 
 .save-panel__buttons {
-  position: fixed;
   display: grid;
+  grid-column: span 2;
   box-sizing: border-box;
   gap: 20px;
-  right:0;
-  top: 426px;
-  grid-template-columns: 1fr;
   justify-items: center;
   align-items: center;
-  background-color: rgb(241, 241, 241);
-  border-radius: 0 0 20px 20px;
-  padding: 30px;
-  z-index: 1;
+  width: 100%;
 }
 
 .save-panel__buttons-mobile {
-  top: 90%;
+  position: fixed;
+  padding: 20px;
+  left: 0;
   bottom: 0;
   border-radius: 0;
   grid-template-columns: 1fr 40px 1fr;
-  padding: 0 20px;
+  background-color: rgb(241, 241, 241);
   width: 100%;
+  z-index: 1;
 }
 
 .user-menu {
@@ -145,20 +138,18 @@ export default {
 
 .user-menu__dropdown-content {
   position: absolute;
-  display: flex;
-  bottom: -65px;
-  top: 35px;
-  width: 190px;
-  right: -35px;
-  background-color: #f1f1f1;
   display: none;
+  top: 35px;
+  right: 50%;
+  transform: translate(50%, 0);
+  background-color: #f1f1f1;
   border-radius: 0 0 30px 30px;
   padding: 10px;
 }
 
 .user-menu__dropdown-content-mobile {
   top: -230px;
-  right: -5px;
+  right: 20px;
   bottom: 70px;
   width: 48px;
   box-shadow: 0px 8px 8px 0px rgba(0,0,0,0.1);
@@ -183,7 +174,10 @@ export default {
 }
 
 .user-menu:hover .user-menu__dropdown-content {
-  display: block;
+  display: flex;
+}
+.user-menu:hover .user-menu__dropdown-content-mobile {
+  display: grid;
 }
 
 .user-menu__arrow {

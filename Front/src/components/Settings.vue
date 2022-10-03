@@ -5,8 +5,9 @@
     />
     <div class="form">
       <Avatar
+        v-if="user.avatar"
         :userName="user.name"
-        :userImg="user.avatar"
+        :userImg="avatarSrc"
         :vertical="true"
         :hideName="true"
         :big="true"
@@ -17,7 +18,11 @@
       <input class="form__input-text" v-model="newEmail" type="email" placeholder="Новый e-mail">
       <input class="form__input-text" v-model="oldPassword" type="password" placeholder="Старый пароль">
       <input class="form__input-text" v-model="newPassword" type="password" placeholder="Новый пароль">
-      <MyButton title="Применить изменения" @click="settingsAccept"/>
+      <MyButton 
+        title="Применить изменения" 
+        @click="settingsAccept"
+        :isDisabled="!(oldEmail || oldPassword || file)"
+        />
     </div>  
   </div>
 </template>
@@ -39,10 +44,12 @@ export default {
     oldPassword: '',
     newPassword: '',
     file: '',
+    image: '',
   }),
   methods: {
     handleFilesUploads(){
-      this.file = this.$refs.file.files[0];
+      this.file = this.$refs.file.files[0]
+      this.readImage()
     },
     async settingsAccept(){
       const formData = new FormData()
@@ -56,11 +63,21 @@ export default {
       await axiosInstance.post('/settings', formData)
         this.oldEmail = this.newEmail = this.oldPassword = this.newPassword = this.file = ''
     },
+    readImage() {
+      const reader = new FileReader();
+      reader.addEventListener('load', (event) => {
+        this.image = event.target.result;
+      });
+      reader.readAsDataURL(this.file);
+    }
   },
   computed: {
     user() {
       return this.$store.state.user
     },
+    avatarSrc() {
+        return this.image || `${process.env.VUE_APP_BASE_URL}/avatars/${this.user.avatar}`
+    }
   }
 }
 </script>
