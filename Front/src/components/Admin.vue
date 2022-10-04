@@ -78,10 +78,10 @@ export default {
   methods: {
     // @TO-DO перенести в actions
     async addNewPlace(){
-      await axiosInstance.post('place', { place: this.place })
+      await axiosInstance.post('place', {params: {place: this.place}})
     },
     async editPlace(){
-      await axiosInstance.patch('place', { place: this.place })
+      await axiosInstance.patch('place', {params: {place: this.place}})
     },
     async deletePlace(){
       await axiosInstance.delete('place', {params: {id: this.place.id}})
