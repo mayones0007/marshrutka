@@ -328,7 +328,7 @@ knex('places')
 
 app.patch('/place', corsMiddleware, authMiddleware, (req, res) => {
   const place = req.body.place
-  knex('places').update({place}).where({ id: place.id }).catch((err) => console.log(err))
+  knex('places').update(place).where({ id: place.id }).catch((err) => console.log(err))
     .then(() => {
       return res.status(200).json({ message: 'Место обновлено'})
     })
