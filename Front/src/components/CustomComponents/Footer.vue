@@ -36,6 +36,8 @@ export default {
 <style lang="scss" scoped> 
 .footer {
   @include panel(to top);
+  position: relative;
+  z-index: 1;
 }
 
 .footer__logo-name{

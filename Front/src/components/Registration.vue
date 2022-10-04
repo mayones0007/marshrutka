@@ -162,7 +162,7 @@ export default {
 
 .input-text-wrong {
   color: red;
-  font-size: 10px;
+  font-size: 0.6em;
   text-align: start;
 }
 

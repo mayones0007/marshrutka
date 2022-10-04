@@ -1,9 +1,9 @@
 <template>
-  <div class="app-container">
+  <div>
     <Header/>
     <router-view></router-view>
     <LoginPopup v-if="this.$store.state.showLoginPopup"/>
-    <Footer class="footer"/>
+    <Footer/>
   </div>
 </template>
 
@@ -20,11 +20,6 @@ export default {
     Footer,
     LoginPopup
   },
-  computed: {
-    isDesktop(){
-        return this.$store.state.isDesktop
-      },
-  },
   mounted(){
     if(localStorage.getItem('userData')){
       this.$store.dispatch('getUser')
@@ -38,10 +33,5 @@ export default {
 </script>
 
 <style lang="scss"> 
-
-@import "./styles/main.scss";
-.footer {
-  position: relative;
-  z-index: 1;
-}
+  @import "./styles/main.scss";
 </style>

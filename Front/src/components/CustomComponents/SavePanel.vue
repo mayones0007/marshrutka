@@ -6,10 +6,11 @@
       <div class="difficalty">{{currentDifficulty}}</div>
       <div>Время</div>
       {{currentTime}}
+      {{ currentPlace.raiting }}
       <div>Рейтинг</div>
       <div class="raiting">
         <img
-            v-for='star in currentRaiting' :key="'star'+star"
+            v-for='star in currentPlace.raiting' :key="'star'+star"
             :src="`${$baseUrl}/icons/star.png`"
             alt="star"
             class="raiting__star"
@@ -55,9 +56,6 @@ export default {
     currentPlace() {
       return this.$store.state.place
     },
-    currentRaiting() {
-      return this.$store.state.raiting
-    },
     currentDifficulty() {
       switch (this.$store.state.place.difficulty) {
         case '1':
@@ -94,7 +92,7 @@ export default {
   justify-items: start;
   right: 0;
   top: 12%;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1fr 1.5fr;
   gap: 20px;
   padding: 30px;
   background-color: rgb(241, 241, 241);

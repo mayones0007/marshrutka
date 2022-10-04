@@ -13,7 +13,6 @@ export const store = createStore({
       places: [],
       place: {},
       reviews: [],
-      raiting: null,
       pictures: [],
       user: {},
       isDesktop: true,
@@ -36,19 +35,21 @@ export const store = createStore({
       }
     },
 
-    async getPlace(_context, place) {
+    async getPlace({commit, dispatch}, place) {
       try {
         const response = await axiosInstance.get(`place?id=${place}`)
-        this.commit("setPlace", response.data)
+        dispatch("getPictures", response.data.eng)
+        dispatch("getReviews", response.data.id)
+        commit("setPlace", response.data)
       } catch (e) {
         console.log("Ошибка HTTP: " + e)
       }
     },
 
-    async getReviews(_context, placeId) {
+    async getReviews({commit}, placeId) {
       try {
         const response = await axiosInstance.get('review', {params: {id: placeId}})
-        this.commit('setReviews', response.data)
+        commit('setReviews', response.data)
       } catch (e) {
         console.log("Ошибка HTTP: " + e)
       }
@@ -82,6 +83,7 @@ export const store = createStore({
     },
 
     async getUser() {
+      // @TO-DO перенести в action
       try {
         const response = await axiosInstance.get('user')
         this.commit('setUser', response.data.user)
@@ -194,7 +196,7 @@ export const store = createStore({
     },
     setReviews (state, reviews) {
       state.reviews = reviews
-      state.raiting = Math.round(reviews.reduce((acc, num) => acc + num.raiting, 0) / reviews.length)
+      state.place.raiting = Math.round(reviews.reduce((acc, num) => acc + num.raiting, 0) / reviews.length)
     },
     setPictures(state, pictures) {
       state.pictures = pictures

@@ -1,4 +1,5 @@
 module.exports = {
+    productionSourceMap: true,
     css: {
         loaderOptions: {
             sass: {

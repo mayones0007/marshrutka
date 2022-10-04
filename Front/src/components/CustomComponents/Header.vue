@@ -84,6 +84,7 @@ export default {
         this.$store.commit('setLoginPopup')
       } else {
         this.$store.dispatch('logOut')
+        // @TO-DO перенести в action
         router.push({ name: "MyPlaces" })
       }
     },
@@ -105,8 +106,8 @@ export default {
   @include flex-between-center-g15;
   text-decoration: none;
   color: black;
-  font-size: 20px;
   height: 80px;
+  font-size: 1.3em;
 }
 
 .logo__icon {
@@ -126,11 +127,6 @@ export default {
   border-radius: 5px 0 0 5px;
   width: 20vw;
   min-width: 200px;
-}
-
-.user-menu__name {
-  cursor: default;
-  font-weight: 500;
 }
 
 .user-menu__arrow {
@@ -156,6 +152,7 @@ export default {
 .user-menu {
   @include flex-between-center-g15;
   position: relative;
+  font-size: 1.2em;
   z-index: 2;
   height: 80px;
 }
@@ -176,6 +173,7 @@ export default {
   text-decoration: none;
   color: transparent;
   transition-duration: 300ms;
+  font-size: 0.9em;
   text-align: end;
   padding: 0 15px;
 }

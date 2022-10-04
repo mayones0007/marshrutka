@@ -18,8 +18,8 @@ export default {
     },
   },
   methods: {
-    async addInMyFavorites(){
-      await this.$store.dispatch('newFavorite', this.placeId)
+    addInMyFavorites(){
+      this.$store.dispatch('newFavorite', this.placeId)
     },
   }
 }

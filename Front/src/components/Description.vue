@@ -1,13 +1,10 @@
 <template>
   <div class="description-page" :class="{'description-page-mobile': !isDesktop}" v-if="currentPlace">
-    <Gallery
-      :images="currentPictures"
-      :vertical="!isDesktop"
-    />  
-    <SavePanel class="save-panel"/>
-    <div class="description-text">
+    <Gallery/>  
+    <SavePanel/>
+    <p class="description-text">
       {{currentPlace.description}}
-    </div>
+    </p>
       <div class="input-rewiew" :class="{'input-rewiew-mobile': !isDesktop}">
         <div class="input-rewiew-text">
           <textarea 
@@ -35,11 +32,7 @@
         @click="saveRewiew"
       />
     </div>
-    <ReviewMessages
-      :reviews="currentReviews"
-      :horizontal="!isDesktop"
-      :isAdmin="isAdmin"
-    />
+    <ReviewMessages/>
   </div>
 </template>
 
@@ -76,11 +69,11 @@ export default {
     currentPictures() {
       return this.$store.state.pictures
     },
-    isDesktop(){
-      return this.$store.state.isDesktop
-    },
     isAdmin() {
       return this.$store.state.user.name === "Admin"
+    },
+    isDesktop(){
+      return this.$store.state.isDesktop
     },
   },
   methods: {
@@ -88,15 +81,14 @@ export default {
       this.starHovered = star;
     },
     async saveRewiew(){
+      // @TO-DO перенести в actions
       await this.$store.dispatch('newReview', {'text':this.inputValue, 'raiting':this.starHovered})
       await this.$store.dispatch("getReviews", this.currentPlace.id)
       this.starHovered = this.inputValue = ''
     },
   },
-  async created(){
-    await this.$store.dispatch("getPlace", this.currentRoute)
-    await this.$store.dispatch("getPictures", this.currentRoute)
-    await this.$store.dispatch("getReviews", this.currentPlace.id)
+  created(){
+    this.$store.dispatch("getPlace", this.currentRoute)
   },
 }
 </script>
@@ -113,9 +105,10 @@ export default {
 
 .description-text {
   margin: 20px 0;
-  text-align: start;
-  font-size: 20px;
+  font-size: 1.2em;
+  text-align: justify;
   font-weight: 300;
+  text-indent: 40px;
 }
 
 .input-rewiew {
@@ -137,7 +130,6 @@ export default {
   padding: 15px;
   width: 100%;
   height: 100px;
-  font-size: 16px;
   font-weight: 300;
   font-family: 'Roboto', Arial, sans-serif;
   resize: vertical;
@@ -154,9 +146,9 @@ export default {
 
 .raiting {
   display: flex;
+  font-size: 0.9em;
   align-items: center;
   padding: 10px 15px;
-  font-weight: 300;
 }
 
 .input-rewiew-text {

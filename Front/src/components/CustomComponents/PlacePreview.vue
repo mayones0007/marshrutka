@@ -42,7 +42,6 @@
     bottom: 0;
     line-height: 140px;
     color: white;
-    font-size: 16px;
     font-weight: 700;
     background: linear-gradient(transparent, rgba(0, 0, 0, 0.591));
   }
@@ -59,17 +58,5 @@
   .gallery__item-container {
     position: relative;
     transition: 300ms;
-  }
-
-  .welcome-image__text {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 70px;
-    color: white;
-    height: 450px;
-    font-weight: 900;
-    user-select: none;
-    background: url("https://marshrutka.su/api/img/chelovek-gora.jpeg") center -280px;
   }
 </style>

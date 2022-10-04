@@ -14,7 +14,7 @@ export default {
 <style lang="scss" scoped>
   .title {
     color: #2c3e50;
-    font-size: 22px;
+    font-size: 1.5em;
     font-weight: 700;
     margin: 20px 0;
 }

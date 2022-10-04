@@ -96,7 +96,6 @@ export default {
 
 .route-point__container {
   font-weight: 400;
-  font-size: 14px;
   cursor: default;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -107,7 +106,6 @@ export default {
 .route-point__container-desktop {
   grid-column: 1 / span 2;
   font-weight: 500;
-  font-size: 18px;
 }
 
 .route-point__buttons {

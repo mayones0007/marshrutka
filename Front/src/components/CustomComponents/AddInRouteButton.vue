@@ -28,8 +28,8 @@ export default {
     },
   },
   methods: {
-    async addInMyRoute(){
-      await this.$store.dispatch('newPointInRoute', this.placeId)
+    addInMyRoute(){
+      this.$store.dispatch('newPointInRoute', this.placeId)
     },
   },
 }

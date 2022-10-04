@@ -76,6 +76,7 @@ export default {
     },
   },
   methods: {
+    // @TO-DO перенести в actions
     async addNewPlace(){
       await axiosInstance.post('place', { place: this.place })
     },
@@ -135,7 +136,6 @@ export default {
   @include input;
   height: 50px;
   padding: 15px;
-  font-size: 15px;
 }
 
 .form__input--month {

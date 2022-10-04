@@ -16,7 +16,7 @@
     </div>
     <MyButton 
       title="Постороить маршрут"
-      @click="routeCreate"
+      @click="newRoute(routeCoords)"
       :isDisabled="!myRoute.length"
     />
     <RoutePoint
@@ -86,7 +86,6 @@ computed: {
       editorDrawOver: false,
       wayPointDraggable: false,
       viaPointDraggable: false,
-      // Зададим собственное оформление линий мультимаршрута.
       routeStrokeColor: "000088",
       routeActiveStrokeColor: "ff0000",
       pinIconFillColor: "ff0000",
@@ -94,17 +93,17 @@ computed: {
       zoomMargin: 30
       });
       multiRoute.model.events.add('requestsuccess', function() {
-        const activeRoute = multiRoute.getActiveRoute()
-        const place1 = coords[0]
-        const place2 = coords[1]
-        const distance = activeRoute.properties.get("distance").value
-        const duration = activeRoute.properties.get("duration").value
-        console.log(place1)
-        console.log(place2)
-        console.log(distance)
-        console.log(duration)
+        // const activeRoute = multiRoute.getActiveRoute()
+        // const place1 = coords[0]
+        // const place2 = coords[1]
+        // const distance = activeRoute.properties.get("distance").value
+        // const duration = activeRoute.properties.get("duration").value
+        // console.log(place1)
+        // console.log(place2)
+        // console.log(distance)
+        // console.log(duration)
       })
-      //myMap.geoObjects.add(multiRoute);
+      myMap.geoObjects.add(multiRoute);
   },
 
     async findMe(){

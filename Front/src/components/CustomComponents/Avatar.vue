@@ -40,7 +40,6 @@ export default {
 
 .avatar__name {
   cursor: default;
-  font-size: 18px;
   font-weight: 400;
 }
 </style>

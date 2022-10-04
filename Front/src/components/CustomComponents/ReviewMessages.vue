@@ -1,10 +1,10 @@
 <template>
   <div>
     <Title
-      :text="`Отзывы: ${reviews.length}`"
+      :text="`Отзывы: ${currentReviews.length}`"
     />
     <div class="rewiew-messages">
-      <div class="rewiew-message" v-for='review in reviews' :key="review">
+      <div class="rewiew-message" v-for='review in currentReviews' :key="review">
         <Avatar
           :userName="review.name"
           :userImg="`${$baseUrl}/avatars/`+ review.avatar"
@@ -20,7 +20,7 @@
             >
           </div>
         </div>
-        <div class="rewiew-text" :class="{'rewiew-text-horizontal': horizontal}" >{{review.text}}</div>
+        <div class="rewiew-text" :class="{'rewiew-text-horizontal': !isDesktop}" >{{review.text}}</div>
         <div v-if="isAdmin" class="gallery-window__button-close" @click="deleteReview(review.id)"/>
       </div>
     </div>
@@ -32,7 +32,7 @@ import Avatar from './Avatar.vue'
 import Title from './Title.vue'
 export default {
   name: 'ReviewMessages',
-  props: ['reviews','horizontal','isAdmin'],
+  props: ['horizontal'],
   components: {
     Avatar,
     Title
@@ -41,11 +41,21 @@ export default {
     currentPlace() {
       return this.$store.state.place
     },
+    currentReviews() {
+      return this.$store.state.reviews
+    },
+    isAdmin() {
+      return this.$store.state.user.name === "Admin"
+    },
+    isDesktop(){
+      return this.$store.state.isDesktop
+    },
   },
   methods: {
-    async deleteReview(id) {
-      await this.$store.dispatch("deleteReview", id)
-      await this.$store.dispatch("getReviews", this.currentPlace.id)
+    deleteReview(id) {
+      // @TO-DO перенести в стор
+      this.$store.dispatch("deleteReview", id)
+      this.$store.dispatch("getReviews", this.currentPlace.id)
     }
   }
 }
@@ -66,7 +76,6 @@ export default {
   grid-template-rows: 50px 1fr;
   text-align: start;
   font-weight: 100;
-  font-size: 16px;
   padding: 15px;
   background-color:aliceblue;
   border-radius: 20px 20px 20px 0;
@@ -92,7 +101,7 @@ export default {
 }
 
 .review-date {
-  font-size: 14px;
+  font-size: 0.9em;
   line-height: 30px;
 }
 

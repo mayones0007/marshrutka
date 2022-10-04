@@ -60,6 +60,7 @@ export default {
       formData.append('password', this.newPassword)
       formData.append('image', this.file)
 
+// TO-DO перенести в стор
       await axiosInstance.post('/settings', formData)
         this.oldEmail = this.newEmail = this.oldPassword = this.newPassword = this.file = ''
     },

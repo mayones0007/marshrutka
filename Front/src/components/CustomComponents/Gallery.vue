@@ -1,16 +1,16 @@
 <template>
-  <div v-if="images.length">
-    <div class="gallery-container" :class="{'gallery-container-vertical': vertical}">
+  <div v-if="currentPictures.length">
+    <div class="gallery-container" :class="{'gallery-container-vertical': !isDesktop}">
       <img
         v-for="(n, i) in 3"
         :key="i"
-        :src="`${$baseUrl}/img/${this.images[i]}`" 
+        :src="`${$baseUrl}/img/${this.currentPictures[i]}`" 
         class="gallery-container__item"
         @click="openGalleryPopup(i)"
       >
       <div class="gallery-container__item" @click="openGalleryPopup(3)">
         <img
-          :src="`${$baseUrl}/img/${this.images[3]}`" 
+          :src="`${$baseUrl}/img/${this.currentPictures[3]}`" 
           class="gallery-container__item gallery-container__item-last-image" 
         >
         <div class="gallery-container__item-last-text">{{ picturesCount }}</div>
@@ -43,7 +43,6 @@
 import { nextTick } from '@vue/runtime-core'
 export default {
   name: 'Gallery',
-  props: ['images','vertical'],
   data() {
     return {
       currentPicture: 0,
@@ -53,11 +52,14 @@ export default {
     showGallery() {
       return this.$store.state.showGalleryPopup
     },
+    currentPictures() {
+      return this.$store.state.pictures
+    },
     imageSrc(){
-      return `/img/${this.images[this.currentPicture]}`
+      return `/img/${this.currentPictures[this.currentPicture]}`
     },
     picturesCount() {
-      return `+${this.images.length - 4}`
+      return `+${this.currentPictures.length - 4}`
     },
     isDesktop(){
       return this.$store.state.isDesktop
@@ -141,7 +143,7 @@ export default {
   width: 100%;
   color: white;
   font-weight: 400;
-  font-size: 40px;
+  font-size: 3em;
   line-height: 0;
   text-align: center;
 }
