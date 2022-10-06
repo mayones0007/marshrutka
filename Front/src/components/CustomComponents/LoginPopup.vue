@@ -1,9 +1,7 @@
 <template>
   <div class="background" @click.self="setLoginPopup">
     <div class="login-window"  :class="{'login-window-mobile': !isDesktop}" @keyup.esc.stop="setLoginPopup" @keyup.enter.stop="login">
-      <Title
-        text="Вход"
-      />
+      <h2>Вход</h2>
       <div class="button-close" @click="setLoginPopup"/>
       <div class="form">
         <input class="form__input-text" ref="name" type="text" placeholder="Логин" tabindex="-1">
@@ -17,12 +15,10 @@
 
 <script>
 import MyButton from './MyButton.vue'
-import Title from './Title.vue'
 export default {
   name: 'LoginPopup',
   components: {
     MyButton,
-    Title,
   },
   computed: {
     isDesktop(){

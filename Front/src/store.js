@@ -24,8 +24,8 @@ export const store = createStore({
       this.state.user = {}
       this.state.myRoute = []
       this.state.myFavorites = []
+      router.push({ name: "MyPlaces" })
     },
-
     async getPlaces(){
       try {
         const response = await axiosInstance.get('places')
@@ -38,7 +38,7 @@ export const store = createStore({
     async getPlace({commit, dispatch}, place) {
       try {
         const response = await axiosInstance.get(`place?id=${place}`)
-        dispatch("getPictures", response.data.eng)
+        dispatch("getPictures", response.data.id)
         dispatch("getReviews", response.data.id)
         commit("setPlace", response.data)
       } catch (e) {
@@ -55,9 +55,9 @@ export const store = createStore({
       }
     },
 
-    async getPictures(_context, place) {
+    async getPictures(_context, id) {
       try {
-        const response = await axiosInstance.get('pictures', {params: {id: place}})
+        const response = await axiosInstance.get('pictures', {params: { id }})
         this.commit('setPictures', response.data)
       } catch (e) {
         console.log("Ошибка HTTP: " + e)
@@ -83,7 +83,6 @@ export const store = createStore({
     },
 
     async getUser() {
-      // @TO-DO перенести в action
       try {
         const response = await axiosInstance.get('user')
         this.commit('setUser', response.data.user)
@@ -102,6 +101,7 @@ export const store = createStore({
           userId: this.state.user.id,
           placeId: this.state.place.id
         })
+        this.dispatch("getReviews", this.state.place.id)
       } catch (e) {
         console.log("Ошибка HTTP: " + e)
       }
@@ -110,6 +110,7 @@ export const store = createStore({
     async deleteReview(_context, id) {
       try {
         await axiosInstance.delete('review', {params: {id}})
+        this.dispatch("getReviews", this.state.place.id)
       } catch (e) {
         console.log("Ошибка HTTP: " + e)
       }
@@ -133,15 +134,17 @@ export const store = createStore({
       }
     },
 
-    async login(_context, inputs) {
+    async login({commit}, inputs) {
       try {
         const response = await axiosInstance.post('login', {
           name: inputs.name,
           password: inputs.password
         })
         localStorage.setItem('userData', JSON.stringify({ token: response.data.token, refreshToken: response.data.refreshToken }))
-        this.commit('setUser', response.data.user)
-        this.commit('setLoginPopup')
+        commit('setUser', response.data.user)
+        this.dispatch('getFavorites')
+        this.dispatch('getRoute')
+        commit('setLoginPopup')
       } catch (e) {
         console.log("Ошибка HTTP: " + e)
       }
@@ -157,6 +160,68 @@ export const store = createStore({
         localStorage.setItem('userData', JSON.stringify({ token: response.data.token, refreshToken: response.data.refreshToken }))
         this.commit('setUser', response.data.user)
         router.push({ name: "MyPlaces" })
+      } catch (e) {
+        console.log("Ошибка HTTP: " + e)
+      }
+    },
+    async addNewPlace(_context, place) {
+      try {
+        await axiosInstance.post('place', { place })
+      } catch(e) {
+        console.log("Ошибка HTTP: " + e)
+      }
+    },
+    async editPlace(_context, place) {
+      try {
+        await axiosInstance.patch('place', { place })
+      } catch (e) {
+        console.log("Ошибка HTTP: " + e)
+      }
+    },
+    async deletePlace(_context, id) {
+      try {
+        await axiosInstance.delete('place', { params: { id } })
+      } catch (e) {
+        console.log("Ошибка HTTP: " + e)
+      }
+    },
+    async addPlaceImage(_context, inputs) {
+      const formData = new FormData()
+      formData.append('id', inputs[0])
+      formData.append('image', inputs[1])
+      try {
+        await axiosInstance.post('pictures', formData)
+      } catch (e) {
+        console.log("Ошибка HTTP: " + e)
+      }
+    },
+    async deletePlaceImage(_context, image) {
+      try {
+        await axiosInstance.delete('pictures', { params: { image } })
+      } catch (e) {
+        console.log("Ошибка HTTP: " + e)
+      }
+    },
+    async replaceUserAvatar(_context, user) {
+      const formData = new FormData()
+      formData.append('name', user.name)
+      formData.append('image', user.image)
+      try {
+        await axiosInstance.post('settings', formData)
+      } catch (e) {
+        console.log("Ошибка HTTP: " + e)
+      }
+    },
+    async replaceUserEmail(_context, user) {
+      try {
+        await axiosInstance.post('settings', { name: user.name, oldEmail: user.oldEmail, email: user.email })
+      } catch (e) {
+        console.log("Ошибка HTTP: " + e)
+      }
+    },
+    async replaceUserPassword(_context, user) {
+      try {
+        await axiosInstance.post('settings', { name: user.name, oldPassword: user.oldPassword, password: user.password })
       } catch (e) {
         console.log("Ошибка HTTP: " + e)
       }

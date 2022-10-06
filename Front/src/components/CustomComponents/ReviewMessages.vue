@@ -1,8 +1,6 @@
 <template>
   <div>
-    <Title
-      :text="`Отзывы: ${currentReviews.length}`"
-    />
+    <h2>{{titleText}}</h2>
     <div class="rewiew-messages">
       <div class="rewiew-message" v-for='review in currentReviews' :key="review">
         <Avatar
@@ -14,7 +12,7 @@
           <div>
             <img
               v-for='star in review.raiting' :key="'star'+star"
-              :src="`${$baseUrl}/icons/star.png`"
+              :src="`${$baseUrl}/icons/star.svg`"
               alt="star"
               class="icon-star"
             >
@@ -29,13 +27,12 @@
 
 <script>
 import Avatar from './Avatar.vue'
-import Title from './Title.vue'
+import { numWord } from '../../services/numerals.service'
 export default {
   name: 'ReviewMessages',
   props: ['horizontal'],
   components: {
     Avatar,
-    Title
   },
   computed: {
     currentPlace() {
@@ -50,12 +47,17 @@ export default {
     isDesktop(){
       return this.$store.state.isDesktop
     },
+    titleText () {
+      if (this.currentReviews.length === 0) {
+        return "Оставьте первый отзыв"
+      } else {
+        return numWord(this.currentReviews.length, ['отзыв', 'отзыва', 'отзывов'])
+      }
+    }
   },
   methods: {
     deleteReview(id) {
-      // @TO-DO перенести в стор
       this.$store.dispatch("deleteReview", id)
-      this.$store.dispatch("getReviews", this.currentPlace.id)
     }
   }
 }

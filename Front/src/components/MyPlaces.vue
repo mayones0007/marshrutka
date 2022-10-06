@@ -6,11 +6,11 @@
         <div>Регион: {{ selectedRegion }}</div>
         <div>Категория:
           <select class="places-filter" name="filter" v-model="Pfilter">
-            <option value="all" selected>Все</option>
-            <option value="waterfall">Водопады</option>
-            <option value="lake">Озера</option>
-            <option value="mountain">Горы</option>
-            <option value="abonded">Заброшки</option>
+            <option value="Все" selected>Все</option>
+            <option value="Водопады">Водопады</option>
+            <option value="Озера">Озера</option>
+            <option value="Горы">Горы</option>
+            <option value="Заброшки">Заброшки</option>
           </select>
         </div>
       </div>
@@ -34,32 +34,28 @@ export default {
   },
   data() {
     return {
-      Pfilter: "all",
+      Pfilter: "Все",
     };
   },
   computed: {
     filteredPlaces() {
-      if (this.selectedRegion === "Все" && this.Pfilter === "all") {
+      if (this.selectedRegion === "Все" && this.Pfilter === "Все") {
         return this.places;
       } else if (this.selectedRegion === "Все") {
-        return this.places.filter((item) => item.tag === this.Pfilter);
-      } else if (this.Pfilter === "all") {
-        return this.places.filter((item) => item.region === this.selectedRegion);
+        return this.places.filter((item) => item.tag === this.Pfilter)
+      } else if (this.Pfilter === "Все") {
+        return this.places.filter((item) => item.region === this.selectedRegion)
       }
       return this.places.filter(
         (item) => item.tag === this.Pfilter && item.region === this.selectedRegion
       )
     },
     selectedRegion() {
-      return this.$store.state.selectedRegion;
+      return this.$store.state.selectedRegion
     },
     places() {
-      return this.$store.state.places;
+      return this.$store.state.places
     },
-    isDesktop(){
-      return this.$store.state.isDesktop
-    }
-    
   },
   created() {
     this.$store.dispatch("getPlaces")

@@ -26,9 +26,9 @@ app.listen(port, () => {
 
 app.get('/places', corsMiddleware, (req, res) => {
   knex('places')
-  .join('pictures', 'places.eng', 'pictures.eng')
+  .leftJoin('pictures', 'places.id', 'pictures.placeId')
   .select('places.*', 'pictures.id as picture')
-  .groupBy('places.eng')
+  .groupBy('places.id')
   .then((places) => {
     return res.status(200).json(places)})
   .catch((err) => {
@@ -70,26 +70,14 @@ app.delete('/review', corsMiddleware, authMiddleware, (req, res) => {
 })
 
 app.get('/pictures', corsMiddleware, (req, res) => {
-  const place = req.query.id
-  if (place) {
-    knex('pictures').where('eng', place).select('id')
-      .then((pictures) => {
-        return res.status(200).json(pictures.map(item => item.id + ".jpeg"))
-      })
-      .catch((err) => {
-        return res.status(400).json({ message: 'An error occurred, please try again later' })
-      })
-  } else {
-    knex('pictures').whereIn('id',
-      knex('pictures').min('id').groupBy('eng')
-    )
-      .then((pictures) => {
-        return res.status(200).json(pictures)
-      })
-      .catch((err) => {
-        return res.status(400).json({ message: 'An error occurred, please try again later' })
-      })
-  }
+  const placeId = req.query.id
+  knex('pictures').where({ placeId }).select('id')
+    .then((pictures) => {
+      return res.status(200).json(pictures.map(item => item.id + ".jpeg"))
+    })
+    .catch((err) => {
+      return res.status(400).json({ message: 'An error occurred, please try again later' })
+    })
 })
 
 app.get('/favorite', corsMiddleware, authMiddleware, (req, res) => {
@@ -97,9 +85,9 @@ app.get('/favorite', corsMiddleware, authMiddleware, (req, res) => {
   knex('favorites')
     .join('places', 'favorites.placeId', '=', 'places.id')
     .where({ userId })
-    .join('pictures', 'places.eng', 'pictures.eng')
+    .leftJoin('pictures', 'places.id', 'pictures.placeId')
     .select('places.*', 'pictures.id as picture')
-    .groupBy('places.eng')
+    .groupBy('places.id')
   .then((favorites) => {
     return res.status(200).json(favorites)
   })
@@ -140,9 +128,9 @@ app.get('/route', corsMiddleware, authMiddleware, (req, res) => {
   knex('routes')
     .join('places', 'routes.placeId', '=', 'places.id')
     .where( { userId } )
-    .join('pictures', 'places.eng', 'pictures.eng')
+    .leftJoin('pictures', 'places.id', 'pictures.placeId')
     .select('places.*', 'pictures.id as picture')
-    .groupBy('places.eng')
+    .groupBy('places.id')
   .then((routes) => {
     return res.status(200).json(routes)
   })
@@ -315,10 +303,9 @@ app.post('/route', corsMiddleware, authMiddleware, (req, res) => {
 
 app.post('/place', corsMiddleware, authMiddleware, (req, res) => {
   const place = req.body.place
-knex('places')
-    .insert(place)
+  knex('places').insert(place)
     .then(() => {
-      return res.status(200).json({ message: 'Место добавлено'})
+      return res.status(200).json({ message: 'Место добавлено', place})
     })
     .catch((err) => {
     console.error(err);
@@ -385,9 +372,9 @@ app.post('/settings', corsMiddleware, authMiddleware, (req, res) => {
 })
 
 app.post('/pictures', corsMiddleware, authMiddleware, (req, res) => {
-  const eng = req.body.eng ? req.body.eng : ''
+  const placeId = req.body.id
     knex('pictures')
-      .insert({ eng })
+      .insert({ placeId })
       .then((id) => {
         const fileName = id + '.jpeg'
         const path = __dirname + '/public/img/' + fileName

@@ -19,6 +19,9 @@ export const router = createRouter({
   history: createWebHistory(),
   routes
 })
-router.beforeEach(() => {
-  window.scroll(0,0)
+router.beforeEach((to, from) =>{
+  window.scroll(0, 0)
+  if (to.name === 'MyPlaces' && from.name !== undefined) {
+    window.scroll(0, 530)
+  }
 })

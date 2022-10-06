@@ -1,10 +1,10 @@
 <template>
-  <div class="page">
+  <div class="page" :class="{'page-mobile': !isDesktop}">
     <div class="map">
       <yandex-map
-        :coords = "coords" 
-        zoom = "5"
-        :controls = "controls"
+        :coords="coords" 
+        zoom="5"
+        :controls="controls"
         @map-was-initialized="mapInitialized"
       >
       <ymap-marker 
@@ -53,6 +53,9 @@ computed: {
   },
   myRoute(){
     return this.$store.state.myRoute;
+  },
+  isDesktop(){
+      return this.$store.state.isDesktop
   },
   routeCoords() {
     return this.$store.state.myRoute.map(item => item.coords)
@@ -124,19 +127,22 @@ computed: {
 
     mapInitialized(e){
       myMap = e;
+      console.log(myMap)
     },
   },
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .page {
-  display: grid;
-  padding: 2%;
+  padding: 2% 10%;
+  &-mobile {
+    padding: 2%;
+  }
 }
 
 .map {
-  height: 300px;
+  height: 600px;
   width: 100%;
   margin-bottom: 20px;
 }
@@ -145,4 +151,5 @@ computed: {
   width: 100%;
   height: 100%;
 }
+
 </style>

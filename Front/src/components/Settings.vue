@@ -1,119 +1,83 @@
 <template>
-  <div class="registration--window">
-    <Title
-      text="Настройки"
+  <div class="form">
+    <h2>Настройки</h2>
+    <Avatar
+      v-if="user.avatar"
+      :userName="user.name"
+      :userImg="`${$baseUrl}/avatars/`+ user.avatar"
+      :vertical="true"
+      :big="true"
     />
-    <div class="form">
-      <Avatar
-        v-if="user.avatar"
-        :userName="user.name"
-        :userImg="avatarSrc"
-        :vertical="true"
-        :hideName="true"
-        :big="true"
-      />
-      <input class="form__input--file" type="file" id="file" ref="file" accept="image/jpeg" @change="handleFilesUploads()">
-      <label class="form__input--btn" for="file">Изменить аватар</label>
-      <input class="form__input-text" v-model="oldEmail" type="email" placeholder="Старый e-mail">
-      <input class="form__input-text" v-model="newEmail" type="email" placeholder="Новый e-mail">
-      <input class="form__input-text" v-model="oldPassword" type="password" placeholder="Старый пароль">
-      <input class="form__input-text" v-model="newPassword" type="password" placeholder="Новый пароль">
-      <MyButton 
-        title="Применить изменения" 
-        @click="settingsAccept"
-        :isDisabled="!(oldEmail || oldPassword || file)"
-        />
-    </div>  
+    <input class="form__input-file" type="file" id="file" ref="file" accept="image/jpeg" @change="replaceUserAvatar()">
+    <label class="form__button" for="file">Изменить аватар</label>
+    <input class="form__input-text" v-model="oldEmail" type="email" placeholder="Старый e-mail">
+    <input class="form__input-text" v-model="email" type="email" placeholder="Новый e-mail">
+    <MyButton 
+      title="Изменить E-mail"
+      :isDisabled="!(oldEmail && email)"
+      @click="replaceUserEmail"
+    />
+    <input class="form__input-text" v-model="oldPassword" type="password" placeholder="Старый пароль">
+    <input class="form__input-text" v-model="password" type="password" placeholder="Новый пароль">
+    <MyButton 
+      title="Изменить пароль"
+      :isDisabled="!(oldPassword && password)"
+      @click="replaceUserPassword"
+    />
   </div>
 </template>
 
 <script>
-import { axiosInstance } from '../httpClient'
 import MyButton from './CustomComponents/MyButton.vue'
 import Avatar from './CustomComponents/Avatar.vue'
-import Title from './CustomComponents/Title.vue'
 export default {
   components: {
     MyButton,
     Avatar,
-    Title
   },
   data: () => ({
     oldEmail: '',
-    newEmail: '',
+    email: '',
     oldPassword: '',
-    newPassword: '',
-    file: '',
-    image: '',
+    password: '',
   }),
   methods: {
-    handleFilesUploads(){
-      this.file = this.$refs.file.files[0]
-      this.readImage()
+    replaceUserAvatar(){
+      this.$store.dispatch('replaceUserAvatar', {name: this.user.name, image: this.$refs.file.files[0]})
     },
-    async settingsAccept(){
-      const formData = new FormData()
-      formData.append('name', this.user.name)
-      formData.append('oldEmail', this.oldEmail)
-      formData.append('oldPassword', this.oldPassword)
-      formData.append('email', this.newEmail)
-      formData.append('password', this.newPassword)
-      formData.append('image', this.file)
-
-// TO-DO перенести в стор
-      await axiosInstance.post('/settings', formData)
-        this.oldEmail = this.newEmail = this.oldPassword = this.newPassword = this.file = ''
+    replaceUserEmail(){
+      this.$store.dispatch('replaceUserEmail', {name: this.user.name, oldEmail: this.oldEmail, email: this.email})
     },
-    readImage() {
-      const reader = new FileReader();
-      reader.addEventListener('load', (event) => {
-        this.image = event.target.result;
-      });
-      reader.readAsDataURL(this.file);
-    }
+    replaceUserPassword(){
+      this.$store.dispatch('replaceUserPassword', {name: this.user.name, oldPassword: this.oldPassword, password: this.password})
+    },
   },
   computed: {
     user() {
       return this.$store.state.user
     },
-    avatarSrc() {
-        return this.image || `${process.env.VUE_APP_BASE_URL}/avatars/${this.user.avatar}`
-    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.registration--window__link {
-  color: green;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-.registration--window {
-  width: 350px;
-  margin: 100px auto;
-  text-align: center;
-}
-
-.form__input--file {
-  display: none;
-}
-
-.form__input--btn {
-  margin: 10px;
-  cursor: pointer;
-}
-
-.form__input--btn:hover {
-  color: red;
-}
-
 .form {
+  width: 300px;
+  margin: 20px auto;
+  text-align: center;
   display: grid;
   gap: 20px;
 }
-
+.form__input-file {
+  display: none;
+}
+.form__button {
+  margin: 10px;
+  cursor: pointer;
+}
+.form__button:hover {
+  color: red;
+}
 .form__input-text {
   @include input;
 }

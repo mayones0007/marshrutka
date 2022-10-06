@@ -2,39 +2,41 @@
 <div>
   <div 
     class="route-point"
-    :class="{'route-point--full-size': isFullSize, 'route-point-mobile': !isDesktop}"
-    @click="toggleSize"
+    :class="{'route-point-full-size': isFullSize, 'route-point-mobile': !isDesktop}"
+    @click.self="toggleSize"
   >
-      <div class="route-point__container" :class="{'route-point__container-desktop': isDesktop}">
-        <div class="route-point__preview">
-          <img :src="`${$baseUrl}/icons/arrow.png`" alt="star" class="route-point__arrow" :class="{'route-point__arrow-down': isFullSize}">
-          <div class="route-point__name">{{routePoint.name}}</div>
-          <div v-if="isDesktop" class="route-point__info">
-            <div class="route-point__time">{{routePoint.time}}</div>
-            <div class="route-point__time">{{routePoint.availability}}</div>
-            <div class="route-point__time">{{routePoint.difficulty}}</div>
-          </div>
-        </div>
-        <div class="route-point__buttons">
-          <AddInRouteButton
-          :placeId="routePoint.id"
-          />
-          <ButtonHeart
-            :placeId="routePoint.id"
-          />
-        </div>
-      </div>
-      <PlacePreview
-        :routePoint="routePoint"
+    <div class="route-point__name" :class="{'route-point__name-mobile': !isDesktop}" @click="toggleSize">
+      <img :src="`${$baseUrl}/icons/arrow.png`" alt="star" class="route-point__arrow" :class="{'route-point__arrow-down': isFullSize}">
+      {{routePoint.name}}
+      <ButtonHeart
+        :placeId="routePoint.id"
+        v-if="!isDesktop"
       />
-      <div>
-        <div class="route-point__description">{{routePoint.description}}</div>
-        <div  v-if="!isDesktop" class="route-point__info">
-          <div class="route-point__time">{{routePoint.time}}</div>
-          <div class="route-point__time">{{routePoint.availability}}</div>
-          <div class="route-point__time">{{routePoint.difficulty}}</div>
-        </div>
+    </div>
+    <div v-if="isDesktop" class="route-point__info route-point__info-desktop">
+      <div class="tag">{{routePoint.region}}</div>
+      <div class="tag">{{routePoint.city}}</div>
+      <div class="tag">{{routePoint.tag}}</div>
+      <ButtonHeart
+        :placeId="routePoint.id"
+      />
+    </div>
+    <PlacePreview
+      :routePoint="routePoint"
+    />
+    <div class="route-point__container">
+      <div class="route-point__description">{{routePoint.description}}</div>
+      <div v-if="!isDesktop" class="route-point__info">
+        <div class="tag">{{routePoint.region}}</div>
+        <div class="tag">{{routePoint.city}}</div>
+        <div class="tag">{{routePoint.tag}}</div>
       </div>
+      <div class="route-point__buttons">
+        <AddInRouteButton
+        :placeId="routePoint.id"
+        />
+      </div>
+    </div>
   </div>
 </div>
 </template>
@@ -71,71 +73,60 @@ export default {
 <style scoped lang="scss">
 
 .route-point {
-  margin-top: 20px;
+  margin-top: 15px;
   padding: 20px;
   border-radius: 20px;
   background-color:aliceblue;
-  height: 50px;
+  height: 20px;
   display: grid;
   overflow: hidden;
-  grid-template-rows: 50px 1fr;
-  grid-auto-flow: column;
+  grid-template-rows: 20px 1fr;
+  grid-template-columns: 300px 1fr;
   gap: 20px;
   border: solid 1px rgba(0, 0, 0, 0.076);
-  transition: 500ms;
+  align-items: center;
+  justify-items: center;
+  cursor: default;
+  user-select: none;
   &:hover {
     background-color:rgb(228, 243, 255);
+  }
+  &-full-size {
+    height: 100%;
   }
 }
 
 .route-point-mobile {
   grid-template-columns: 1fr;
   grid-auto-flow: row;
-  justify-items: center;
-}
-
-.route-point__container {
-  font-weight: 400;
-  cursor: default;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 10px;
-}
-
-.route-point__container-desktop {
-  grid-column: 1 / span 2;
-  font-weight: 500;
 }
 
 .route-point__buttons {
-  display: grid;
-  grid-template-columns: 120px 50px;
-  align-items: center;
   justify-self: end;
-  gap: 10px;
+  align-self: end;
 }
-.route-point__preview {
-  display: grid;
-  grid-template-columns: 40px 1fr 1fr;
+.route-point__name {
+  display: flex;
   align-items: center;
+  width: 100%;
+  justify-self: start;
   gap: 10px;
 }
-.route-point__time {
-  cursor: default;
-}
 
-.route-point--full-size {
-  height: 100%;
-}
-
-.item__container-panel {
-  display: grid;
+.route-point__name-mobile {
+  justify-content: space-between;
 }
 
 .route-point__description {
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  height: 115px;
   overflow: hidden;
-  height: 180px;
+  text-overflow: ellipsis;
+  text-align: justify;
+  font-weight: 300;
+  text-indent: 20px;
 }
 
 .route-point__arrow {
@@ -154,5 +145,23 @@ export default {
 }
 .route-point__info {
   display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  &-desktop {
+    justify-self: end;
+  }
+}
+.route-point__container {
+  display: grid;
+  gap: 20px;
+  height: 100%;
+}
+.tag {
+  font-weight: 200;
+  font-size: 0.9em;
+  padding: 10px;
+  background-color:rgb(255, 255, 255);
+  border-radius: 20px;
+  border: solid rgb(240, 240, 240) 1px;
 }
 </style>

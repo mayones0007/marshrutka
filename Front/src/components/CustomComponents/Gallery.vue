@@ -71,11 +71,11 @@ export default {
     },
     switchGallaryPicture(i) {
       this.currentPicture = this.currentPicture + i
-      if (this.currentPicture >= this.images.length) {
+      if (this.currentPicture >= this.currentPictures.length) {
         this.currentPicture = 0
       }
       if (this.currentPicture < 0) {
-        this.currentPicture = this.images.length -1
+        this.currentPicture = this.currentPictures.length -1
       }
     },
     openGalleryPopup(i){

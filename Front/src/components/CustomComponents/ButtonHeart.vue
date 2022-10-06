@@ -1,16 +1,12 @@
 <template>
-  <img 
-    class="heart"
-    :class="{'heart-grey': isFavorite}"
-    :src="`${$baseUrl}/icons/heart.png`"
-    alt="heart"
-    @click="addInMyFavorites"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" class="heart" :class="{'heart-red': isFavorite}" viewBox="-1 -1 18 18" @click="addInMyFavorites">
+    <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+  </svg>
 </template>
 
 <script>
+
 export default {
-  name: 'ButtonHeart',
   props: ['placeId'],
   computed: {
     isFavorite(){
@@ -26,17 +22,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.heart {
-  width: 20px;
-  height: 20px;
-  border: solid red 1px;
-  border-radius: 50%;
-  padding: 8px;
-  cursor: pointer;
-  filter: grayscale(1);
-}
-
-.heart-grey{
-  filter: grayscale(0);
-}
+  .heart {
+    fill: white;
+    height: 25px;
+    width: 25px;
+    cursor: pointer;
+    align-self: center;
+    justify-self: center;
+    stroke: rgb(255, 85, 85);
+    stroke-width: 1px;
+    &-red {
+      fill: rgb(255, 85, 85);
+    }
+  }
 </style>

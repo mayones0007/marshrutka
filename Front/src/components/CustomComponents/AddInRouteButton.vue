@@ -1,7 +1,8 @@
 <template>
   <MyButton
-    :title="isAddedInRouteTextButton"
+    :title="buttonTitle"
     :isRed="isAddedInRoute"
+    :icon="'geo-alt.svg'"
     @click="addInMyRoute"
   />
 </template>
@@ -19,7 +20,7 @@ export default {
     isAddedInRoute(){
       return !!this.$store.state.myRoute.find(el => el.id === this.placeId)
     },
-    isAddedInRouteTextButton(){
+    buttonTitle(){
       if (this.isAddedInRoute){
         return "Убрать из маршрута"
       } else {

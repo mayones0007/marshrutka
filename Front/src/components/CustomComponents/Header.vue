@@ -20,15 +20,15 @@
         :userImg="`${$baseUrl}/avatars/`+ userInfo.avatar"
         :hideName="!isDesktop"
       />
-      <div class="user-menu__arrow" v-if="!isLogIn"></div>
-      <div class="user-menu__dropdown-content" v-if="!isLogIn">
+      <div class="user-menu__arrow" v-if="isLogIn"></div>
+      <div class="user-menu__dropdown-content" v-if="isLogIn">
         <router-link to="/myroute" class="dropdown-content__link">Мой маршрут</router-link>
         <router-link to="/myfavorites" class="dropdown-content__link">Избранное</router-link>
         <router-link to="/settings" class="dropdown-content__link">Настройки</router-link>
         <router-link to="/admin" class="dropdown-content__link" v-if="isAdmin">Редактировать</router-link>
         <div class="dropdown-content__link" @click="setLoginPopup">Выйти</div>
       </div>
-      <div class="login-panel__button-login" @click="setLoginPopup" v-if="isLogIn">Войти</div>
+      <div class="login-panel__button-login" @click="setLoginPopup" v-if="!isLogIn">Войти</div>
     </div>
   </div>
 </template>
@@ -51,11 +51,7 @@ export default {
       return this.$store.state.user
     },
     isLogIn(){
-      if (Object.keys(this.user).length){
-        return false
-      } else {
-        return true
-      }
+      return !!this.user.name
     },
     userInfo() {
       return {
@@ -64,11 +60,7 @@ export default {
       }
     },
     isAdmin(){
-      if(this.user.name === "Admin"){
-        return true
-      } else {
-        return false
-      }
+      return this.user.name === "Admin"
     },
     isDesktop(){
       return this.$store.state.isDesktop
@@ -81,16 +73,17 @@ export default {
   methods: {
     setLoginPopup(){
       if (this.isLogIn){
-        this.$store.commit('setLoginPopup')
-      } else {
         this.$store.dispatch('logOut')
-        // @TO-DO перенести в action
-        router.push({ name: "MyPlaces" })
+      } else {
+        this.$store.commit('setLoginPopup')
       }
     },
     setSelectedRegion () {
       this.$store.commit('setselectedRegion', this.selectedRegion)
-      router.push({ name: "MyPlaces" })
+      window.scroll(0, 530)
+      if (router.currentRoute.name !== 'MyPlaces') {
+        router.push({ name: "MyPlaces" })
+      }
       this.selectedRegion = ""
     },
   },

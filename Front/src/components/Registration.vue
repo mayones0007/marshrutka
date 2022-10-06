@@ -1,9 +1,7 @@
 <template>
   <div class="registration--window">
     <div class="form">
-    <Title
-      text="Регистрация"
-    />
+    <h2>Регистрация</h2>/>
     <div class="registration--window__form form">
       <input
         class="form__input"
@@ -77,11 +75,9 @@
 
 <script>
 import MyButton from './CustomComponents/MyButton.vue'
-import Title from './CustomComponents/Title.vue'
 export default {
   components: {
     MyButton,
-    Title,
   },
   data: () => ({
     name: '',
@@ -134,9 +130,9 @@ export default {
         this.eyeIconPassword = "show"
       }
     },
-    async registration(){
+    registration(){
       const inputs = {name:this.name, email:this.email, password:this.password}
-      await this.$store.dispatch('registration', inputs)
+      this.$store.dispatch('registration', inputs)
     }
   }
 }

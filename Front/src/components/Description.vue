@@ -17,7 +17,7 @@
           <div class="raiting">Ваша оценка:
             <img
               v-for='star in 5' :key="'star'+star"
-              :src="`${$baseUrl}/icons/star.png`"
+              :src="`${$baseUrl}/icons/star.svg`"
               alt="star"
               class="icon-star"
               :class="{'icon-star--hovered': star <= starHovered}"
@@ -80,10 +80,8 @@ export default {
     onStarHover(star) {
       this.starHovered = star;
     },
-    async saveRewiew(){
-      // @TO-DO перенести в actions
-      await this.$store.dispatch('newReview', {'text':this.inputValue, 'raiting':this.starHovered})
-      await this.$store.dispatch("getReviews", this.currentPlace.id)
+    saveRewiew(){
+      this.$store.dispatch('newReview', {'text':this.inputValue, 'raiting':this.starHovered})
       this.starHovered = this.inputValue = ''
     },
   },
@@ -131,6 +129,7 @@ export default {
   width: 100%;
   height: 100px;
   font-weight: 300;
+  font-size: 0.9em;
   font-family: 'Roboto', Arial, sans-serif;
   resize: vertical;
   };
@@ -147,6 +146,7 @@ export default {
 .raiting {
   display: flex;
   font-size: 0.9em;
+  font-weight: 300;
   align-items: center;
   padding: 10px 15px;
 }
