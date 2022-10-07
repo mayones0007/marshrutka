@@ -2,7 +2,7 @@
   <div class="header">
     <router-link to="/" class="logo">
       <img class="logo__icon" :src="`${$baseUrl}/icons/logo.svg`" alt="Маршрутка">
-      <div class="logo__name">Маршрутка</div>
+      <div class="logo__name">Marshrutka</div>
     </router-link>
     <div v-if="isStartPage || isDesktop" class="search-form" :class="{'search-form-mobile': !isDesktop}">
       <input class="search-form__input-text" type="text" list="region" placeholder="Куда вы собираетесь?" v-model="selectedRegion">
@@ -98,13 +98,20 @@ export default {
 .logo {
   @include flex-between-center-g15;
   text-decoration: none;
-  color: black;
-  height: 80px;
-  font-size: 1.3em;
+  color: #29333f;
+  height: 30px;
+  font-size: 1.6em;
+  font-weight: 400;
+  gap: 5px;
+  align-items: end;
 }
 
 .logo__icon {
-  height: 50px;
+  height: 40px;
+}
+
+.logo__name {
+  line-height: 25px;
 }
 
 .search-form {
@@ -145,7 +152,8 @@ export default {
 .user-menu {
   @include flex-between-center-g15;
   position: relative;
-  font-size: 1.2em;
+  font-size: 1.1em;
+  font-weight: 300;
   z-index: 2;
   height: 80px;
 }
@@ -157,6 +165,7 @@ export default {
   right: -10px;
   background-color: #f1f1f1;
   min-width: 160px;
+  -webkit-appearance: none;
   box-shadow: 0px 8px 8px 0px rgba(0,0,0,0.1);
   border-radius: 0 0 5px 5px;
 }
@@ -167,6 +176,7 @@ export default {
   color: transparent;
   transition-duration: 300ms;
   font-size: 0.9em;
+  font-weight: 300;
   text-align: end;
   padding: 0 15px;
 }

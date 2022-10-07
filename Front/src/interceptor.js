@@ -34,9 +34,9 @@ export const initInterceptor = (axiosInstance) => {
       return axiosInstance(config);
     }
     if (error.response.status === 403 && error.response.data) {
-      showToast(toastTypes.ERROR, error.response.data.message, 'bottom', 'left')
+      showToast(toastTypes.ERROR, error.response.data.message, 'bottom', 'right')
     }
-    showToast(toastTypes.ERROR, error.response.data.message, 'bottom', 'left')
+    showToast(toastTypes.ERROR, error.response.data.message, 'bottom', 'right')
   })
 }
 

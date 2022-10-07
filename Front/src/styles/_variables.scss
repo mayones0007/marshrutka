@@ -13,12 +13,12 @@
 };
 
 @mixin input {
-  -webkit-appearance: none;
-  border:none;
+  border: solid rgb(240, 240, 240) 1px;
   border-radius: 5px;
-  box-shadow: inset 0px 0px 5px rgba(193, 193, 193, 0.691);
   height: 35px;
   padding: 0 10px;
+  font-family: 'Roboto', Arial, sans-serif;
+  font-weight: 300;
   &:focus {
     outline: 0;
   }

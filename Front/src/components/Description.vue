@@ -94,11 +94,11 @@ export default {
 <style scoped lang="scss">
 
 .description-page {
-  padding: 2% 320px 2% 2%;
+  padding: 20px 360px 20px 40px;
 }
 
 .description-page-mobile {
-  padding: 2%;
+  padding: 3%;
 }
 
 .description-text {
@@ -118,6 +118,7 @@ export default {
 
 .input-rewiew-mobile {
   flex-direction: column;
+  gap: 10px;
 }
 
 .input-rewiew__input {
@@ -128,16 +129,13 @@ export default {
   padding: 15px;
   width: 100%;
   height: 100px;
-  font-weight: 300;
-  font-size: 0.9em;
-  font-family: 'Roboto', Arial, sans-serif;
   resize: vertical;
   };
 
 .icon-star {
   height: 23px;
   padding-left: 8px;
-  filter:grayscale(1);
+  filter: grayscale(1) brightness(1.7);
   &--hovered {
     filter:grayscale(0);
   }

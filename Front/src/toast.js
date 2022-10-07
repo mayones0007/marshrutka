@@ -12,13 +12,15 @@ export const showToast = (type, text, gravity, position) => {
     text: text,
     duration: 3000,
     newWindow: true,
-    close: true,
+    close: false,
     gravity, // `top` or `bottom`
     position, // `left`, `center` or `right`
     stopOnFocus: true, // Prevents dismissing of toast on hover
     style: {
       background: type,
-      'border-radius': '10px'
+      'border-radius': '5px',
+      'font-family': 'Roboto, Arial, sans- serif',
+      'font-weight': '300',
     },
     onClick: function () { } // Callback after click
   }).showToast();

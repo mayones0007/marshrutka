@@ -1,7 +1,7 @@
 <template>
   <div class="registration--window">
     <div class="form">
-    <h2>Регистрация</h2>/>
+    <h2>Регистрация</h2>
     <div class="registration--window__form form">
       <input
         class="form__input"

@@ -143,7 +143,7 @@ export default {
   width: 100%;
   color: white;
   font-weight: 400;
-  font-size: 3em;
+  font-size: min(max(30px, 4vw));
   line-height: 0;
   text-align: center;
 }
@@ -156,18 +156,19 @@ export default {
 .gallery-window {
   position: fixed;
   display:flex;
-  width: 70%;
-  height: 80%;
-  top: 10%;
-  left: 15%;
+  width: 80%;
+  min-height: 80vh;
+  max-height: 80vh;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   outline: none;
 }
 
 .gallery-window-mobile {
   width: 100%;
-  height: 40%;
-  top: 30%;
-  left: 0;
+  min-height: 40vh;
+  max-height: 100vh;
 }
 
 .gallery-window__slider {

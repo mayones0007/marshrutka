@@ -69,7 +69,7 @@ export default {
   filter: invert(0.9);
   border-radius: 5px;
   &:hover {
-    background-color: #191919;
+    background-color: #040404;
   }
 }
 </style>

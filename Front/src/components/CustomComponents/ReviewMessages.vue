@@ -80,7 +80,7 @@ export default {
   font-weight: 100;
   padding: 15px;
   background-color:aliceblue;
-  border-radius: 20px 20px 20px 0;
+  border-radius: 5px;
   border: solid rgb(240, 240, 240) 1px;
 }
 
@@ -89,8 +89,8 @@ export default {
   grid-column: 2;
   white-space: pre-line;
   text-align: start;
-  padding: 20px;
-  border-radius: 15px 15px 15px 0;
+  padding: 10px;
+  border-radius: 5px;
   border: solid rgb(240, 240, 240) 1px;
   background-color: rgb(255, 255, 255);
   height: 100%;

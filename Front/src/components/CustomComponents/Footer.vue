@@ -1,11 +1,11 @@
 <template>
   <div class="footer">
     <div class="footer__contacts-typical" :class="{'footer__contacts-typical-mobile': !isDesktop}">
-      <a href="tel:+79014534841" class="contacts-typical__item">
-        <img :src="`${$baseUrl}/icons/russia-flag.png`" alt="tel"> +79014534841
-      </a>
       <a href="mailto:macs0007@mail.ru" class="contacts-typical__item">
-        <img :src="`${$baseUrl}/icons/mail.png`" alt="mail"> macs0007@mail.ru
+        <img :src="`${$baseUrl}/icons/mail.svg`" alt="mail"> macs0007@mail.ru
+      </a>
+      <a href="tel:+79014534841" class="contacts-typical__item">
+        <img :src="`${$baseUrl}/icons/phone.svg`" alt="phone"> +79014534841
       </a>
     </div>
     <div class="footer__contacts-social">
@@ -38,6 +38,8 @@ export default {
   @include panel(to top);
   position: relative;
   z-index: 1;
+  font-weight: 300;
+  font-size: 0.9em;
 }
 
 .footer__logo-name{
@@ -48,6 +50,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  line-height: 20px;
 }
 
 .footer__logo-name-mobile{
@@ -60,9 +63,10 @@ export default {
 .footer__contacts-typical {
   display: flex;
   flex-direction: column;
+  gap: 5px;
   justify-content: center;
+  align-items: flex-start;
   height: 80px;
-  margin: 0 10px;
 }
 
 .footer__contacts-typical-mobile {
@@ -75,6 +79,8 @@ export default {
 
 .contacts-typical__item {
   @include link-reset;
+  display: flex;
+  gap: 5px;
 }
 
 .contacts-typical__item:hover {

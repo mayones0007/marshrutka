@@ -85,23 +85,27 @@ export default {
   position: fixed;
   box-sizing: border-box;
   justify-items: start;
-  right: 0;
-  top: 12.5%;
+  right: 40px;
+  top: 100px;
   grid-template-columns: 1fr 1.5fr;
   gap: 20px;
   padding: 30px;
-  background-color: rgb(241, 241, 241);
-  border-radius: 20px 0 0 20px;
+  background: linear-gradient(45deg, rgb(235, 246, 255), rgb(207, 233, 255));
+  border: solid rgb(240, 240, 240) 1px;
+  border-radius: 5px 0 0 5px;
   width: 300px;
   font-weight: 300;
 }
 
 .save-panel__info-mobile {
   position: relative;
-  border-radius: 0 0 20px 20px;
+  border-radius: 0 0 5px 5px;
   grid-template-columns: 1fr 1fr;
+  background: rgb(235, 246, 255);
+  border: none;
   padding: 15px 30px;
   gap: 15px;
+  right: 0;
   top: 0px;
   width: 100%;
 }
@@ -121,7 +125,8 @@ export default {
   padding: 20px;
   left: 0;
   bottom: 0;
-  background-color: rgb(250, 250, 250);
+  background: linear-gradient(to bottom, rgb(255, 255, 255), rgb(242, 242, 242));
+  border: solid rgb(240, 240, 240) 1px;
   z-index: 1;
 }
 

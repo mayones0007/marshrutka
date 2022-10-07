@@ -23,6 +23,7 @@ export default {
   box-shadow: inset 0px 0px 5px rgba(193, 193, 193, 0.691);
   cursor: pointer;
   font-family: 'Roboto', Arial, sans-serif;
+  font-size: 0.9em;
   &:hover {
     filter: grayscale(0.2);
   }
