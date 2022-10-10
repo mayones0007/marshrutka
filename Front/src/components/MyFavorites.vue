@@ -18,7 +18,7 @@ export default {
   },
   computed: {
     myFavorites () {
-      return this.$store.state.myFavorites
+      return this.$store.state.userModule.myFavorites
     },
     titleText () {
       if (this.myFavorites.length) {
@@ -28,7 +28,7 @@ export default {
       }
     },
     isDesktop(){
-      return this.$store.state.isDesktop
+      return this.$store.state.appModule.isDesktop
     },
   },
 }

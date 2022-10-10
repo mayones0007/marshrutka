@@ -1,6 +1,6 @@
 <template>
   <router-link
-    :to="{name: 'Description', params: {eng: routePoint.eng}}" 
+    :to="{name: 'description', params: {eng: routePoint.eng}}" 
     class="gallery__item"
   >
     <div class="gallery__item-container">
@@ -50,7 +50,7 @@
     overflow: hidden;
     width: 300px;
     height: 200px;
-    border-radius: 10px;
+    border-radius: 5px;
     cursor: pointer;
     border: solid 1px rgba(0, 0, 0, 0.076);
   }

@@ -36,16 +36,16 @@ export default {
   },
   computed: {
     currentPlace() {
-      return this.$store.state.place
+      return this.$store.state.placesModule.place
     },
     currentReviews() {
-      return this.$store.state.reviews
+      return this.$store.state.placesModule.reviews
     },
     isAdmin() {
-      return this.$store.state.user.name === "Admin"
+      return this.$store.state.userModule.user.name === "Admin"
     },
     isDesktop(){
-      return this.$store.state.isDesktop
+      return this.$store.state.appModule.isDesktop
     },
     titleText () {
       if (this.currentReviews.length === 0) {
@@ -95,7 +95,7 @@ export default {
   background-color: rgb(255, 255, 255);
   height: 100%;
   box-sizing: border-box;
-  justify-items: stretch;
+  user-select: text;
 }
 .rewiew-text-horizontal {
   grid-column: 1 / span 2;

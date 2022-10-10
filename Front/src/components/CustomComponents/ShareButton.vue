@@ -21,7 +21,7 @@ export default {
   },
   computed: {
     isDesktop(){
-      return this.$store.state.isDesktop
+      return this.$store.state.appModule.isDesktop
     }
   },
   methods: {
@@ -50,12 +50,11 @@ export default {
 .share-button__links {
   position: absolute;
   display: grid;
-  bottom: -230px;
+  bottom: -250px;
   right: 50%;
   transform: translate(50%,0);
   background-color: #f1f1f1;
   border-radius: 5px;
-  box-shadow: 0px 0px 8px 2px rgba(0,0,0,0.1);
 }
 
 .share-button__links-mobile {

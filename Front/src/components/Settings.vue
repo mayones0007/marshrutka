@@ -42,6 +42,7 @@ export default {
     password: '',
   }),
   methods: {
+    // @TO-DO remove user.name, you have user.id at backend
     replaceUserAvatar(){
       this.$store.dispatch('replaceUserAvatar', {name: this.user.name, image: this.$refs.file.files[0]})
     },
@@ -54,7 +55,7 @@ export default {
   },
   computed: {
     user() {
-      return this.$store.state.user
+      return this.$store.state.userModule.user
     },
   }
 }

@@ -1,11 +1,11 @@
 <template>
-  <div class="footer">
+  <div class="footer" :class="{'footer-mobile': !isDesktop}">
     <div class="footer__contacts-typical" :class="{'footer__contacts-typical-mobile': !isDesktop}">
-      <a href="mailto:macs0007@mail.ru" class="contacts-typical__item">
-        <img :src="`${$baseUrl}/icons/mail.svg`" alt="mail"> macs0007@mail.ru
+      <a :href="`mailto:${email}`" class="contacts-typical__item">
+        <img :src="`${$baseUrl}/icons/mail.svg`" alt="mail"> {{ email }}
       </a>
-      <a href="tel:+79014534841" class="contacts-typical__item">
-        <img :src="`${$baseUrl}/icons/phone.svg`" alt="phone"> +79014534841
+      <a :href='`tel:${tel}`' class="contacts-typical__item">
+        <img :src="`${$baseUrl}/icons/phone.svg`" alt="phone"> {{tel}}
       </a>
     </div>
     <div class="footer__contacts-social">
@@ -13,21 +13,25 @@
         <img :src="social.icon" :alt="social.alt" class="contacts-social__item">
       </a>
     </div>
-    <router-link to="/" class="footer__logo-name" :class="{'footer__logo-name-mobile': !isDesktop}">© 2022, Marshrutka Limited Sochifornia</router-link>
+    <router-link :to="{name: $options.routeNames.places}" class="footer__logo-name" :class="{'footer__logo-name-mobile': !isDesktop}">© 2022, Marshrutka Limited Sochifornia</router-link>
   </div>
 </template>
 
 <script>
 import { socials } from '../../data/socials.data'
+import { routeNames } from '../../router'
 export default {
+  routeNames,
   data() {
     return {
         socials: socials,
+        tel: '+79014534841',
+        email: 'macs0007@mail.ru',
     };
   },
   computed: {
     isDesktop(){
-      return this.$store.state.isDesktop
+      return this.$store.state.appModule.isDesktop
     }
   }
 }
@@ -40,6 +44,9 @@ export default {
   z-index: 1;
   font-weight: 300;
   font-size: 0.9em;
+    &-mobile {
+      flex-direction: column;
+    }
 }
 
 .footer__logo-name{
@@ -50,7 +57,7 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  line-height: 20px;
+  line-height: 25px;
 }
 
 .footer__logo-name-mobile{

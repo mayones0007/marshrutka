@@ -10,7 +10,7 @@ export default {
   props: ['placeId'],
   computed: {
     isFavorite(){
-      return !!this.$store.state.myFavorites.find(el => el.id === this.placeId)
+      return !!this.$store.state.userModule.myFavorites.find(el => el.id === this.placeId)
     },
   },
   methods: {

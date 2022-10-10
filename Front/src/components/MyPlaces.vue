@@ -1,16 +1,19 @@
 <template>
   <div>
-    <div class="welcome-image__text">Создай свой маршрут</div>
+    <div class="welcome">
+      <img class="welcome__image" :src="`${$baseUrl}/img/chelovek-gora.jpeg`" alt="Маршрутка">
+      <div class="welcome__text">{{ welcomeText }}</div>
+    </div>
     <div class="places-container">
       <div class="menu__filters">
-        <div>Регион: {{ selectedRegion }}</div>
         <div>Категория:
           <select class="places-filter" name="filter" v-model="Pfilter">
-            <option value="Все" selected>Все</option>
-            <option value="Водопады">Водопады</option>
-            <option value="Озера">Озера</option>
-            <option value="Горы">Горы</option>
-            <option value="Заброшки">Заброшки</option>
+            <option v-for="type in placesTypes" :key="type" >{{type}}</option>
+          </select>
+        </div>
+        <div>Уровень сложности:
+          <select class="places-filter">
+            <option v-for="level in placesLevels" :key="level" >{{level}}</option>
           </select>
         </div>
       </div>
@@ -34,16 +37,17 @@ export default {
   },
   data() {
     return {
-      Pfilter: "Все",
+      Pfilter: '',
     };
   },
   computed: {
+    // @TO-DO !!!! 
     filteredPlaces() {
-      if (this.selectedRegion === "Все" && this.Pfilter === "Все") {
+      if (!this.selectedRegion && !this.Pfilter) {
         return this.places;
-      } else if (this.selectedRegion === "Все") {
+      } else if (!this.selectedRegion) {
         return this.places.filter((item) => item.tag === this.Pfilter)
-      } else if (this.Pfilter === "Все") {
+      } else if (!this.Pfilter) {
         return this.places.filter((item) => item.region === this.selectedRegion)
       }
       return this.places.filter(
@@ -51,11 +55,24 @@ export default {
       )
     },
     selectedRegion() {
-      return this.$store.state.selectedRegion
+      return this.$store.state.placesModule.selectedRegion
     },
     places() {
-      return this.$store.state.places
+      return this.$store.state.placesModule.places
     },
+    placesTypes() {
+      return new Set(this.places.map((place) => place.tag))
+    },
+    placesLevels() {
+      return new Set(this.places.map((place) => place.difficulty))
+    },
+    welcomeText() {
+      if (this.selectedRegion) {
+        return this.selectedRegion
+      } else {
+        return "Построй свой маршрут"
+      }
+    }
   },
   created() {
     this.$store.dispatch("getPlaces")
@@ -72,18 +89,28 @@ export default {
   gap: 15px;
   padding: 20px 0;
 }
+.welcome {
+  position:relative;
+  height: 450px;
+}
 
-.welcome-image__text {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.welcome__image {
+  width: 100%;
+  height: 100%;
+  object-fit: none;
+  object-position: center -300px;
+}
+
+.welcome__text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   text-align: center;
+  width: 90%;
   font-size: min(max(50px, 6vw), 70px);
   color: white;
-  height: 450px;
   font-weight: 900;
-  user-select: none;
-  background: url("https://marshrutka.su/api/img/chelovek-gora.jpeg") center -280px;
 }
 
 .menu__filters {

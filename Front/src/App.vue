@@ -2,7 +2,7 @@
   <div>
     <Header/>
     <router-view></router-view>
-    <LoginPopup v-if="this.$store.state.showLoginPopup"/>
+    <LoginPopup v-if="this.$store.state.appModule.showLoginPopup"/>
     <Footer/>
   </div>
 </template>
@@ -20,6 +20,14 @@ export default {
     Footer,
     LoginPopup
   },
+  data: () => ({
+    timeout: null
+  }),
+  computed: {
+    getUser() {
+      return this.$store.state.userModule.user
+    }
+  },
   mounted(){
     if(localStorage.getItem('userData')){
       this.$store.dispatch('getUser')
@@ -27,7 +35,12 @@ export default {
       this.$store.dispatch('logOut')
     }
     this.$store.commit('setIsDesktop', isDesktop())
-    window.addEventListener('resize', () => {this.$store.commit('setIsDesktop', isDesktop())})
+    window.addEventListener('resize', () => {
+      if (this.timeout) {
+        clearTimeout(this.timeout)
+      }
+      this.timeout = setTimeout(() => this.$store.commit('setIsDesktop', isDesktop()), 100);
+    })    
   },
 }
 </script>

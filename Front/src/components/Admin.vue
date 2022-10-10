@@ -62,10 +62,10 @@ export default {
   }),
   computed: {
     places() {
-      return this.$store.state.places
+      return this.$store.state.placesModule.places
     },
     currentPictures() {
-      return this.$store.state.pictures
+      return this.$store.state.placesModule.pictures
     },
   },
   methods: {
@@ -94,7 +94,7 @@ export default {
   },
   created() {
     this.$store.dispatch("getPlaces")
-    this.$store.state.pictures = []
+    this.$store.commit('setPictures', [])
   }
 }
 

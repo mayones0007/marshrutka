@@ -59,7 +59,7 @@ export default {
   },
   computed: {
     isDesktop(){
-      return this.$store.state.isDesktop
+      return this.$store.state.appModule.isDesktop
     },
   },
   methods: {
@@ -87,7 +87,6 @@ export default {
   align-items: center;
   justify-items: center;
   cursor: default;
-  user-select: none;
   &:hover {
     background-color:rgb(228, 243, 255);
   }
@@ -121,7 +120,6 @@ export default {
   display: -webkit-box;
   -webkit-line-clamp: 6;
   -webkit-box-orient: vertical;
-  height: 115px;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: justify;

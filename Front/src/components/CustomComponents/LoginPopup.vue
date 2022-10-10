@@ -4,10 +4,10 @@
       <h2>Вход</h2>
       <div class="button-close" @click="setLoginPopup"/>
       <div class="form">
-        <input class="form__input-text" ref="name" type="text" placeholder="Логин" tabindex="-1">
-        <input class="form__input-text" ref="password" type="password" placeholder="Пароль">
+        <input class="form__input-text" ref="name" v-model="name" type="text" placeholder="Логин" tabindex="-1">
+        <input class="form__input-text" v-model="password" type="password" placeholder="Пароль">
         <MyButton @click="login" title="Войти"/>
-        <div>Впервые у нас? <router-link to="/registration" @click="setLoginPopup">Зарегистрируйтесь</router-link></div>
+        <div>Впервые у нас? <router-link :to="{name: $options.routeNames.registration}" @click="setLoginPopup">Зарегистрируйтесь</router-link></div>
       </div>
     </div>
   </div>
@@ -15,14 +15,20 @@
 
 <script>
 import MyButton from './MyButton.vue'
+import { routeNames } from '../../router'
 export default {
+  routeNames,
   name: 'LoginPopup',
   components: {
     MyButton,
   },
+  data: () => ({
+    name: '',
+    password: ''
+  }),
   computed: {
     isDesktop(){
-      return this.$store.state.isDesktop
+      return this.$store.state.appModule.isDesktop
     },
   },
   methods: {
@@ -30,8 +36,7 @@ export default {
       this.$store.commit('setLoginPopup')
     },
     login(){
-      const inputs = {name:this.$refs.name.value, password:this.$refs.password.value}
-      this.$store.dispatch('login', inputs)
+      this.$store.dispatch('login', {name:this.name, password:this.password})
     },
   },
   mounted() {

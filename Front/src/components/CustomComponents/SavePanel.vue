@@ -49,10 +49,10 @@ export default {
   },
   computed: {
     currentPlace() {
-      return this.$store.state.place
+      return this.$store.state.placesModule.place
     },
     currentDifficulty() {
-      switch (this.$store.state.place.difficulty) {
+      switch (this.$store.state.placesModule.place.difficulty) {
         case '1':
           return ( 'Легкая' )
         case '2':
@@ -64,15 +64,16 @@ export default {
       }
     },
     currentTime() {
-      if (this.$store.state.place.time < 1) {
-        return numWord(60 * this.$store.state.place.time, ['минута', 'минуты', 'минут'])
-      } else if (this.$store.state.place.time >= 24) {
-        return numWord(this.$store.state.place.time / 24, ['день', 'дня', 'дней'])
+      const time = this.currentPlace.time
+      if (time < 1) {
+        return numWord(60 * time, ['минута', 'минуты', 'минут'])
+      } else if (time >= 24) {
+        return numWord(time / 24, ['день', 'дня', 'дней'])
       }
-      return numWord(this.$store.state.place.time, ['час', 'часа', 'часов'])
+      return numWord(time, ['час', 'часа', 'часов'])
     },
     isDesktop(){
-      return this.$store.state.isDesktop
+      return this.$store.state.appModule.isDesktop
     }
   },
 }
@@ -89,11 +90,11 @@ export default {
   top: 100px;
   grid-template-columns: 1fr 1.5fr;
   gap: 20px;
-  padding: 30px;
+  padding: 20px;
   background: linear-gradient(45deg, rgb(235, 246, 255), rgb(207, 233, 255));
   border: solid rgb(240, 240, 240) 1px;
-  border-radius: 5px 0 0 5px;
-  width: 300px;
+  border-radius: 5px;
+  width: 320px;
   font-weight: 300;
 }
 
@@ -103,7 +104,7 @@ export default {
   grid-template-columns: 1fr 1fr;
   background: rgb(235, 246, 255);
   border: none;
-  padding: 15px 30px;
+  padding: 15px;
   gap: 15px;
   right: 0;
   top: 0px;

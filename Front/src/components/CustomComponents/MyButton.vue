@@ -2,7 +2,11 @@
   <button
     class="button"
     :class="{'button-disabled': isDisabled, 'button-no-left-radius': noLeftRadius,'button-red': isRed}"
-    :disabled="isDisabled"><div class="button__content" :class="{'button__content-vertical': vertical}"><img v-if="icon" :src="`${$baseUrl}/icons/${icon}`" alt="icon">{{ title }}</div>
+    :disabled="isDisabled">
+    <div class="button__content" :class="{'button__content-vertical': vertical}">
+      <img v-if="icon" :src="`${$baseUrl}/icons/${icon}`" alt="icon">
+      {{ title }}
+    </div>
   </button>
 </template>
 
@@ -20,7 +24,6 @@ export default {
   color: white;
   border: 0px;
   border-radius: 5px;
-  box-shadow: inset 0px 0px 5px rgba(193, 193, 193, 0.691);
   cursor: pointer;
   font-family: 'Roboto', Arial, sans-serif;
   font-size: 0.9em;
@@ -29,11 +32,11 @@ export default {
   }
 
   &-disabled {
-    background-color: rgb(147, 147, 147);
+    background-color: rgb(172, 172, 172);
     cursor: default;
   }
   &-red {
-    background-color: rgb(255, 117, 117);
+    background-color: rgb(255, 108, 108);
   }
 
   &-no-left-radius {

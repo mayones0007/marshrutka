@@ -49,16 +49,16 @@ data(){
   },
 computed: {
   user() {
-    return this.$store.state.user
+    return this.$store.state.userModule.user
   },
   myRoute(){
-    return this.$store.state.myRoute;
+    return this.$store.state.userModule.myRoute;
   },
   isDesktop(){
-      return this.$store.state.isDesktop
+      return this.$store.state.appModule.isDesktop
   },
   routeCoords() {
-    return this.$store.state.myRoute.map(item => item.coords)
+    return this.$store.state.userModule.myRoute.map(item => item.coords)
     },
 },
   methods: {
@@ -67,7 +67,7 @@ computed: {
   },
       async routeCreate() {
       try {
-        await axiosInstance.get(`optimalroute?id=${this.$store.state.user.id}`)
+        await axiosInstance.get(`optimalroute?id=${this.$store.state.userModule.user.id}`)
       } catch (e) {
         console.log("Ошибка HTTP: " + e.response.data.message)
       }
@@ -127,7 +127,6 @@ computed: {
 
     mapInitialized(e){
       myMap = e;
-      console.log(myMap)
     },
   },
 }

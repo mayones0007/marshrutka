@@ -18,7 +18,7 @@ export default {
   },
   computed: {
     isAddedInRoute(){
-      return !!this.$store.state.myRoute.find(el => el.id === this.placeId)
+      return !!this.$store.state.userModule.myRoute.find(el => el.id === this.placeId)
     },
     buttonTitle(){
       if (this.isAddedInRoute){

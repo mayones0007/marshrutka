@@ -18,13 +18,13 @@
     </div>
     <div class="background"  @click.self="closeGalleryPopup" v-if="showGallery">
       <div
+        ref="gallary"
+        tabindex="-1"
         class="gallery-window"
         :class="{'gallery-window-mobile': !isDesktop}"
-        tabindex="-1"
         @keyup.right.stop="switchGallaryPicture(1)"
         @keyup.left.stop="switchGallaryPicture(-1)"
         @keyup.esc.stop="closeGalleryPopup"
-        ref="gallary"
       >
         <div class="gallery-window__button-close" @click="closeGalleryPopup"/>
         <div class="gallery-window__slider slider-left" @click="switchGallaryPicture(-1)">
@@ -50,10 +50,10 @@ export default {
   },
   computed: {
     showGallery() {
-      return this.$store.state.showGalleryPopup
+      return this.$store.state.appModule.showGalleryPopup
     },
     currentPictures() {
-      return this.$store.state.pictures
+      return this.$store.state.placesModule.pictures
     },
     imageSrc(){
       return `/img/${this.currentPictures[this.currentPicture]}`
@@ -62,7 +62,7 @@ export default {
       return `+${this.currentPictures.length - 4}`
     },
     isDesktop(){
-      return this.$store.state.isDesktop
+      return this.$store.state.appModule.isDesktop
     }
   },
   methods: {
@@ -222,7 +222,6 @@ export default {
 .gallery-window__image {
   object-fit: cover;
   width: 100%;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 }
 
 .gallery-window__button-close{
