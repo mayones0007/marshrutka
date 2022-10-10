@@ -5,7 +5,7 @@
       <div class="logo__name">Marshrutka</div>
     </router-link>
     <Search
-      v-if="isStartPage"
+      v-if="isDesktop || isStartPage"
       :class="{'search-form-mobile': !isDesktop}"
     />
     <div :class="{'user-menu': isDesktop, 'user-menu-mobile': !isDesktop}" @click="toggleMenuSize" @click.self="toggleMenuSize">
