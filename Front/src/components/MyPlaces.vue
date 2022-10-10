@@ -11,11 +11,11 @@
             <option v-for="type in placesTypes" :key="type" >{{type}}</option>
           </select>
         </div>
-        <div>Уровень сложности:
+        <!-- <div>Уровень сложности:
           <select class="places-filter">
             <option v-for="level in placesLevels" :key="level" >{{level}}</option>
           </select>
-        </div>
+        </div> -->
       </div>
       <div class="gallery">
         <PlacePreview
