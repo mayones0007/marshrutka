@@ -23,9 +23,9 @@
     <input class="form__input" type="text" placeholder="город" v-model="place.city">
     <input class="form__input" type="text" list="difficulty" placeholder="сложность" v-model="place.difficulty">
     <datalist id="difficulty">
-      <option value=1>Легкий</option>
-      <option value="2">Средний</option>
-      <option value="3">Сложный</option>
+      <option>Легкий</option>
+      <option>Средний</option>
+      <option>Сложный</option>
     </datalist>
     <input class="form__input" type="text" placeholder="доступность" v-model="place.availability">
     <input class="form__input" type="text" placeholder="время" v-model="place.time">

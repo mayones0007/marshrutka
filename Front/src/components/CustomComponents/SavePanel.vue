@@ -52,16 +52,7 @@ export default {
       return this.$store.state.placesModule.place
     },
     currentDifficulty() {
-      switch (this.$store.state.placesModule.place.difficulty) {
-        case '1':
-          return ( 'Легкая' )
-        case '2':
-          return ( 'Средняя' )
-        case '3':
-          return ( 'Сложная' )
-        default:
-          return ( 'Не определена' )
-      }
+      return this.$store.state.placesModule.place.difficulty
     },
     currentTime() {
       const time = this.currentPlace.time

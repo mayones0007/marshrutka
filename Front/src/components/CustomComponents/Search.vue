@@ -1,10 +1,10 @@
 <template>
   <div class="search" @click="toggleSearchList">
-    <input class="search__input" :class="{'search__input-active': listFullSize}" type="text" list="region" placeholder="Куда вы собираетесь?" v-model="selectedRegion">
+    <input class="search__input" :class="{'search__input-active': listFullSize}" type="text" placeholder="Куда вы собираетесь?" v-model="selectedRegion">
     <div v-if="listFullSize" class="search__list">
       <div v-for="(region, index) in regions" :key="region" class="search__list-item" @click="setSelectedRegion(index)">
         <div>{{index}}</div>
-        <div class="item__count">{{placesAmountText(region)}}</div>
+        <div class="item__amount">{{placesAmountText(region)}}</div>
       </div>
     </div>
     <MyButton 
@@ -37,7 +37,7 @@ export default {
 
   methods: {
     setSelectedRegion (region) {
-      this.$store.commit('setselectedRegion', region)
+      this.$store.commit('setSelectedRegion', region)
       if (router.currentRoute.name !== 'MyPlaces') {
         router.push({ name: routeNames.places })
       }
@@ -94,7 +94,7 @@ export default {
     background-color: rgb(240, 240, 240);
   }
 }
-.item__count {
+.item__amount {
   font-size: 14px;
   color: rgb(134, 134, 134);
 }

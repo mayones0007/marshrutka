@@ -76,7 +76,7 @@ export default {
       }
     },
     setSelectedRegion () {
-      this.$store.commit('setselectedRegion', this.selectedRegion)
+      this.$store.commit('setSelectedRegion', this.selectedRegion)
       window.scroll(0, 530)
       if (router.currentRoute.name !== 'MyPlaces') {
         router.push({ name: routeNames.places })
@@ -175,7 +175,6 @@ export default {
 }
 
 .user-menu__dropdown-content {
-  line-height: 0%;
   position: absolute;
   top: 80px;
   right: -10px;
@@ -192,6 +191,7 @@ export default {
   color: transparent;
   transition-duration: 300ms;
   font-size: 0.9em;
+  line-height: 0%;
   font-weight: 300;
   text-align: end;
   padding: 0 15px;
