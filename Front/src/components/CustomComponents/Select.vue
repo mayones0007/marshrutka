@@ -58,7 +58,9 @@ export default {
 
 <style lang="scss" scoped>
 .select {
-  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .select__input {
@@ -113,9 +115,6 @@ export default {
   transform: rotate(0deg);
 }
 .select__reset-button {
-  position: absolute;
-  top: 10px;
-  right: -25px;
   width: 22px;
   height: 22px;
   cursor: pointer;
