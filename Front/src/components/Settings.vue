@@ -7,21 +7,22 @@
       :userImg="`${$baseUrl}/avatars/`+ user.avatar"
       :vertical="true"
       :big="true"
+      :hideName="true"
     />
     <input class="form__input-file" type="file" id="file" ref="file" accept="image/jpeg" @change="replaceUserAvatar()">
     <label class="form__button" for="file">Изменить аватар</label>
-    <input class="form__input-text" v-model="oldEmail" type="email" placeholder="Старый e-mail">
-    <input class="form__input-text" v-model="email" type="email" placeholder="Новый e-mail">
+    <input class="form__input-text" v-model="email" type="email" placeholder="Старый e-mail">
+    <input class="form__input-text" v-model="newEmail" type="email" placeholder="Новый e-mail">
     <MyButton 
       title="Изменить E-mail"
-      :isDisabled="!(oldEmail && email)"
+      :isDisabled="!(newEmail && email)"
       @click="replaceUserEmail"
     />
-    <input class="form__input-text" v-model="oldPassword" type="password" placeholder="Старый пароль">
-    <input class="form__input-text" v-model="password" type="password" placeholder="Новый пароль">
+    <input class="form__input-text" v-model="password" type="password" placeholder="Старый пароль">
+    <input class="form__input-text" v-model="newPassword" type="password" placeholder="Новый пароль">
     <MyButton 
       title="Изменить пароль"
-      :isDisabled="!(oldPassword && password)"
+      :isDisabled="!(newPassword && password)"
       @click="replaceUserPassword"
     />
   </div>
@@ -36,21 +37,22 @@ export default {
     Avatar,
   },
   data: () => ({
-    oldEmail: '',
     email: '',
-    oldPassword: '',
+    newEmail: '',
     password: '',
+    newPassword: '',
+    isLoading: false,
   }),
   methods: {
-    // @TO-DO remove user.name, you have user.id at backend
-    replaceUserAvatar(){
-      this.$store.dispatch('replaceUserAvatar', {name: this.user.name, image: this.$refs.file.files[0]})
+    async replaceUserAvatar(){
+      await this.$store.dispatch('replaceUserAvatar', this.$refs.file.files[0])
+      await this.$store.dispatch('getUser')
     },
     replaceUserEmail(){
-      this.$store.dispatch('replaceUserEmail', {name: this.user.name, oldEmail: this.oldEmail, email: this.email})
+      this.$store.dispatch('replaceUserEmail', {newEmail: this.newEmail, email: this.email})
     },
     replaceUserPassword(){
-      this.$store.dispatch('replaceUserPassword', {name: this.user.name, oldPassword: this.oldPassword, password: this.password})
+      this.$store.dispatch('replaceUserPassword', {newPassword: this.newPassword, password: this.password})
     },
   },
   computed: {

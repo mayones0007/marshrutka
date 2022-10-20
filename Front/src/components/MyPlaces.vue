@@ -1,28 +1,37 @@
 <template>
   <div>
-    <div class="welcome">
-      <img class="welcome__image" :src="`${$baseUrl}/img/chelovek-gora.jpeg`" alt="Маршрутка">
-      <div class="welcome__text">{{ welcomeText }}</div>
+    <div class="welcome" :class="{'welcome-mobile': !isDesktop}">
+      <img class="welcome__picture" :src="`${$baseUrl}/img/${welcomeImage.image}`" alt="Маршрутка">
+      <div class="welcome__text">{{ welcomeImage.text }}</div>
     </div>
-    <div class="places-container">
-      <div class="menu__filters">
-        <Select
-          :name="'Категория'"
-          :fieldName="'tag'"
-        />
-        <Select
-          :name="'Сложность'"
-          :fieldName="'difficulty'"
-        />
-      </div>
-      <div class="gallery">
-        <PlacePreview
-          v-for="place in filteredPlaces"
-          :key="`place + ${place.id}`"
-          :routePoint="place"
-          :ShowText="true"
-        />
-      </div>
+    <MyButton
+      v-if="!isDesktop"
+      title="Фильтры"
+      :icon="'filter.svg'"
+      class="places__filters-button"
+      @click="toggleFiltersSize"
+    />
+    <div v-if="isFullSizeFilters | isDesktop" class="places__filters" :class="{'places__filters-mobile': !isDesktop}">
+      <Select
+        :name="'Категория'"
+        :fieldName="'category'"
+      />
+      <Select
+        :name="'Сложность'"
+        :fieldName="'difficulty'"
+      />
+      <Select
+        :name="'На чем'"
+        :fieldName="'way'"
+      />
+    </div>
+    <div class="places__gallery">
+      <PlacePreview
+        v-for="place in filteredPlaces"
+        :key="`place + ${place.id}`"
+        :routePoint="place"
+        :ShowText="true"
+      />
     </div>
   </div>
 </template>
@@ -30,10 +39,17 @@
 <script>
 import PlacePreview from './CustomComponents/PlacePreview.vue'
 import Select from './CustomComponents/Select.vue'
+import MyButton from './CustomComponents/MyButton.vue'
 export default {
   components: {
     PlacePreview,
     Select,
+    MyButton,
+  },
+  data(){
+    return {
+      isFullSizeFilters: false,
+    }
   },
   computed: {
     selectedRegion() {
@@ -42,13 +58,21 @@ export default {
     filteredPlaces() {
       return this.$store.state.placesModule.filteredPlaces
     },
-    welcomeText() {
+    welcomeImage() {
       if (this.selectedRegion) {
-        return this.selectedRegion
+        return {image: this.filteredPlaces[0].picture, text: this.selectedRegion}
       } else {
-        return "Построй свой маршрут"
+        return {image: "chelovek-gora.jpeg", text: "Построй свой маршрут"}
       }
-    }
+    },
+    isDesktop(){
+      return this.$store.state.appModule.isDesktop
+    },
+  },
+  methods: {
+    toggleFiltersSize() {
+      this.isFullSizeFilters = !this.isFullSizeFilters;
+    },
   },
   created() {
     this.$store.dispatch("getPlaces")
@@ -58,23 +82,25 @@ export default {
 
 <style lang="scss" scoped>
 
-.gallery {
+.places__gallery {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 15px;
-  padding: 20px 0;
+  padding: 20px 0px;
 }
 .welcome {
   position:relative;
   height: 450px;
+  &-mobile {
+    height: 350px;
+  }
 }
 
-.welcome__image {
+.welcome__picture {
   width: 100%;
   height: 100%;
-  object-fit: none;
-  object-position: center -300px;
+  object-fit: cover;
 }
 
 .welcome__text {
@@ -84,18 +110,22 @@ export default {
   transform: translate(-50%, -50%);
   text-align: center;
   width: 90%;
-  font-size: min(max(50px, 6vw), 70px);
+  font-size: min(max(40px, 6vw), 70px);
   color: white;
   font-weight: 900;
 }
 
-.menu__filters {
+.places__filters {
   @include panel(to bottom);
   font-weight: 500;
   color: rgb(105, 105, 105);
-}
-
-.places-filter {
-  @include input;
+  &-mobile {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+  }
+  &-button {
+    margin-top: 20px;
+  }
 }
 </style>

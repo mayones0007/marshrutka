@@ -3,9 +3,9 @@ import { showToast, toastTypes } from "./toast"
 export const initInterceptor = (axiosInstance) => {
   axiosInstance.interceptors.request.use(
     (config) => {
-      const token = JSON.parse(localStorage.getItem('userData'))?.token;
-      if (token) {
-        config.headers["Authorization"] = 'Bearer ' + token;
+      const accessToken = JSON.parse(localStorage.getItem('userData'))?.accessToken
+      if (accessToken) {
+        config.headers["Authorization"] = 'Bearer ' + accessToken;
       }
       return config;
     },
@@ -16,18 +16,21 @@ export const initInterceptor = (axiosInstance) => {
   let refreshPromise = null;
 
   axiosInstance.interceptors.response.use(function (response) {
-    return response;
+    if (response.data.message) {
+      showToast(toastTypes.SUCCCES, response.data.message, 'bottom', 'right')
+    }
+    return response
   }, async (error) => {
     const config = error.config;
     if (error.response.status === 401) {
       if (!refreshPromise) {
         refreshPromise = axiosInstance.post('refresh',
           {
-            token: JSON.parse(localStorage.getItem('userData'))?.refreshToken
+            refreshToken: JSON.parse(localStorage.getItem('userData'))?.refreshToken
           })
         const tokenResponse = await refreshPromise
         refreshPromise = null;
-        localStorage.setItem('userData', JSON.stringify({ token: tokenResponse.data.accessToken, refreshToken: tokenResponse.data.refreshToken }))
+        localStorage.setItem('userData', JSON.stringify({ accessToken: tokenResponse.data.accessToken, refreshToken: tokenResponse.data.refreshToken }))
       } else {
         await refreshPromise
       }

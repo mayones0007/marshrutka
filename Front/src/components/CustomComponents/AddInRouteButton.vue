@@ -3,7 +3,7 @@
     :title="buttonTitle"
     :isRed="isAddedInRoute"
     :icon="'geo-alt.svg'"
-    @click="addInMyRoute"
+    @click="changeMyRoute"
   />
 </template>
 
@@ -29,8 +29,12 @@ export default {
     },
   },
   methods: {
-    addInMyRoute(){
-      this.$store.dispatch('newPointInRoute', this.placeId)
+    changeMyRoute(){
+      if (this.isAddedInRoute){
+        this.$store.dispatch('deleteInRoute', this.placeId)
+      } else {
+        this.$store.dispatch('addInRoute', this.placeId)
+      }
     },
   },
 }

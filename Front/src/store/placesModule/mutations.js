@@ -1,7 +1,11 @@
 export const mutations = {
   setSelectedRegion(state, region) {
     state.selectedRegion = region
-    state.filteredPlaces = state.places.filter((item) => item.region === region || item.city === region)
+    if (region) {
+      state.filteredPlaces = state.places.filter((item) => item.region === region || item.city === region)
+      } else {
+        state.filteredPlaces = state.places
+      }
     state.appliedFilters = {}
   },
 
@@ -18,7 +22,6 @@ export const mutations = {
     if (Object.keys(state.appliedFilters).length === 0) {
       state.filteredPlaces = places
     }
-    
   },
 
   setPlace(state, place) {

@@ -5,9 +5,11 @@
       <div>Город</div>
       {{currentPlace.city}}
       <div>Категория</div>
-      {{currentPlace.tag}}
+      {{currentPlace.category}}
       <div>Доступен</div>
       {{currentPlace.availability}}
+      <div>Способ</div>
+      {{currentPlace.way}}
       <div>Сложность</div>
       <div>{{currentDifficulty}}</div>
       <div>Время</div>
@@ -92,7 +94,7 @@ export default {
 .save-panel__info-mobile {
   position: relative;
   border-radius: 0 0 5px 5px;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: auto auto;
   background: rgb(235, 246, 255);
   border: none;
   padding: 15px;

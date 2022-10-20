@@ -18,8 +18,8 @@
       <div class="user-menu__dropdown-content" v-if="isLogIn && isFullMenuSize">
         <router-link :to="{name: $options.routeNames.myRoute}" class="dropdown-content__link">Мой маршрут</router-link>
         <router-link :to="{name: $options.routeNames.myFavorites}" class="dropdown-content__link">Избранное</router-link>
+        <router-link :to="{name: $options.routeNames.newPlace}" class="dropdown-content__link">Добавить место</router-link>
         <router-link :to="{name: $options.routeNames.settings}" class="dropdown-content__link">Настройки</router-link>
-        <router-link :to="{name: $options.routeNames.admin}" class="dropdown-content__link" v-if="isAdmin">Редактировать</router-link>
         <div class="dropdown-content__link" @click="setLoginPopup">Выйти</div>
       </div>
       <div class="login-panel__button-login" @click="setLoginPopup" v-if="!isLogIn">Войти</div>

@@ -1,4 +1,4 @@
 export const isDesktop = () => {
-  const desktopBreakpoint = 850;
+  const desktopBreakpoint = 900;
   return window.innerWidth >= desktopBreakpoint;
 }

@@ -8,7 +8,7 @@
           :userImg="`${$baseUrl}/avatars/`+ review.avatar"
         />
         <div class="review-date"  :class="{'review-date-horizontal': horizontal}">
-          {{review.createdAt}}
+          {{prepareDate(review.createdAt)}}
           <div>
             <img
               v-for='star in review.raiting' :key="'star'+star"
@@ -19,7 +19,7 @@
           </div>
         </div>
         <div class="rewiew-text" :class="{'rewiew-text-horizontal': !isDesktop}" >{{review.text}}</div>
-        <div v-if="isAdmin" class="gallery-window__button-close" @click="deleteReview(review.id)"/>
+        <img v-if="isAdmin" :src="`${$baseUrl}/icons/close-btn.png`" class="gallery-window__button-close" @click="deleteReview(review.id)">
       </div>
     </div>
   </div>
@@ -28,6 +28,7 @@
 <script>
 import Avatar from './Avatar.vue'
 import { numWord } from '../../services/numerals.service'
+import moment from 'moment'
 export default {
   name: 'ReviewMessages',
   props: ['horizontal'],
@@ -53,11 +54,14 @@ export default {
       } else {
         return numWord(this.currentReviews.length, ['отзыв', 'отзыва', 'отзывов'])
       }
-    }
+    },
   },
   methods: {
     deleteReview(id) {
       this.$store.dispatch("deleteReview", id)
+    },
+    prepareDate(date) {
+      return moment(date).locale('ru').format('lll')
     }
   }
 }
@@ -122,7 +126,6 @@ export default {
 
 .gallery-window__button-close{
   position: absolute;
-  background: url("https://marshrutka.su/api/icons/close-btn.png") center/100%;
   width: 20px;
   height: 20px;
   right: 25px;

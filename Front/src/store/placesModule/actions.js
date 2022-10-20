@@ -1,11 +1,14 @@
 import { axiosInstance } from '../../httpClient'
+import { compressAndRenamePicture } from "../../services/file.service"
 
 export const actions = {
+
   async getPlaces({ commit }) {
     try {
-      const response = await axiosInstance.get('places')
+      const response = await (await axiosInstance.get('places'))
+      const places = response.data
       commit("setPlaces", response.data)
-      const regions = [...response.data.map((place) => place.region), ...response.data.map((place) => place.city)]
+      const regions = [...places.map((place) => place.region), ...places.map((place) => place.city)]
         .reduce((acc, el) => {
           acc[el] = (acc[el] || 0) + 1
           return acc
@@ -16,11 +19,11 @@ export const actions = {
     }
   },
 
-  async getPlace({ commit, dispatch }, place) {
+  async getPlace({ commit, dispatch }, id) {
     try {
-      const response = await axiosInstance.get(`place?id=${place}`)
-      dispatch("getPictures", response.data.id)
-      dispatch("getReviews", response.data.id)
+      const response = await axiosInstance.get(`place?id=${id}`)
+      dispatch("getPictures", id)
+      dispatch("getReviews", id)
       commit("setPlace", response.data)
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
@@ -51,7 +54,8 @@ export const actions = {
         text: inputs.text,
         raiting: inputs.raiting,
         userId: rootState.userModule.user.id,
-        placeId: state.place.id
+        placeId: state.place.id,
+        createdAt: new Date()
       })
       dispatch("getReviews", state.place.id)
     } catch (e) {
@@ -61,24 +65,36 @@ export const actions = {
 
   async deleteReview({ state, dispatch }, id) {
     try {
-      await axiosInstance.delete('review', { params: { id } })
+      await axiosInstance.delete('review', { params: { id, placeId: state.place.id } })
       dispatch("getReviews", state.place.id)
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
   },
 
-  async addNewPlace(_context, place) {
+  async addNewPlace(_context, inputs) {
     try {
-      await axiosInstance.post('place', { place })
+      const formData = new FormData()
+      formData.append('place', JSON.stringify(inputs[0]))
+      Object.values(inputs[1]).forEach(file => {
+        formData.append('images', compressAndRenamePicture(file))
+      })
+      await axiosInstance.post('place', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
   },
 
-  async editPlace(_context, place) {
+  async editPlace(_context, inputs) {
     try {
-      await axiosInstance.patch('place', { place })
+      const formData = new FormData()
+      formData.append('place', JSON.stringify(inputs[0]))
+        if(inputs.length > 1) {
+        Object.values(inputs[1]).forEach(file => {
+          formData.append('images', compressAndRenamePicture(file))
+        })
+      }
+      await axiosInstance.patch('place', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
@@ -92,20 +108,22 @@ export const actions = {
     }
   },
 
-  async addPlaceImage(_context, inputs) {
+  async addPlacePicture(_context, inputs) {
     const formData = new FormData()
     formData.append('id', inputs[0])
-    formData.append('image', inputs[1])
+    Object.values(inputs[1]).forEach(file => {
+      formData.append('images', file)
+    })
     try {
-      await axiosInstance.post('pictures', formData)
+      await axiosInstance.post('pictures', formData, {headers:{'Content-Type': 'multipart/form-data'}})
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
   },
   
-  async deletePlaceImage(_context, id) {
+  async deletePlacePicture(_context, fileName) {
     try {
-      await axiosInstance.delete('pictures', { params: { id } })
+      await axiosInstance.delete('pictures', { params: { fileName } })
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }

@@ -5,9 +5,9 @@
     :class="{'route-point-full-size': isFullSize, 'route-point-mobile': !isDesktop}"
     @click.self="toggleSize"
   >
-    <div class="route-point__name" :class="{'route-point__name-mobile': !isDesktop}" @click="toggleSize">
-      <img :src="`${$baseUrl}/icons/arrow.png`" alt="star" class="route-point__arrow" :class="{'route-point__arrow-down': isFullSize}">
-      {{routePoint.name}}
+    <div class="route-point__name" :class="{'route-point__name-mobile': !isDesktop}">
+      <img :src="`${$baseUrl}/icons/arrow.png`" alt="star" class="route-point__arrow" :class="{'route-point__arrow-down': isFullSize}" @click="toggleSize">
+      <div @click="toggleSize">{{routePoint.name}}</div>
       <ButtonHeart
         :placeId="routePoint.id"
         v-if="!isDesktop"
@@ -16,7 +16,7 @@
     <div v-if="isDesktop" class="route-point__info route-point__info-desktop">
       <div class="tag">{{routePoint.region}}</div>
       <div class="tag">{{routePoint.city}}</div>
-      <div class="tag">{{routePoint.tag}}</div>
+      <div class="tag">{{routePoint.category}}</div>
       <ButtonHeart
         :placeId="routePoint.id"
       />
@@ -29,7 +29,7 @@
       <div v-if="!isDesktop" class="route-point__info">
         <div class="tag">{{routePoint.region}}</div>
         <div class="tag">{{routePoint.city}}</div>
-        <div class="tag">{{routePoint.tag}}</div>
+        <div class="tag">{{routePoint.category}}</div>
       </div>
       <div class="route-point__buttons">
         <AddInRouteButton
@@ -51,7 +51,7 @@ export default {
     PlacePreview,
     ButtonHeart
   },
-  props: ['routePoint', 'FullSize', 'ButtonsReverse'],
+  props: ['routePoint', 'FullSize'],
   data(){
     return {
       isFullSize: this.FullSize,
@@ -118,11 +118,11 @@ export default {
 
 .route-point__description {
   display: -webkit-box;
-  -webkit-line-clamp: 6;
+  -webkit-line-clamp: 8;
   -webkit-box-orient: vertical;
-  overflow: hidden;
   text-overflow: ellipsis;
   text-align: justify;
+  overflow: hidden;
   font-weight: 300;
   text-indent: 20px;
 }
@@ -144,9 +144,12 @@ export default {
 .route-point__info {
   display: flex;
   flex-wrap: wrap;
+  white-space: nowrap;
+  overflow: hidden;
   gap: 10px;
   &-desktop {
     justify-self: end;
+    flex-wrap: nowrap;
   }
 }
 .route-point__container {

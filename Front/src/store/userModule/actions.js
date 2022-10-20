@@ -1,5 +1,6 @@
 import { axiosInstance } from '../../httpClient'
 import { router, routeNames } from '../../router'
+import { compressAndRenamePicture } from "../../services/file.service"
 
 export const actions = {
   async getUser({commit, dispatch}) {
@@ -16,7 +17,7 @@ export const actions = {
   async login({ commit, dispatch }, inputs) {
     try {
       const response = await axiosInstance.post('login', inputs)
-      localStorage.setItem('userData', JSON.stringify({ token: response.data.token, refreshToken: response.data.refreshToken }))
+      localStorage.setItem('userData', JSON.stringify({ accessToken: response.data.accessToken, refreshToken: response.data.refreshToken }))
       commit('setUser', response.data.user)
       dispatch('getFavorites')
       dispatch('getRoute')
@@ -29,7 +30,7 @@ export const actions = {
   async registration({ commit }, inputs) {
     try {
       const response = await axiosInstance.post('registration', inputs)
-      localStorage.setItem('userData', JSON.stringify({ token: response.data.token, refreshToken: response.data.refreshToken }))
+      localStorage.setItem('userData', JSON.stringify({ accessToken: response.data.accessToken, refreshToken: response.data.refreshToken }))
       commit('setUser', response.data.user)
       router.push({ name: routeNames.places })
     } catch (e) {
@@ -37,12 +38,11 @@ export const actions = {
     }
   },
 
-  async replaceUserAvatar(_context, user) {
+  async replaceUserAvatar(_context, image) {
     const formData = new FormData()
-    formData.append('name', user.name)
-    formData.append('image', user.image)
+    formData.append('avatar', compressAndRenamePicture(image))
     try {
-      await axiosInstance.post('settings', formData)
+      await axiosInstance.patch('user', formData)
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
@@ -50,7 +50,7 @@ export const actions = {
 
   async replaceUserEmail(_context, user) {
     try {
-      await axiosInstance.post('settings', { name: user.name, oldEmail: user.oldEmail, email: user.email })
+      await axiosInstance.patch('user', user)
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
@@ -58,13 +58,13 @@ export const actions = {
 
   async replaceUserPassword(_context, user) {
     try {
-      await axiosInstance.post('settings', { name: user.name, oldPassword: user.oldPassword, password: user.password })
+      await axiosInstance.patch('user', user)
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
   },
 
-  async newFavorite({ state, dispatch }, placeId) {
+  async addFavorite({ state, dispatch }, placeId) {
     try {
       const response = await axiosInstance.post('favorite', { userId: state.user.id, placeId })
       if (response) {
@@ -75,9 +75,31 @@ export const actions = {
     }
   },
 
-  async newPointInRoute({ state, dispatch }, placeId) {
+  async deleteFavorite({ state, dispatch }, placeId) {
+    try {
+      const response = await axiosInstance.delete('favorite', { params: { userId: state.user.id, placeId }})
+      if (response) {
+        dispatch('getFavorites')
+      }
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e)
+    }
+  },
+
+  async addInRoute({ state, dispatch }, placeId) {
     try {
       const response = await axiosInstance.post('route', { userId: state.user.id, placeId })
+      if (response) {
+        dispatch('getRoute')
+      }
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e)
+    }
+  },
+
+  async deleteInRoute({ state, dispatch }, placeId) {
+    try {
+      const response = await axiosInstance.delete('route', { params: { userId: state.user.id, placeId } })
       if (response) {
         dispatch('getRoute')
       }

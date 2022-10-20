@@ -1,16 +1,18 @@
 <template>
   <div class="search" @click="toggleSearchList">
-    <input class="search__input" :class="{'search__input-active': listFullSize}" type="text" placeholder="Куда вы собираетесь?" v-model="selectedRegion">
+    <input class="search__input" :class="{'search__input-active': listFullSize}" type="text" placeholder="Куда вы собираетесь?" v-model="input">
     <div v-if="listFullSize" class="search__list">
       <div v-for="(region, index) in regions" :key="region" class="search__list-item" @click="setSelectedRegion(index)">
         <div>{{index}}</div>
         <div class="item__amount">{{placesAmountText(region)}}</div>
       </div>
+      <div class="search__list-item" @click="setSelectedRegion('')">
+        <div>Смотреть все</div>
+      </div>
     </div>
     <MyButton 
       title="Поиск" 
       :noLeftRadius="true"
-      @click="setSelectedRegion(selectedRegion)"
     />
   </div>
 </template>
@@ -27,11 +29,12 @@ export default {
   routeNames,
   data: () => ({
     selectedRegion: '',
-    listFullSize: false
+    listFullSize: false,
+    input: '',
   }),
   computed:{
     regions() {
-      return this.$store.state.placesModule.regions
+      return Object.fromEntries(Object.entries(this.$store.state.placesModule.regions).filter(([key]) => key.toLowerCase().includes(this.input.toLowerCase())))
     },
   },
 
@@ -41,7 +44,8 @@ export default {
       if (router.currentRoute.name !== 'MyPlaces') {
         router.push({ name: routeNames.places })
       }
-      this.selectedRegion = ""
+      this.selectedRegion = ''
+      this.input = ''
     },
     placesAmountText(number) {
       return numWord(number, ['место', 'места', 'мест'])
@@ -92,6 +96,11 @@ export default {
   line-height: 20px;
   &:hover {
     background-color: rgb(240, 240, 240);
+  }
+  &:last-child {
+    font-weight: 400;
+    color: rgb(0, 154, 103);
+    border-top: solid rgb(232, 232, 232) 1px;
   }
 }
 .item__amount {

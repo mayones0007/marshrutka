@@ -1,12 +1,12 @@
 <template>
   <router-link
-    :to="{name: 'description', params: {eng: routePoint.eng}}" 
+    :to="{name: 'description', params: {id: routePoint.id}}" 
     class="gallery__item"
   >
     <div class="gallery__item-container">
       <img
         class="item__image"
-        :src="`${$baseUrl}/img/` + routePoint.picture + `.jpeg`"
+        :src="`${$baseUrl}/img/` + routePoint.picture"
         alt="avt"
       />
       <div v-if="ShowText" class="item__name">{{ routePoint.name }}</div>

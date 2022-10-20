@@ -1,25 +1,25 @@
 <template>
-  <div v-if="currentPlace" class="description-page" :class="{'description-page-mobile': !isDesktop}">
+  <div v-if="currentPlace" class="page" :class="{'page-mobile': !isDesktop}">
     <Gallery/>  
     <SavePanel/>
     <p class="description-text">
       {{currentPlace.description}}
     </p>
-    <div class="input-rewiew">
+    <div class="review">
       <textarea 
-        class="input-rewiew__input"
+        class="review__input"
         type="text"
         placeholder="Ваш отзыв"
         v-model="inputValue"
       />
-      <div class="input-rewiew__buttons" :class="{'input-rewiew__buttons-mobile': !isDesktop}">
+      <div class="review__buttons" :class="{'review__buttons-mobile': !isDesktop}">
         <div class="raiting">Ваша оценка
           <img
             v-for='star in 5' :key="'star'+star"
             :src="`${$baseUrl}/icons/star.svg`"
             alt="star"
-            class="icon-star"
-            :class="{'icon-star--hovered': star <= starHovered}"
+            class="review__buttons-star"
+            :class="{'review__buttons-star--hovered': star <= starHovered}"
             @click="onStarHover(star)"
           >
         </div>
@@ -57,7 +57,7 @@ export default {
   },
   computed: {
     currentRoute() {
-      return router.currentRoute.value.params.eng
+      return router.currentRoute.value.params.id
     },
     currentPlace() {
       return this.$store.state.placesModule.place
@@ -77,7 +77,7 @@ export default {
   },
   methods: {
     onStarHover(star) {
-      this.starHovered = star;
+      this.starHovered = star
     },
     saveRewiew(){
       this.$store.dispatch('newReview', {'text':this.inputValue, 'raiting':this.starHovered})
@@ -92,12 +92,11 @@ export default {
 
 <style scoped lang="scss">
 
-.description-page {
+.page {
   padding: 20px 380px 20px 40px;
-}
-
-.description-page-mobile {
-  padding: 3%;
+  &-mobile {
+    padding: 3%;
+  }
 }
 
 .description-text {
@@ -109,14 +108,14 @@ export default {
   user-select: text;
 }
 
-.input-rewiew {
+.review {
   display: grid;
   background-color:rgb(249, 249, 249);
   border-radius: 5px;
   border: solid rgb(240, 240, 240) 1px;
 }
 
-.input-rewiew__input {
+.review__input {
   @include input;
   box-sizing: border-box;
   border-radius: 5px 0 0 0;
@@ -127,12 +126,12 @@ export default {
   resize: vertical;
   };
 
-.icon-star {
+.review__buttons-star {
   height: 23px;
   padding-left: 8px;
   filter: grayscale(1) brightness(1.7);
   &--hovered {
-    filter:grayscale(0);
+    filter: grayscale(0);
   }
 }
 
@@ -144,7 +143,7 @@ export default {
   margin-left: 15px;
 }
 
-.input-rewiew__buttons {
+.review__buttons {
   display: flex;
   gap: 15px;
   justify-content: space-between;

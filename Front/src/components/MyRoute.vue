@@ -62,16 +62,17 @@ computed: {
     },
 },
   methods: {
-  async getMyOptimalRoute(){
-  await this.$store.dispatch("getOptimalRoute")
+    getMyOptimalRoute(){
+      this.$store.dispatch("getOptimalRoute")
   },
-      async routeCreate() {
-      try {
-        await axiosInstance.get(`optimalroute?id=${this.$store.state.userModule.user.id}`)
-      } catch (e) {
-        console.log("Ошибка HTTP: " + e.response.data.message)
-      }
-    },
+
+  async routeCreate() {
+    try {
+      await axiosInstance.get(`optimalroute?id=${this.$store.state.userModule.user.id}`)
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e.response.data.message)
+    }
+  },
 
   async routeCreate1(){
       const route = this.routeCoords

@@ -70,7 +70,6 @@ export default {
   gap: 10px;
   justify-content: space-between;
   align-items: center;
-  z-index: 1;
   border-radius: 5px;
   background-color: white;
   border: solid rgb(240, 240, 240) 1px;
@@ -92,6 +91,7 @@ export default {
   overflow: scroll;
   top: 41px;
   left: 0px;
+  z-index: 1;
   background-color: white;
   box-shadow: 0px 8px 8px 0px rgba(0,0,0,0.1);
   border-radius: 0 0 5px 5px;

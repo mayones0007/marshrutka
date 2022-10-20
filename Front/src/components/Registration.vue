@@ -5,7 +5,8 @@
     <div class="registration--window__form form">
       <input
         class="form__input"
-        v-model="name" type="text"
+        v-model="name"
+        type="text"
         placeholder="Логин"
       >
       <input
@@ -23,12 +24,12 @@
       </div>
       <div class="form__password">
         <input
-          class="form__input"
           v-model="password"
-          @input="clearPasswordValidation"
-          @blur="validatePassword"
+          class="form__input"
           :type="typePassword"
           placeholder="Пароль"
+          @input="clearPasswordValidation"
+          @blur="validatePassword"
         >
         <img
           class="password-eye"
@@ -61,9 +62,9 @@
         Пароли не совпадают
         </div>
         <MyButton 
-        title="Зарегистрироваться"
-        :isDisabled="!inputIsCorrect"
-        @click="registration"
+          title="Зарегистрироваться"
+          :isDisabled="!inputIsCorrect"
+          @click="registration"
         />
       <p>Уже зарегистрированы? 
         <a class="registration--window__link" @click="setLoginPopup">Войти</a>

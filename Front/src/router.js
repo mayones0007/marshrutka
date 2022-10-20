@@ -5,7 +5,7 @@ import Registration from "./components/Registration.vue";
 import MyRoute from "./components/MyRoute.vue";
 import MyFavorites from "./components/MyFavorites.vue";
 import Settings from "./components/Settings.vue";
-import Admin from "./components/Admin.vue";
+import NewPlace from "./components/NewPlace.vue";
 import { createRouter, createWebHistory } from "vue-router";
 
 export const routeNames = {
@@ -15,7 +15,7 @@ export const routeNames = {
   myRoute: 'myRoute',
   myFavorites: 'myFavorites',
   settings: 'settings',
-  admin: 'admin',
+  newPlace: 'newPlace',
 }
 
 const routes = [
@@ -24,9 +24,8 @@ const routes = [
   { path: '/myroute', name: routeNames.myRoute, component: MyRoute, meta: { title: "Marshrutka - создай свой маршрут" } },
   { path: '/myfavorites', name: routeNames.myFavorites, component: MyFavorites, meta: { title: "Marshrutka - создай свой маршрут" } },
   { path: '/settings', name: routeNames.settings, component: Settings, meta: { title: "Marshrutka - создай свой маршрут" } },
-  { path: '/admin', name: routeNames.admin, component: Admin, meta: { title: "Marshrutka - создай свой маршрут" } },
-  { path: '/:eng', name: routeNames.description, component: Description, meta: { title: "Marshrutka - создай свой маршрут" } },
-
+  { path: '/:id', name: routeNames.description, component: Description, meta: { title: "Marshrutka - создай свой маршрут" } },
+  { path: '/newplace', name: routeNames.newPlace, component: NewPlace, meta: { title: "Marshrutka - создай свой маршрут" } },
 ]
 export const router = createRouter({
   history: createWebHistory(),
