@@ -70,7 +70,7 @@
     <div class="form__buttons">
       <MyButton v-if="place.id && isAdmin" title="Сохранить" @click="editPlace"/>
       <MyButton v-if="place.id && isAdmin" title="Удалить" isRed="true" @click="deletePlace"/>
-      <MyButton v-else :title="buttonTitle" :isDisabled="!(isFilledPictures && isFilledForm)" @click="addNewPlace"/>
+      <MyButton v-else :title="buttonTitle" :isDisabled="!isFilledPictures || !isFilledForm || isLoading" @click="addNewPlace"/>
     </div>
   </div>
 </template>
@@ -88,7 +88,8 @@ export default {
     place: {},
     hiddenOnly: false,
     addedPictures: [],
-    mounths
+    mounths,
+    isLoading: false,
   }),
   computed: {
     places() {
@@ -115,10 +116,13 @@ export default {
   },
   methods: {
     async addNewPlace(){
+      this.isLoading = true
       await this.$store.dispatch('addNewPlace', [this.place, this.$refs.file.files])
+      this.isLoading = true
       router.push({ name: routeNames.places })
     },
     editPlace(){
+      this.isLoading = true
       delete this.place.picture
       const pictures = this.$refs.file.files
       if (this.addedPictures.length){
@@ -126,10 +130,11 @@ export default {
       } else {
       this.$store.dispatch('editPlace', [this.place])
       }
+      this.isLoading = false
     },
-    deletePlace(){
+    async deletePlace(){
       this.$store.dispatch('deletePlace', this.place.id)
-      this.$store.dispatch("getPlaces")
+      await this.$store.dispatch("getPlaces")
       this.$store.commit('setPictures', [])
       this.place = {}
     },
@@ -200,6 +205,7 @@ export default {
   width: 100%;
   height: 200px;
   margin-bottom: 20px;
+  resize: vertical;
 }
 
 .gallery__item {

@@ -22,7 +22,7 @@ export default {
   padding: 10px;
   background-color: rgb(0, 201, 134);
   color: white;
-  border: 0px;
+  border: none;
   border-radius: 5px;
   cursor: pointer;
   font-family: 'Roboto', Arial, sans-serif;

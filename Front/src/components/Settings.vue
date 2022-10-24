@@ -9,7 +9,7 @@
       :big="true"
       :hideName="true"
     />
-    <input class="form__input-file" type="file" id="file" ref="file" accept="image/jpeg" @change="replaceUserAvatar()">
+    <input class="form__input-file" type="file" id="file" ref="file" accept="image/*" @change="replaceUserAvatar()">
     <label class="form__button" for="file">Изменить аватар</label>
     <input class="form__input-text" v-model="email" type="email" placeholder="Старый e-mail">
     <input class="form__input-text" v-model="newEmail" type="email" placeholder="Новый e-mail">

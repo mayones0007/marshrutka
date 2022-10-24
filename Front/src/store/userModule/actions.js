@@ -40,7 +40,7 @@ export const actions = {
 
   async replaceUserAvatar(_context, image) {
     const formData = new FormData()
-    formData.append('avatar', compressAndRenamePicture(image))
+    formData.append('avatar', await compressAndRenamePicture(image))
     try {
       await axiosInstance.patch('user', formData)
     } catch (e) {

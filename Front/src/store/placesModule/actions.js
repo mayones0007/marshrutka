@@ -76,10 +76,14 @@ export const actions = {
     try {
       const formData = new FormData()
       formData.append('place', JSON.stringify(inputs[0]))
+      const files = []
       Object.values(inputs[1]).forEach(file => {
-        formData.append('images', compressAndRenamePicture(file))
+        files.push(compressAndRenamePicture(file))
       })
-      await axiosInstance.post('place', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+      Promise.all(files).then(async (list) => {
+        list.forEach(file => formData.append('images', file))
+        await axiosInstance.post('place', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+      })
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
@@ -89,13 +93,18 @@ export const actions = {
     try {
       const formData = new FormData()
       formData.append('place', JSON.stringify(inputs[0]))
+      const files = []
         if(inputs.length > 1) {
-        Object.values(inputs[1]).forEach(file => {
-          formData.append('images', compressAndRenamePicture(file))
+        Object.values(inputs[1]).forEach((file) => {
+          files.push(compressAndRenamePicture(file))
         })
       }
-      await axiosInstance.patch('place', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-    } catch (e) {
+      Promise.all(files).then(async(list) => {
+        list.forEach(file => formData.append('images', file))
+        await axiosInstance.patch('place', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+      })
+    }
+     catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
   },

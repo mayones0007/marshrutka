@@ -16,7 +16,7 @@
     </div>
     <MyButton 
       title="Постороить маршрут"
-      @click="newRoute(routeCoords)"
+      @click="newRoute()"
       :isDisabled="!myRoute.length"
     />
     <RoutePoint
@@ -40,24 +40,21 @@ components: {
 data(){
   return{
     coords: [
-      54.82896654088406,
-      39.83189382275390
+      54.828966,
+      39.831893,
       ],
     controls: ['default'],
     
     }
   },
 computed: {
-  user() {
-    return this.$store.state.userModule.user
-  },
   myRoute(){
     return this.$store.state.userModule.myRoute;
   },
   isDesktop(){
       return this.$store.state.appModule.isDesktop
   },
-  routeCoords() {
+  routeCoords(){
     return this.$store.state.userModule.myRoute.map(item => item.coords)
     },
 },
@@ -83,9 +80,9 @@ computed: {
       }
   },
 
-  async newRoute(coords){
+  async newRoute(){
     const multiRoute = new window.ymaps.multiRouter.MultiRoute({
-      referencePoints: coords,
+      referencePoints: this.routeCoords,
       }, {
       editorDrawOver: false,
       wayPointDraggable: false,
@@ -142,7 +139,7 @@ computed: {
 }
 
 .map {
-  height: 600px;
+  height: 400px;
   width: 100%;
   margin-bottom: 20px;
 }

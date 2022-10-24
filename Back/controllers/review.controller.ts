@@ -13,8 +13,8 @@ export class ReviewController {
     }
   }
   async deleteReview(req: Request): Promise<AppResponse> {
-    const messageId = req.query.id
-    await models.review.deleteReview({ messageId })
+    const id = req.query.id
+    await models.review.deleteReview({ id })
     return {
       status: 200,
       body: { message: 'Комментирий удален' },

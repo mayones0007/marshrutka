@@ -104,8 +104,8 @@ export default {
   font-size: 1.2em;
   text-align: justify;
   font-weight: 300;
-  text-indent: 40px;
   user-select: text;
+  white-space: pre-line;
 }
 
 .review {

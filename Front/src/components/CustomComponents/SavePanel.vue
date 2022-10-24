@@ -8,7 +8,7 @@
       {{currentPlace.category}}
       <div>Доступен</div>
       {{currentPlace.availability}}
-      <div>Способ</div>
+      <div>На чем</div>
       {{currentPlace.way}}
       <div>Сложность</div>
       <div>{{currentDifficulty}}</div>
