@@ -1,29 +1,28 @@
 <template>
-    <div class="save-panel__info" :class="{'save-panel__info-mobile': !isDesktop}">
-      <div>Регион</div>
-      {{currentPlace.region}}
-      <div>Город</div>
-      {{currentPlace.city}}
-      <div>Категория</div>
-      {{currentPlace.category}}
-      <div>Доступен</div>
-      {{currentPlace.availability}}
-      <div>На чем</div>
-      {{currentPlace.way}}
-      <div>Сложность</div>
-      <div>{{currentDifficulty}}</div>
-      <div>Время</div>
-      {{currentTime}}
-      <div>Рейтинг</div>
-      <div class="raiting" v-if="currentPlace.raiting">
-        <img
-          v-for='star in currentPlace.raiting' :key="'star'+star"
-          :src="`${$baseUrl}/icons/star.svg`"
-          alt="star"
-          class="raiting__star"
-        >
+    <div class="save-panel" :class="{'save-panel-mobile': !isDesktop}">
+      <div class="name">
+        {{currentPlace.name}}
+        <Hits :hits="currentPlace.hits" color="rgb(60, 60, 60)"/>
       </div>
-      <div v-else>Не определен</div>
+      <div v-for="field in infoFields" :key="field.name" class="save-panel__item">
+        <div>{{field.name}}</div>
+        <a v-if="field.type === 'email'" class="link" :href="`mailto:${currentPlace[field.fieldName]}`">{{currentPlace[field.fieldName]}}</a>
+        <a v-else-if="field.type === 'tel'" class="link" :href="`tel:${currentPlace[field.fieldName]}`">{{currentPlace[field.fieldName]}}</a>
+        <a v-else-if="field.type === 'url'" class="link" :href="`http://${currentPlace[field.fieldName]}`" target="_blank">{{currentPlace[field.fieldName]}}</a>
+        <div v-else-if="field.fieldName === 'time'">{{currentTime}}</div>
+        <div v-else>{{currentPlace[field.fieldName]}}</div>
+      </div>
+      <div v-if="currentPlace.raiting" class="save-panel__item">
+        <div>Рейтинг</div>
+        <div class="raiting">
+          <img
+            v-for='star in currentPlace.raiting' :key="'star'+star"
+            :src="`${$baseUrl}/icons/star.svg`"
+            alt="star"
+            class="raiting__star"
+          >
+        </div>
+      </div>
       <div class="save-panel__buttons" :class="{'save-panel__buttons-mobile': !isDesktop}">
         <AddInRouteButton
           :placeId="currentPlace.id"
@@ -40,6 +39,8 @@
 import AddInRouteButton from './AddInRouteButton.vue'
 import ButtonHeart from './ButtonHeart.vue'
 import ShareButton from './ShareButton.vue'
+import Hits from './Hits.vue'
+import { placeFields } from '../../data/place.fields'
 import { numWord } from '../../services/numerals.service'
 
 export default {
@@ -47,8 +48,12 @@ export default {
   components: {
     AddInRouteButton,
     ButtonHeart,
-    ShareButton
+    ShareButton,
+    Hits,
   },
+  data: () => ({
+    placeFields,
+  }),
   computed: {
     currentPlace() {
       return this.$store.state.placesModule.place
@@ -65,6 +70,9 @@ export default {
       }
       return numWord(time, ['час', 'часа', 'часов'])
     },
+    infoFields() {
+      return this.placeFields.filter((field) => field.info && this.currentPlace[field.fieldName])
+    },
     isDesktop(){
       return this.$store.state.appModule.isDesktop
     }
@@ -73,59 +81,78 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-
-.save-panel__info {
+.save-panel {
   display: grid;
-  position: fixed;
+  position: sticky;
   box-sizing: border-box;
   justify-items: start;
-  right: 40px;
-  top: 100px;
-  grid-template-columns: 1fr 1.5fr;
-  gap: 20px;
+  text-align: start;
+  top: 20px;
+  gap: 15px;
   padding: 20px;
   background: linear-gradient(45deg, rgb(235, 246, 255), rgb(207, 233, 255));
   border: solid rgb(240, 240, 240) 1px;
   border-radius: 5px;
-  width: 320px;
+  width: 350px;
   font-weight: 300;
+  &-mobile {
+    position: relative;
+    border-radius: 0 0 5px 5px;
+    background: rgb(235, 246, 255);
+    border: none;
+    padding: 15px;
+    right: 0;
+    top: 0px;
+    width: 100%;
+  }
 }
 
-.save-panel__info-mobile {
-  position: relative;
-  border-radius: 0 0 5px 5px;
-  grid-template-columns: auto auto;
-  background: rgb(235, 246, 255);
-  border: none;
-  padding: 15px;
-  gap: 15px;
-  right: 0;
-  top: 0px;
+.save-panel__item {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
   width: 100%;
+  justify-items: start;
 }
 
 .save-panel__buttons {
   position: relative;
   display: grid;
-  grid-column: span 2;
   grid-template-columns: 1fr 25px 25px;
   box-sizing: border-box;
   gap: 20px;
   width: 100%;
+  margin-top: 20px;
+  &-mobile {
+    position: fixed;
+    padding: 20px 20px 30px 20px;
+    left: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgb(255, 255, 255), rgb(242, 242, 242));
+    border: solid rgb(240, 240, 240) 1px;
+    z-index: 1;
+  }
 }
 
-.save-panel__buttons-mobile {
-  position: fixed;
-  padding: 20px;
-  left: 0;
-  bottom: 0;
-  background: linear-gradient(to bottom, rgb(255, 255, 255), rgb(242, 242, 242));
-  border: solid rgb(240, 240, 240) 1px;
-  z-index: 1;
+.raiting {
+  display:flex;
 }
 
 .raiting__star {
   height: 19px;
   margin-right: 4px;
+}
+
+.name {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  font-weight: 400;
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+.link {
+  color: rgb(0, 148, 99);
 }
 </style>

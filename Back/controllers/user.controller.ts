@@ -20,7 +20,7 @@ export class UserController {
       status: 200,
       body: {
         user:
-        { name: user.name, id: user.id, avatar: user.avatar }
+          { name: user.name, id: user.id, avatar: user.avatar, role: user.role }
       }
     }
   }
@@ -29,22 +29,12 @@ export class UserController {
     const name = req.body.name
     const password = req.body.password
     const email = req.body.email
-    const avatar = "tourist.png"
-    const createdAt = new Date()
-    const role = 'user'
+    const phone = req.body.phone
 
-    if (!name || !password || !email){
+    if (!name || !password || !email || !phone){
       return  {
         status: 400,
-        body: { message: 'Логин и/или пароль и/или email отсутствуют' }
-      }
-    }
-
-    const userName = await models.user.getUser({ name })
-    if (userName) {
-      return {
-        status: 400,
-        body: { message: 'Пользователь с таким именем уже существует' }
+        body: { message: 'Заполните все поля' }
       }
     }
 
@@ -56,7 +46,7 @@ export class UserController {
       }
     }
 
-    const user = await models.user.addUser({ name, password, email, avatar, createdAt, role })
+    const user = await models.user.addUser({ ...req.body, createdAt: new Date() })
 
     const { accessToken, refreshToken} = authService.getTokens(user.id, user.role)
     return {
@@ -65,7 +55,7 @@ export class UserController {
         message: 'Успешный вход',
         accessToken,
         refreshToken,
-        user: { name: user.name, id: user.id, avatar: user.avatar }
+        user: { name: user.name, id: user.id, avatar: user.avatar, role: user.role }
       }
     }
   }
@@ -89,21 +79,21 @@ export class UserController {
   }
 
   async login(req: Request): Promise<AppResponse<LoginUserBody> | AppResponse> {
-    const name = req.body.name
+    const email = req.body.email
     const password = req.body.password
 
-    if (!name || !password) {
+    if (!email || !password) {
       return {
         status: 400,
-        body: { message: 'Логин и/или пароль отсутствуют' }
+        body: { message: 'E-mail и/или пароль отсутствуют' }
       }
     }
 
-    const user = await models.user.getUser({ name })
+    const user = await models.user.getUser({ email })
     if (!user) {
       return {
         status: 400,
-        body: { message: 'Неверный логин' }
+        body: { message: 'Неверный e-mail' }
       }
     }
 
@@ -121,7 +111,7 @@ export class UserController {
         message: 'Успешный вход',
         accessToken,
         refreshToken,
-        user: { name: user.name, id: user.id, avatar: user.avatar }
+        user: { name: user.name, id: user.id, avatar: user.avatar, role: user.role }
       }
     }
   }

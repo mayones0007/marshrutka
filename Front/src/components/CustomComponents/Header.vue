@@ -10,19 +10,20 @@
     />
     <div :class="{'user-menu': isDesktop, 'user-menu-mobile': !isDesktop}" @click="toggleMenuSize" @click.self="toggleMenuSize">
       <Avatar
-        :userName="userInfo.name"
+        :userName="isDesktop ? userInfo.name : ''"
         :userImg="`${$baseUrl}/avatars/`+ userInfo.avatar"
-        :hideName="!isDesktop"
       />
       <img v-if="isLogIn" :src="`${$baseUrl}/icons/arrow.png`" alt="arrow" class="user-menu__arrow" :class="{'user-menu__arrow-down': isFullMenuSize && !isDesktop}">
       <div class="user-menu__dropdown-content" v-if="isLogIn && isFullMenuSize">
         <router-link :to="{name: $options.routeNames.myRoute}" class="dropdown-content__link">Мой маршрут</router-link>
+        <router-link v-if="isGuide" :to="{name: $options.routeNames.booking}" class="dropdown-content__link">Бронирования</router-link>
         <router-link :to="{name: $options.routeNames.myFavorites}" class="dropdown-content__link">Избранное</router-link>
+        <router-link :to="{name: $options.routeNames.routes}" class="dropdown-content__link">Популярные маршруты</router-link>
         <router-link :to="{name: $options.routeNames.newPlace}" class="dropdown-content__link">Добавить место</router-link>
         <router-link :to="{name: $options.routeNames.settings}" class="dropdown-content__link">Настройки</router-link>
-        <div class="dropdown-content__link" @click="setLoginPopup">Выйти</div>
+        <div class="dropdown-content__link" @click="logOut">Выйти</div>
       </div>
-      <div class="login-panel__button-login" @click="setLoginPopup" v-if="!isLogIn">Войти</div>
+      <div class="login-panel__button-login" @click="logIn" v-if="!isLogIn">Войти</div>
     </div>
   </div>
 </template>
@@ -56,24 +57,23 @@ export default {
         avatar: this.user.avatar ? this.user.avatar : 'tourist.png'
       }
     },
-    isAdmin(){
-      return this.user.name === "Admin"
-    },
     isDesktop(){
       return this.$store.state.appModule.isDesktop
     },
     isStartPage(){
       return this.$route.fullPath  === '/'
-    }
+    },
+    isGuide(){
+      return this.user.role !== "user"
+  },
   },
 
   methods: {
-    setLoginPopup(){
-      if (this.isLogIn){
-        this.$store.dispatch('logOut')
-      } else {
-        this.$store.commit('setLoginPopup')
-      }
+    logOut(){
+      this.$store.dispatch('logOut')
+    },
+    logIn(){
+      this.$store.commit('setPopup', 'login')
     },
     setSelectedRegion () {
       this.$store.commit('setSelectedRegion', this.selectedRegion)
@@ -179,7 +179,7 @@ export default {
   top: 80px;
   right: -10px;
   background-color: #f1f1f1;
-  min-width: 160px;
+  width: 205px;
   -webkit-appearance: none;
   box-shadow: 0px 8px 8px 0px rgba(0,0,0,0.1);
   border-radius: 0 0 5px 5px;

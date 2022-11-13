@@ -1,160 +1,102 @@
 <template>
-  <div class="registration--window">
-    <div class="form">
-    <h2>Регистрация</h2>
-    <div class="registration--window__form form">
-      <input
-        class="form__input"
-        v-model="name"
-        type="text"
-        placeholder="Логин"
-      >
-      <input
-        v-model="email"
-        class="form__input"
-        type="email"
-        placeholder="E-mail"
-        @input="clearEmailValidation"
-        @blur="validateEmail"
-      >
-      <div
-        v-if="emailValidated && !isValidEmail"
-        class="input-text-wrong"
-      >Введите корректный email
-      </div>
-      <div class="form__password">
-        <input
-          v-model="password"
-          class="form__input"
-          :type="typePassword"
-          placeholder="Пароль"
-          @input="clearPasswordValidation"
-          @blur="validatePassword"
-        >
-        <img
-          class="password-eye"
-          :src="`${$baseUrl}/icons/${eyeIconPassword}.png`"
-          @click="togglePasswordVisibility"
-        >
-      </div>
-      <div
-        v-if="passwordValidated && !isValidPassword"
-        class="input-text-wrong"
-      >
-        Пароль должен быть больше 6 символов и включать латниские буквы и цифры
-      </div>
-      <div class="form__password">
-        <input
-          v-model="rePassword"
-          class="form__input" 
-          :type="typePassword"
-          placeholder="Повторно введите пароль"
-        >
-        <img
-          class="password-eye"
-          @click="togglePasswordVisibility"
-          :src="`${$baseUrl}/icons/${eyeIconPassword}.png`"
-        >
-      </div>
-        <div
-        v-if="password !== rePassword && rePassword.length > 6"
-        class="input-text-wrong" >
-        Пароли не совпадают
+  <div class="registration">
+    <div class="registration__form">
+      <h2>Регистрация</h2>
+      <div v-for="field in userFields" :key="field.name">
+        <div v-if="isRoleField(field.role)">
+          <div class="form__input">
+            <input
+              class="form__input-text"
+              v-model="user[field.name]"
+              :type="field.currentType || field.type"
+              :placeholder="field.placeholder"
+              @blur="validate(field.name)"
+            >
+            <img
+              v-if="field.type === 'password'"
+              class="form__input-password"
+              :src="`${$baseUrl}/icons/eye-${!!field.show}.png`"
+              @click="togglePasswordVisibility(field.name)"
+            >
+          </div>
+          <div v-if="this.validation[field.name]" class="input-text-wrong">{{this.validation[field.name]}}</div>
         </div>
-        <MyButton 
-          title="Зарегистрироваться"
-          :isDisabled="!inputIsCorrect"
-          @click="registration"
-        />
-      <p>Уже зарегистрированы? 
-        <a class="registration--window__link" @click="setLoginPopup">Войти</a>
-      </p>
+      </div>
+      <div class="form__item">
+        <label for="role">Вы гид?</label>
+        <input type="checkbox" id="role" v-model="user.role" true-value='guide' false-value='user'>
+      </div>
+      <MyButton 
+        title="Зарегистрироваться"
+        :isDisabled="!inputIsCorrect"
+        @click="registration"
+      />
     </div>
-    </div>  
   </div>
 </template>
 
 <script>
 import MyButton from './CustomComponents/MyButton.vue'
+import { validation } from '../services/validation.service'
+import { userFields } from '../data/user.fields'
 export default {
   components: {
     MyButton,
   },
   data: () => ({
-    name: '',
-    email: '',
-    password: '',
-    rePassword: '',
-    typePassword: 'password',
-    eyeIconPassword: 'hide',
-    emailValidationText: 'Введите корректный email',
-    emailValidated: false,
-    passwordValidated: false,
+    userFields,
+    user: {},
+    validation: {},
   }),
   computed: {
-    isValidEmail(){
-      return this.email.includes('@') && this.email.includes('.')
-    },
-    isValidPassword(){
-      const numbers = /[0-9]/
-      const letters = /[A-z]/
-      return this.password.length > 6 && this.password.match(numbers) && this.password.match(letters) || this.password.length < 1;
-    },
     inputIsCorrect(){
-      return this.password !== "" && this.password === this.rePassword && this.isValidEmail && this.isValidPassword && this.name !== ""
-    }
+      return !Object.values(this.validation).reduce((a, b) => a + b, '') && Object.keys(this.user).length >= userFields.map(field => field.required).length && !Object.values(this.user).includes('')
+    },
   },
   methods: {
-    validatePassword() {
-      this.passwordValidated = true;
-      return this.isValidPassword ? '' : this.passwordValidationText;
-    },
-    validateEmail() {
-      this.emailValidated = true;
-      return this.isValidEmail ? '' : this.emailValidationText;
-    },
-    clearPasswordValidation() {
-      this.passwordValidated = false;
-    },
-    clearEmailValidation() {
-      this.emailValidated = false;
-    },
-    setLoginPopup(){
-      this.$store.commit('setLoginPopup')
-    },
-    togglePasswordVisibility(){
-      if (this.typePassword === "text") {
-        this.typePassword = "password"
-        this.eyeIconPassword = "hide"
-      } else {
-        this.typePassword = "text"
-        this.eyeIconPassword = "show"
-      }
+    validate(fieldName){
+      this.validation[fieldName] = validation(this.user[fieldName], fieldName)
     },
     registration(){
-      const inputs = {name:this.name, email:this.email, password:this.password}
-      this.$store.dispatch('registration', inputs)
+      this.$store.dispatch('registration', this.user)
+    },
+    isRoleField(role) {
+      return role ? role.includes(this.user.role) : true
+    },
+    togglePasswordVisibility(fieldName){
+      const field = this.userFields.find(field => field.name === fieldName)
+      if(field.currentType === 'text') {
+        field.currentType = 'password'
+        field.show = false
+      } else {
+        field.currentType = 'text'
+        field.show = true
+      }
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.form {
+.registration {
+  width: 350px;
+  margin: 100px auto;
+}
+
+.registration__form {
   display: grid;
   gap: 20px;
   text-align: center;
 }
 
-.registration--window__link {
+.registration__link {
   color: green;
   cursor: pointer;
   text-decoration: underline;
 }
 
-.registration--window {
-  width: 350px;
-  margin: 100px auto;
+.form__input-text {
+  @include input;
 }
 
 .input-text-wrong {
@@ -163,12 +105,12 @@ export default {
   text-align: start;
 }
 
-.form__password {
+.form__input {
   display: grid;
   grid-template-columns: 1fr 0;
 }
 
-.password-eye {
+.form__input-password {
   width: 20px;
   height: 20px;
   margin: auto 0;
@@ -176,7 +118,10 @@ export default {
   cursor: pointer;
 }
 
-.form__input {
-  @include input;
+.form__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 </style>

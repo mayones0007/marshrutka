@@ -24,22 +24,34 @@ interface DbQuery {
 
 export class PlaceModel {
   async getPlace(dbQuery: DbQuery): Promise<Place> {
+    await knexService('places').where(dbQuery).increment('hits')
     return await knexService('places').where(dbQuery).first()
       .then((place) => {
         return place
       })
   }
-  async getPlaces(role: string): Promise<Place[]> {
-    return await knexService('places').leftJoin('pictures', 'places.id', 'pictures.placeId')
+  async getPlaces(role: string, filters?: DbQuery): Promise<Place[]> {
+    return await knexService('places')
+    .modify(function (query) {
+      if (role === 'user') {
+        query.where('isAccepted', 1)
+      }
+      if (filters) {
+        query.where(filters)
+      }
+    })
+    .orderBy('hits','desc')
+    .leftJoin('pictures', 'places.id', 'pictures.placeId')
     .select('places.*', 'pictures.fileName as picture')
     .groupBy('places.id')
-    .modify(function(query) {
-      if(role === 'user'){
-        query.where('isAccepted', 1) 
-      }
-     })
     .then((places) => {
       return places
+    })
+  }
+  async getFilters() {
+    return await knexService('places').count('regions')
+    .then((filters) => {
+      return filters
     })
   }
   async addPlace(place: NewPlace): Promise<number> {
@@ -59,7 +71,7 @@ export class PlaceModel {
     promises.push(knexService('favorites').where({placeId: id}).del())
     promises.push(knexService('pictures').where({ placeId: id }).del())
     promises.push(knexService('reviews').where({ placeId: id }).del())
-    promises.push(knexService('routes').where({ placeId: id }).del())
+    promises.push(knexService('route').where({ placeId: id }).del())
     Promise.all(promises)
   }
 }

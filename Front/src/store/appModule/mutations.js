@@ -1,11 +1,7 @@
 
 export const mutations = {
-  setLoginPopup(state) {
-    state.showLoginPopup = !state.showLoginPopup
-  },
-  
-  setGalleryPopup(state) {
-    state.showGalleryPopup = !state.showGalleryPopup
+  setPopup(state, payload) {
+    state.popup = payload
   },
   
   setIsDesktop(state, payload) {

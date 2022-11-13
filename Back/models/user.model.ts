@@ -7,6 +7,7 @@ interface User {
   password: string,
   avatar: string,
   role: string,
+  phone: string,
 }
 
 interface NewUser {
@@ -16,6 +17,7 @@ interface NewUser {
   avatar: string,
   createdAt: Date,
   role: string,
+  phone: string,
 }
 
 interface editUser {

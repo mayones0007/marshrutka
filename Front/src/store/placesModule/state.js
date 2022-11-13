@@ -1,10 +1,13 @@
 export const state = () => ({
   selectedRegion: '',
-  regions: [],
+  filters: [],
   places: [],
-  filteredPlaces: [],
   appliedFilters: {},
   place: {},
   reviews: [],
   pictures: [],
+  route: [],
+  routes: [],
+  booking: [],
+  routeInfo: {}
 })

@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid"
 import imageCompression from 'browser-image-compression'
 
-export const compressAndRenamePicture = async(file) => {
+export const compressAndRenamePicture = async (file) => {
   const options = {
     maxSizeMB: 1,
     maxWidthOrHeight: 1920,
@@ -9,6 +9,10 @@ export const compressAndRenamePicture = async(file) => {
   }
   const type = file.name.split('.')[1]
   const blob = file.slice(0, file.size, 'image/' + type)
-  const newBlob = await imageCompression(blob, options)
-  return new File([newBlob], uuidv4() + '.' + type, { type: 'image/' + type })
+  if (file.size > 1348577) {
+    const newBlob = await imageCompression(blob, options)
+    return new File([newBlob], uuidv4() + '.' + type, { type: 'image/' + type })
+  } else {
+    return new File([blob], uuidv4() + '.' + type, { type: 'image/' + type })
+  }
 }

@@ -7,10 +7,11 @@ import { fileService } from "../services/file.service"
 export class PlaceController {
   async getPlaces(req: Request): Promise<AppResponse<Place[]>> {
     const role = req.user.role
-    const places = await models.place.getPlaces(role)
+    const query = req.query
+    const places = await models.place.getPlaces(role, query)
     return {
       status: 200,
-      body: places,
+      body: places
     }
   }
   async getPlace(req: Request): Promise<AppResponse<Place>> {

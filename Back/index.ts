@@ -76,17 +76,22 @@ app.get('/favorite', corsMiddleware, authMiddleware, async (req: Request, res: R
   res.status(response.status).send(response.body)
 })
 
-app.get('/route', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
-  const response = await controllers.route.getRoute(req)
+app.get('/favoriteroutes', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
+  const response = await controllers.favorite.getFavoriteRoutes(req)
   res.status(response.status).send(response.body)
 })
 
-app.post('/route', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
+app.get('/myroute', corsMiddleware, async (req: Request, res: Response) => {
+  const response = await controllers.route.getMyRoute(req)
+  res.status(response.status).send(response.body)
+})
+
+app.post('/myroute', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
   const response = await controllers.route.addRoutePoint(req)
   res.status(response.status).send(response.body)
 })
 
-app.delete('/route', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
+app.delete('/myroute', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
   const response = await controllers.route.deleteRoutePoint(req)
   res.status(response.status).send(response.body)
 })
@@ -141,3 +146,47 @@ app.delete('/place', corsMiddleware, authMiddleware, async (req: Request, res: R
   res.status(response.status).send(response.body)
 })
 
+app.get('/routelink', corsMiddleware, async (req: Request, res: Response) => {
+  const response = await controllers.route.getRouteByLink(req)
+  res.status(response.status).send(response.body)
+})
+
+app.post('/routes', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
+  const response = await controllers.route.addRoute(req)
+  res.status(response.status).send(response.body)
+})
+
+app.get('/myroutes', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
+  const response = await controllers.route.getRoutes(req)
+  res.status(response.status).send(response.body)
+})
+
+app.get('/routes', corsMiddleware, async (req: Request, res: Response) => {
+  const response = await controllers.route.getRoutes(req)
+  res.status(response.status).send(response.body)
+})
+
+app.get('/route', corsMiddleware, async (req: Request, res: Response) => {
+  const response = await controllers.route.getRoute(req)
+  res.status(response.status).send(response.body)
+})
+
+app.post('/booking', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
+  const response = await controllers.booking.createBooking(req)
+  res.status(response.status).send(response.body)
+})
+
+app.patch('/booking', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
+  const response = await controllers.booking.setBooking(req)
+  res.status(response.status).send(response.body)
+})
+
+app.get('/booking', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
+  const response = await controllers.booking.getBookings(req)
+  res.status(response.status).send(response.body)
+})
+
+app.get('/filters', corsMiddleware, async (req: Request, res: Response) => {
+  const response = await controllers.filter.getFilters()
+  res.status(response.status).send(response.body)
+})

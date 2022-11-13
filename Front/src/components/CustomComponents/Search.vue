@@ -2,11 +2,15 @@
   <div class="search" @click="toggleSearchList">
     <input class="search__input" :class="{'search__input-active': listFullSize}" type="text" placeholder="Куда вы собираетесь?" v-model="input">
     <div v-if="listFullSize" class="search__list">
-      <div v-for="(region, index) in regions" :key="region" class="search__list-item" @click="setSelectedRegion(index)">
-        <div>{{index}}</div>
-        <div class="item__amount">{{placesAmountText(region)}}</div>
+      <div v-for="region in regions" :key="region" class="search__list-item" @click="setSelectedRegion(region.region)">
+        <div>{{region.region}}</div>
+        <div class="item__amount">{{placesAmountText(region.count)}}</div>
       </div>
-      <div class="search__list-item" @click="setSelectedRegion('')">
+      <div v-for="city in cities" :key="city" class="search__list-item" @click="setSelectedCity(city.city)">
+        <div>{{city.city}}</div>
+        <div class="item__amount">{{placesAmountText(city.count)}}</div>
+      </div>
+      <div class="search__list-item" @click="resetSelectedRegion()">
         <div>Смотреть все</div>
       </div>
     </div>
@@ -34,13 +38,38 @@ export default {
   }),
   computed:{
     regions() {
-      return Object.fromEntries(Object.entries(this.$store.state.placesModule.regions).filter(([key]) => key.toLowerCase().includes(this.input.toLowerCase())))
+      return Object.fromEntries(Object.entries(this.$store.state.placesModule.filters.regions).filter(([key]) => key.toLowerCase().includes(this.input.toLowerCase())))
+    },
+    cities() {
+      return Object.fromEntries(Object.entries(this.$store.state.placesModule.filters.cities).filter(([key]) => key.toLowerCase().includes(this.input.toLowerCase())))
     },
   },
 
   methods: {
     setSelectedRegion (region) {
       this.$store.commit('setSelectedRegion', region)
+      this.$store.commit('setAppliedFilters', {region})
+      this.$store.dispatch("getPlaces")
+      if (router.currentRoute.name !== 'MyPlaces') {
+        router.push({ name: routeNames.places })
+      }
+      this.selectedRegion = ''
+      this.input = ''
+    },
+    setSelectedCity (city) {
+      this.$store.commit('setSelectedRegion', city)
+      this.$store.commit('setAppliedFilters', {city})
+      this.$store.dispatch("getPlaces")
+      if (router.currentRoute.name !== 'MyPlaces') {
+        router.push({ name: routeNames.places })
+      }
+      this.selectedRegion = ''
+      this.input = ''
+    },
+    resetSelectedRegion () {
+      this.$store.commit('setSelectedRegion', '')
+      this.$store.commit('setAppliedFilters', {})
+      this.$store.dispatch("getPlaces")
       if (router.currentRoute.name !== 'MyPlaces') {
         router.push({ name: routeNames.places })
       }

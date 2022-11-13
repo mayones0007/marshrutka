@@ -1,5 +1,4 @@
 export const state = () => ({
-  showLoginPopup: false,
-  showGalleryPopup: false,
+  popup: '',
   isDesktop: true,
 })

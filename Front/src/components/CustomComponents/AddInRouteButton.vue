@@ -9,7 +9,6 @@
 
 <script>
 import MyButton from './MyButton.vue'
-
 export default {
   name: 'AddInRouteButton',
   props: ['placeId'],
@@ -21,20 +20,12 @@ export default {
       return !!this.$store.state.userModule.myRoute.find(el => el.id === this.placeId)
     },
     buttonTitle(){
-      if (this.isAddedInRoute){
-        return "Убрать из маршрута"
-      } else {
-        return "Добавить в маршрут"
-      }
+      return this.isAddedInRoute ? "Убрать из маршрута" : "Добавить в маршрут"
     },
   },
   methods: {
     changeMyRoute(){
-      if (this.isAddedInRoute){
-        this.$store.dispatch('deleteInRoute', this.placeId)
-      } else {
-        this.$store.dispatch('addInRoute', this.placeId)
-      }
+      this.isAddedInRoute ? this.$store.dispatch('deleteInMyRoute', this.placeId) : this.$store.dispatch('addInMyRoute', this.placeId)
     },
   },
 }

@@ -1,6 +1,6 @@
 <template>
   <router-link
-    :to="{name: 'description', params: {id: routePoint.id}}" 
+    :to="{name: 'place', params: {id: routePoint.id}}" 
     class="gallery__item"
   >
     <div class="gallery__item-container">
@@ -38,21 +38,21 @@
     position: absolute;
     text-align: center;
     width: 100%;
-    height: 50%;
+    height: 100%;
     bottom: 0;
-    line-height: 140px;
+    line-height: 330px;
+    font-size: 1.1em;
     color: white;
     font-weight: 700;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.591));
+    background: linear-gradient(to left bottom, transparent, rgba(0, 0, 0, 0.589));
   }
 
   .gallery__item {
     overflow: hidden;
     width: 300px;
     height: 200px;
-    border-radius: 5px;
+    border-radius: 15px;
     cursor: pointer;
-    border: solid 1px rgba(0, 0, 0, 0.076);
   }
 
   .gallery__item-container {

@@ -23,11 +23,11 @@ export default {
     }
   },
   computed: {
-    filteredPlaces() {
-      return this.$store.state.placesModule.filteredPlaces
+    places() {
+      return this.$store.state.placesModule.places
     },
     options() {
-      return new Set(this.filteredPlaces.map((place) => place[this.fieldName]))
+      return new Set(this.places.map((place) => place[this.fieldName]))
     },
     selectedOption() {
       const filters = this.$store.state.placesModule.appliedFilters
@@ -46,11 +46,13 @@ export default {
       this.listFullSize = !this.listFullSize
     },
     setSelectedOption(option) {
-      this.$store.commit('setFilters', {[this.fieldName]: option})
+      this.$store.commit('setAppliedFilters', {[this.fieldName]: option})
+      this.$store.dispatch("getPlaces")
     },
     resetSelectedOption() {
       this.listFullSize = false
-      this.$store.commit('resetFilter', this.fieldName)
+      this.$store.commit('resetAppliedFilter', this.fieldName)
+      this.$store.dispatch("getPlaces")
     }
   },
 }

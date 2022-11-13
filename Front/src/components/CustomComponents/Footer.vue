@@ -5,7 +5,7 @@
         <img :src="`${$baseUrl}/icons/mail.svg`" alt="mail"> {{ email }}
       </a>
       <a :href='`tel:${tel}`' class="contacts-typical__item">
-        <img :src="`${$baseUrl}/icons/phone.svg`" alt="phone"> {{tel}}
+        <img :src="`${$baseUrl}/icons/phone.svg`" alt="phone"> {{ tel }}
       </a>
     </div>
     <div class="footer__contacts-social">

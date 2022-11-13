@@ -1,35 +1,29 @@
 <template>
   <div class="page" :class="{'page-mobile': !isDesktop}">
-    <h2>{{titleText}}</h2>
-    <RoutePoint
-      v-for='favorite in myFavorites'
-      :key="favorite"
-      :FullSize="true"
-      :routePoint="favorite"
-    />
+    <MasonryWall :items="myFavoriteRoutes" :columnWidth="350" type="route" header="Маршруты"/>
+    <MasonryWall :items="myFavorites" :columnWidth="350" type="place" header="Места"/>
   </div>
 </template>
 
 <script>
-import RoutePoint from './CustomComponents/RoutePoint.vue'
+import MasonryWall from './CustomComponents/MasonryWall.vue'
 export default {
   components: {
-    RoutePoint,
+    MasonryWall,
   },
   computed: {
+    myFavoriteRoutes() {
+      return this.$store.state.userModule.myFavoriteRoutes
+    },
     myFavorites () {
       return this.$store.state.userModule.myFavorites
-    },
-    titleText () {
-      if (this.myFavorites.length) {
-        return "Избранное: " + this.myFavorites.length
-      } else {
-        return "Пока здесь пусто"
-      }
     },
     isDesktop(){
       return this.$store.state.appModule.isDesktop
     },
+  },
+  created(){
+    this.$store.dispatch("getFavoriteRoutes")
   },
 }
 </script>

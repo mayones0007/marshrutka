@@ -3,11 +3,9 @@
     <h2>Настройки</h2>
     <Avatar
       v-if="user.avatar"
-      :userName="user.name"
       :userImg="`${$baseUrl}/avatars/`+ user.avatar"
-      :vertical="true"
-      :big="true"
-      :hideName="true"
+      :isVertical="true"
+      :isBig="true"
     />
     <input class="form__input-file" type="file" id="file" ref="file" accept="image/*" @change="replaceUserAvatar()">
     <label class="form__button" for="file">Изменить аватар</label>

@@ -8,7 +8,8 @@ export const actions = {
       const response = await axiosInstance.get('user')
       commit('setUser', response.data.user)
       dispatch('getFavorites')
-      dispatch('getRoute')
+      dispatch('getFavoriteRoutes')
+      dispatch('getMyRoute')
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
@@ -20,8 +21,8 @@ export const actions = {
       localStorage.setItem('userData', JSON.stringify({ accessToken: response.data.accessToken, refreshToken: response.data.refreshToken }))
       commit('setUser', response.data.user)
       dispatch('getFavorites')
-      dispatch('getRoute')
-      commit('setLoginPopup')
+      dispatch('getMyRoute')
+      commit('setPopup')
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
@@ -64,63 +65,74 @@ export const actions = {
     }
   },
 
-  async addFavorite({ state, dispatch }, placeId) {
+  async addFavorite({ dispatch }, favorite) {
     try {
-      const response = await axiosInstance.post('favorite', { userId: state.user.id, placeId })
+      const response = await axiosInstance.post('favorite', favorite)
       if (response) {
-        dispatch('getFavorites')
+        favorite.placeId ? dispatch('getFavorites') : dispatch('getFavoriteRoutes')
       }
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
   },
 
-  async deleteFavorite({ state, dispatch }, placeId) {
+  async deleteFavorite({ dispatch }, favorite) {
     try {
-      const response = await axiosInstance.delete('favorite', { params: { userId: state.user.id, placeId }})
+      const response = await axiosInstance.delete('favorite', { params: favorite })
       if (response) {
-        dispatch('getFavorites')
+        favorite.placeId ? dispatch('getFavorites') : dispatch('getFavoriteRoutes')
       }
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
   },
 
-  async addInRoute({ state, dispatch }, placeId) {
+  async addInMyRoute({ state, dispatch }, placeId) {
     try {
-      const response = await axiosInstance.post('route', { userId: state.user.id, placeId })
+      const response = await axiosInstance.post('myroute', { userId: state.user.id, placeId })
       if (response) {
-        dispatch('getRoute')
+        dispatch('getMyRoute')
       }
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
   },
 
-  async deleteInRoute({ state, dispatch }, placeId) {
+  async deleteInMyRoute({ state, dispatch }, placeId) {
     try {
-      const response = await axiosInstance.delete('route', { params: { userId: state.user.id, placeId } })
+      const response = await axiosInstance.delete('myroute', { params: { userId: state.user.id, placeId } })
       if (response) {
-        dispatch('getRoute')
+        dispatch('getMyRoute')
       }
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
   },
 
-  async getRoute({ state, commit }) {
+  async getMyRoute({ state, commit }) {
     try {
-      const response = await axiosInstance.get('route', { params: { id: state.user.id } })
+      const response = await axiosInstance.get('myroute', { params: { id: state.user.id } })
       commit('setmyRoute', response.data)
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
   },
 
+  
+
   async getFavorites({ state, commit }) {
     try {
       const response = await axiosInstance.get('favorite', { params: { id: state.user.id } })
       commit('setmyFavorites', response.data)
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e)
+    }
+  },
+
+  async getFavoriteRoutes({ state, commit }) {
+    try {
+      const response = await axiosInstance.get('favoriteroutes', { params: { id: state.user.id } })
+      commit('setmyFavoriteRoutes', response.data)
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
@@ -132,5 +144,16 @@ export const actions = {
     state.myRoute = []
     state.myFavorites = []
     router.push({ name: routeNames.places })
+  },
+
+  async reserve({ state, dispatch }, placeId) {
+    try {
+      const response = await axiosInstance.post('reserve', { userId: state.user.id, placeId })
+      if (response) {
+        dispatch('getRoute')
+      }
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e)
+    }
   },
 }

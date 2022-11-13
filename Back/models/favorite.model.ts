@@ -20,12 +20,18 @@ interface DbQuery {
 
 export class FavoriteModel {
   async getFavorites(dbQuery: DbQuery): Promise<Favorite[]> {
-    return await knexService('favorites')
+    return await knexService('favorites').where(dbQuery)
       .join('places', 'favorites.placeId', '=', 'places.id')
-      .where(dbQuery)
       .leftJoin('pictures', 'places.id', 'pictures.placeId')
       .select('places.*', 'pictures.fileName as picture')
       .groupBy('places.id')
+      .then((favorites) => {
+        return favorites
+      })
+  }
+  async getFavoriteRoutes(dbQuery: DbQuery): Promise<Favorite[]> {
+    return await knexService('favorites').where(dbQuery)
+      .join('routes', 'favorites.routeId', '=', 'routes.id')
       .then((favorites) => {
         return favorites
       })

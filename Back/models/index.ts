@@ -4,6 +4,8 @@ import { PictureModel } from "./picture.model"
 import { ReviewModel } from "./review.model"
 import { FavoriteModel } from "./favorite.model"
 import { RouteModel } from "./route.model"
+import { BookingModel } from "./booking.model"
+import { FilterModel } from "./filter.model"
 
 export const models = {
   user: new UserModel,
@@ -11,5 +13,7 @@ export const models = {
   picture: new PictureModel,
   review: new ReviewModel,
   favorite: new FavoriteModel,
-  route: new RouteModel
+  route: new RouteModel,
+  booking: new BookingModel,
+  filter: new FilterModel
 }

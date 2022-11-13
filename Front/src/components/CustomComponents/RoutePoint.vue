@@ -5,7 +5,7 @@
     :class="{'route-point-full-size': isFullSize, 'route-point-mobile': !isDesktop}"
     @click.self="toggleSize"
   >
-    <div class="route-point__name" :class="{'route-point__name-mobile': !isDesktop}">
+    <div class="route-point__name" :class="{'route-point__name-mobile': !isDesktop}" @click.self="toggleSize">
       <img :src="`${$baseUrl}/icons/arrow.png`" alt="star" class="route-point__arrow" :class="{'route-point__arrow-down': isFullSize}" @click="toggleSize">
       <div @click="toggleSize">{{routePoint.name}}</div>
       <ButtonHeart
@@ -31,7 +31,7 @@
         <div class="tag">{{routePoint.city}}</div>
         <div class="tag">{{routePoint.category}}</div>
       </div>
-      <div class="route-point__buttons">
+      <div v-if="!isHideAddInRouteButton" class="route-point__buttons">
         <AddInRouteButton
         :placeId="routePoint.id"
         />
@@ -51,7 +51,7 @@ export default {
     PlacePreview,
     ButtonHeart
   },
-  props: ['routePoint', 'FullSize'],
+  props: ['routePoint', 'FullSize', 'isHideAddInRouteButton'],
   data(){
     return {
       isFullSize: this.FullSize,
@@ -73,22 +73,19 @@ export default {
 <style scoped lang="scss">
 
 .route-point {
-  margin-top: 15px;
   padding: 20px;
-  border-radius: 20px;
-  background-color:aliceblue;
   height: 20px;
   display: grid;
   overflow: hidden;
   grid-template-rows: 20px 1fr;
   grid-template-columns: 300px 1fr;
   gap: 20px;
-  border: solid 1px rgba(0, 0, 0, 0.076);
+  border-bottom: solid 1px rgba(0, 0, 0, 0.076);
   align-items: center;
   justify-items: center;
   cursor: default;
   &:hover {
-    background-color:rgb(228, 243, 255);
+    background-color:rgb(248, 248, 248);
   }
   &-full-size {
     height: 100%;

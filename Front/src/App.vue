@@ -2,7 +2,7 @@
   <div>
     <Header/>
     <router-view></router-view>
-    <LoginPopup v-if="this.$store.state.appModule.showLoginPopup"/>
+    <LoginPopup/>
     <Footer/>
   </div>
 </template>
@@ -31,8 +31,6 @@ export default {
   mounted(){
     if(localStorage.getItem('userData')){
       this.$store.dispatch('getUser')
-    } else {
-      this.$store.dispatch('logOut')
     }
     this.$store.commit('setIsDesktop', isDesktop())
     window.addEventListener('resize', () => {

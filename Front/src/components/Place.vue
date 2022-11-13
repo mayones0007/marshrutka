@@ -1,37 +1,40 @@
 <template>
   <div v-if="currentPlace" class="page" :class="{'page-mobile': !isDesktop}">
-    <Gallery/>  
-    <SavePanel/>
-    <p class="description-text">
-      {{currentPlace.description}}
-    </p>
-    <div class="review">
-      <textarea 
-        class="review__input"
-        type="text"
-        placeholder="Ваш отзыв"
-        v-model="inputValue"
-      />
-      <div class="review__buttons" :class="{'review__buttons-mobile': !isDesktop}">
-        <div class="raiting">Ваша оценка
-          <img
-            v-for='star in 5' :key="'star'+star"
-            :src="`${$baseUrl}/icons/star.svg`"
-            alt="star"
-            class="review__buttons-star"
-            :class="{'review__buttons-star--hovered': star <= starHovered}"
-            @click="onStarHover(star)"
-          >
-        </div>
-        <MyButton
-          title="Отправить отзыв"
-          :isDisabled="!this.inputValue || !this.starHovered"
-          :icon="'send.svg'"
-          @click="saveRewiew"
+    <div>
+      <Gallery :pictures="this.currentPictures"/>  
+      <SavePanel v-if="!isDesktop"/>
+      <p class="description-text">
+        {{currentPlace.description}}
+      </p>
+      <div class="review">
+        <textarea 
+          class="review__input"
+          type="text"
+          placeholder="Ваш отзыв"
+          v-model="inputValue"
         />
+        <div class="review__buttons" :class="{'review__buttons-mobile': !isDesktop}">
+          <div class="raiting">Ваша оценка
+            <img
+              v-for='star in 5' :key="'star'+star"
+              :src="`${$baseUrl}/icons/star.svg`"
+              alt="star"
+              class="review__buttons-star"
+              :class="{'review__buttons-star--hovered': star <= starHovered}"
+              @click="onStarHover(star)"
+            >
+          </div>
+          <MyButton
+            title="Отправить отзыв"
+            :isDisabled="!this.inputValue || !this.starHovered"
+            :icon="'send.svg'"
+            @click="saveRewiew"
+          />
+        </div>
       </div>
+      <ReviewMessages/>
     </div>
-    <ReviewMessages/>
+    <SavePanel v-if="isDesktop"/>
   </div>
 </template>
 
@@ -93,9 +96,15 @@ export default {
 <style scoped lang="scss">
 
 .page {
-  padding: 20px 380px 20px 40px;
+  padding: 20px 60px;
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  align-items: start;
+  gap: 20px;
   &-mobile {
     padding: 3%;
+    grid-template-columns: 1fr;
+    text-align: start;
   }
 }
 
@@ -118,7 +127,7 @@ export default {
 .review__input {
   @include input;
   box-sizing: border-box;
-  border-radius: 5px 0 0 0;
+  border-radius: 5px 5px 0 0;
   height: 60px;
   padding: 15px;
   width: 100%;

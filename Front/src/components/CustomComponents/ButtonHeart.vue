@@ -1,25 +1,22 @@
 <template>
-  <svg xmlns="http://www.w3.org/2000/svg" class="heart" :class="{'heart-red': isFavorite}" viewBox="-1 -1 18 18" @click="changeMyFavorites">
+  <svg xmlns="http://www.w3.org/2000/svg" class="heart" :class="{'heart-red': isFavorite}" viewBox="-1 -1 18 18" @click="setMyFavorites">
     <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
   </svg>
 </template>
 
 <script>
-
 export default {
-  props: ['placeId'],
+  props: ['placeId', 'routeId'],
   computed: {
     isFavorite(){
-      return !!this.$store.state.userModule.myFavorites.find(el => el.id === this.placeId)
+      return !!this.$store.state.userModule.myFavorites.find(el => el.id === this.placeId) || !!this.$store.state.userModule.myFavoriteRoutes.find(el => el.id === this.routeId)
     },
   },
   methods: {
-    changeMyFavorites(){
-      if(this.isFavorite) {
-        this.$store.dispatch('deleteFavorite', this.placeId)
-      } else {
-        this.$store.dispatch('addFavorite', this.placeId)
-      }
+    setMyFavorites(){
+      this.isFavorite ? 
+      this.$store.dispatch('deleteFavorite', this.placeId ? {placeId :this.placeId} : {routeId :this.routeId}) : 
+      this.$store.dispatch('addFavorite', this.placeId ? {placeId :this.placeId} : {routeId :this.routeId})
     },
   }
 }

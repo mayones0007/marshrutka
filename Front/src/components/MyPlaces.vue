@@ -17,34 +17,29 @@
         :fieldName="'category'"
       />
       <Select
-        :name="'Сложность'"
-        :fieldName="'difficulty'"
+        :name="'Тип'"
+        :fieldName="'type'"
       />
       <Select
         :name="'На чем'"
         :fieldName="'way'"
       />
     </div>
-    <div class="places__gallery">
-      <PlacePreview
-        v-for="place in filteredPlaces"
-        :key="`place + ${place.id}`"
-        :routePoint="place"
-        :ShowText="true"
-      />
+    <div class="page" :class="{'page-mobile': !isDesktop}">
+      <MasonryWall :items="places" :columnWidth="350" type="place"/>
     </div>
   </div>
 </template>
 
 <script>
-import PlacePreview from './CustomComponents/PlacePreview.vue'
 import Select from './CustomComponents/Select.vue'
 import MyButton from './CustomComponents/MyButton.vue'
+import MasonryWall from './CustomComponents/MasonryWall.vue'
 export default {
   components: {
-    PlacePreview,
     Select,
     MyButton,
+    MasonryWall
   },
   data(){
     return {
@@ -55,12 +50,12 @@ export default {
     selectedRegion() {
       return this.$store.state.placesModule.selectedRegion
     },
-    filteredPlaces() {
-      return this.$store.state.placesModule.filteredPlaces
+    places() {
+      return this.$store.state.placesModule.places
     },
     welcomeImage() {
       if (this.selectedRegion) {
-        return {image: this.filteredPlaces[0].picture, text: this.selectedRegion}
+        return {image: this.places[0].picture, text: this.selectedRegion}
       } else {
         return {image: "chelovek-gora.jpeg", text: "Построй свой маршрут"}
       }
@@ -76,18 +71,17 @@ export default {
   },
   created() {
     this.$store.dispatch("getPlaces")
+    this.$store.dispatch("getFilters")
   }
 }
 </script>
 
 <style lang="scss" scoped>
-
-.places__gallery {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 15px;
-  padding: 20px 0px;
+.page {
+  padding: 2% 10%;
+  &-mobile {
+    padding: 2%;
+  }
 }
 .welcome {
   position:relative;

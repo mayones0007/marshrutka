@@ -30,7 +30,6 @@ import Avatar from './Avatar.vue'
 import { numWord } from '../../services/numerals.service'
 import moment from 'moment'
 export default {
-  name: 'ReviewMessages',
   props: ['horizontal'],
   components: {
     Avatar,
@@ -43,7 +42,7 @@ export default {
       return this.$store.state.placesModule.reviews
     },
     isAdmin() {
-      return this.$store.state.userModule.user.name === "Admin"
+      return this.$store.state.userModule.user.role === "admin"
     },
     isDesktop(){
       return this.$store.state.appModule.isDesktop
@@ -82,7 +81,7 @@ export default {
   grid-template-rows: 50px 1fr;
   text-align: start;
   font-weight: 100;
-  padding: 15px;
+  padding: 10px 10px 10px 15px;
   background-color:aliceblue;
   border-radius: 5px;
   border: solid rgb(240, 240, 240) 1px;

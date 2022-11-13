@@ -13,8 +13,9 @@
 };
 
 @mixin input {
-  border: solid rgb(240, 240, 240) 1px;
-  border-radius: 5px;
+  box-sizing: border-box;
+  border: solid #ddd 1px;
+  border-radius: 4px;
   height: 35px;
   padding: 0 10px;
   font-family: 'Roboto', Arial, sans-serif;

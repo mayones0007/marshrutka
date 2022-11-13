@@ -3,17 +3,10 @@ import { compressAndRenamePicture } from "../../services/file.service"
 
 export const actions = {
 
-  async getPlaces({ commit }) {
+  async getPlaces({ state, commit }) {
     try {
-      const response = await (await axiosInstance.get('places'))
-      const places = response.data
+      const response = await (await axiosInstance.get('places', { params: state.appliedFilters }))
       commit("setPlaces", response.data)
-      const regions = [...places.map((place) => place.region), ...places.map((place) => place.city)]
-        .reduce((acc, el) => {
-          acc[el] = (acc[el] || 0) + 1
-          return acc
-        }, {})
-      commit("setRegions", regions)
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
@@ -72,36 +65,38 @@ export const actions = {
     }
   },
 
-  async addNewPlace(_context, inputs) {
+  async addNewPlace(_context, place) {
     try {
       const formData = new FormData()
-      formData.append('place', JSON.stringify(inputs[0]))
+      formData.append('place', JSON.stringify(place.info))
       const files = []
-      Object.values(inputs[1]).forEach(file => {
+      Object.values(place.pictures).forEach(file => {
         files.push(compressAndRenamePicture(file))
       })
       Promise.all(files).then(async (list) => {
         list.forEach(file => formData.append('images', file))
-        await axiosInstance.post('place', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        const response = await axiosInstance.post('place', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        return response.status
       })
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
   },
 
-  async editPlace(_context, inputs) {
+  async editPlace(_context, place) {
     try {
       const formData = new FormData()
-      formData.append('place', JSON.stringify(inputs[0]))
+      formData.append('place', JSON.stringify(place.info))
       const files = []
-        if(inputs.length > 1) {
-        Object.values(inputs[1]).forEach((file) => {
+        if(place.pictures) {
+          Object.values(place.pictures).forEach((file) => {
           files.push(compressAndRenamePicture(file))
         })
       }
       Promise.all(files).then(async(list) => {
         list.forEach(file => formData.append('images', file))
-        await axiosInstance.patch('place', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        const response = await axiosInstance.patch('place', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        return response.status
       })
     }
      catch (e) {
@@ -133,6 +128,80 @@ export const actions = {
   async deletePlacePicture(_context, fileName) {
     try {
       await axiosInstance.delete('pictures', { params: { fileName } })
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e)
+    }
+  },
+
+  async getRoute({ commit }, id) {
+    try {
+      const response = await axiosInstance.get(`routelink?id=${id}`)
+      commit('setRoute', response.data)
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e)
+    }
+  },
+
+  async getGuideRoute({ commit }, id) {
+    try {
+      const response = await axiosInstance.get(`route?id=${id}`)
+      commit('setRouteInfo', response.data)
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e)
+    }
+  },
+
+  async getRoutes({ commit }) {
+    try {
+      const response = await axiosInstance.get('routes')
+      commit('setRoutes', response.data)
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e)
+    }
+  },
+
+  async addBooking(_context, booking) {
+    try {
+      await axiosInstance.post('booking', booking)
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e)
+    }
+  },
+
+  async getAllBooking({ commit }) {
+    try {
+      const response = await axiosInstance.get('booking')
+      commit('setBooking', response.data)
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e)
+    }
+  },
+
+  async getFilters({ commit }) {
+    try {
+      const response = await axiosInstance.get('filters')
+      commit('setFilters', response.data)
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e)
+    }
+  },
+
+  async setBooking({ dispatch }, id) {
+    try {
+      await axiosInstance.patch('booking',{ id })
+      dispatch("getAllBooking")
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e)
+    }
+  },
+
+  async routeSave({ commit }, route) {
+    const formData = new FormData()
+    formData.append('route', JSON.stringify(route.info))
+    formData.append('picture', await compressAndRenamePicture(route.picture))
+    try {
+      await axiosInstance.post('routes', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+      commit('setPopup')
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }

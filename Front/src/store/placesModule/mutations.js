@@ -1,11 +1,6 @@
 export const mutations = {
   setSelectedRegion(state, region) {
     state.selectedRegion = region
-    if (region) {
-      state.filteredPlaces = state.places.filter((item) => item.region === region || item.city === region)
-      } else {
-        state.filteredPlaces = state.places
-      }
     state.appliedFilters = {}
   },
 
@@ -13,15 +8,8 @@ export const mutations = {
     state.selectedCategory = category
   },
 
-  setRegions(state, regions) {
-    state.regions = regions
-  },
-  
   setPlaces(state, places) {
     state.places = places
-    if (Object.keys(state.appliedFilters).length === 0) {
-      state.filteredPlaces = places
-    }
   },
 
   setPlace(state, place) {
@@ -37,23 +25,31 @@ export const mutations = {
     state.pictures = pictures
   },
 
-  setFilters(state, filter) {
-    state.appliedFilters = { ...state.appliedFilters, ...filter }
-    if (state.selectedRegion) {
-      state.filteredPlaces = state.places.filter((item) => item.region === state.selectedRegion || item.city === state.selectedRegion)
-    } else {
-      state.filteredPlaces = state.places
-    }
-    for (const [key, value] of Object.entries(state.appliedFilters)) { state.filteredPlaces = state.filteredPlaces.filter((item) => item[key] === value) }
+  setFilters(state, filters) {
+    state.filters = filters
   },
 
-  resetFilter(state, filter) {
+  setAppliedFilters(state, filter) {
+    state.appliedFilters = { ...state.appliedFilters, ...filter }
+  },
+
+  resetAppliedFilter(state, filter) {
     delete state.appliedFilters[filter]
-    if (state.selectedRegion) {
-      state.filteredPlaces = state.places.filter((item) => item.region === state.selectedRegion || item.city === state.selectedRegion)
-    } else {
-      state.filteredPlaces = state.places
-    }
-    for (const [key, value] of Object.entries(state.appliedFilters)) { state.filteredPlaces = state.filteredPlaces.filter((item) => item[key] === value) }
+  },
+
+  setRoute(state, payload) {
+    state.route = payload
+  },
+
+  setRouteInfo(state, payload) {
+    state.routeInfo = payload
+  },
+
+  setRoutes(state, payload) {
+    state.routes = payload
+  },
+
+  setBooking(state, payload) {
+    state.booking = payload
   },
 }

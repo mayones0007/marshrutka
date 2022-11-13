@@ -1,56 +1,44 @@
 <template>
   <div class="page" :class="{'page-mobile': !isDesktop}">
     <h2>Добавить место</h2>
-      <div v-if="isAdmin" class="form" :class="{'form-mobile': !isDesktop}">
-          <label for="places">Места</label>
-          <select class="form__input" id="places" v-model="place" @change="getPictures">
-            <option v-for="place in this.places" :key="place.id" :value="place">{{place.name}}</option>
-          </select>
-          <label for="hiddenOnly">Только скрытые</label>
+      <div v-if="isAdmin" class="form">
+        <div class="form__item">
+          <label for="hiddenOnly">Cкрытые</label>
           <input type="checkbox" id="hiddenOnly" :checked="hiddenOnly" v-model="hiddenOnly">
         </div>
-      <div class="form" :class="{'form-mobile': !isDesktop}">
-        <label for="name">Название</label>
-        <input class="form__input" id="name" v-model="place.name" type="text">
-        <label for="category">Категория</label>
-        <input class="form__input" id="category" type="text" list="categories" v-model="place.category">
-        <datalist id="categories">
-          <option v-for="option in options('category')" :key="option">{{option}}</option>
-        </datalist>
-        <label for="region">Регион</label>
-        <input class="form__input" id="region" type="text" list="regions" v-model="place.region">
-        <datalist id="regions">
-          <option v-for="option in options('region')" :key="option">{{option}}</option>
-        </datalist>
-        <label for="city">Город</label>
-        <input class="form__input" id="city" type="text" list="cities" v-model="place.city">
-        <datalist id="cities">
-          <option v-for="option in options('city')" :key="option">{{option}}</option>
-        </datalist>
-        <label for="difficulty">Сложность</label>
-        <select class="form__input" id="difficulty" v-model="place.difficulty">
-          <option>Легкий</option>
-          <option>Средний</option>
-          <option>Сложный</option>
+        <select class="form__input" id="places" v-model="place" @change="getPictures">
+          <option v-for="place in this.places" :key="place.id" :value="place">{{place.name}}</option>
         </select>
-        <label for="availability">Доступность</label>
-        <input class="form__input" id="availability" type="text" list="availabilities" placeholder="по месяцам" v-model="place.availability">
-        <datalist id="availabilities">
-          <option>Круглый год</option>
-        </datalist>
-        <label for="way">Способ</label>
-        <input class="form__input" id="way" type="text" list="ways" v-model="place.way">
-        <datalist id="ways">
-          <option v-for="option in options('way')" :key="option">{{option}}</option>
-        </datalist>
-        <label for="time">Время в часах</label>
-        <input class="form__input" id="time" type="number" v-model="place.time">
-        <label for="coords">Координаты</label>
-        <input class="form__input" id="coords" type="text" placeholder="43.434954,40.442885" v-model="place.coords">
-        <label v-if="isAdmin" for="isAccepted">Показывать</label>
-        <input v-if="isAdmin" type="checkbox" id="isAccepted" :checked="place.isAccepted" v-model="place.isAccepted">
       </div>
-    <textarea class="form__textarea" type="text" placeholder="Описание" v-model="place.description"></textarea>
+      <div class="form">
+        <div v-for="field in this.placeFields" :key="field.name">
+          <div v-if="isCategoryField(field.category)">
+            <textarea v-if="field.type === 'textarea'" class="form__textarea" type="text" :placeholder="field.placeholder" v-model="place[field.fieldName]"></textarea>
+            <div v-else class="form__item">
+              <label :for="field.fieldName">{{field.name}}{{field.required ? '*' : ''}}</label>
+              <div>
+                <input 
+                  class="form__input"
+                  :id="field.fieldName"
+                  v-model="place[field.fieldName]" 
+                  :placeholder="field.placeholder"
+                  :type="field.type"
+                  :list="field.name"
+                  @blur="validate(field, this.place)"
+                >
+                <datalist v-if="field.autofull" :id="field.name">
+                  <option v-for="option in options(field.fieldName)" :key="option">{{option}}</option>
+                </datalist>
+                <div v-if="this.validation[field.fieldName]" class="input-text-wrong">{{this.validation[field.fieldName]}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-if="isAdmin" class="form__item">
+          <label for="isAccepted">Показывать</label>
+          <input type="checkbox" id="isAccepted" v-model="place.isAccepted" true-value=1 false-value=0>
+        </div>
+      </div>
     <label>Фото (минимум 4)</label>
     <div class="gallery">
       <div v-for="picture in currentPictures" :key="picture" class="gallery__item">
@@ -72,23 +60,30 @@
       <MyButton v-if="place.id && isAdmin" title="Удалить" isRed="true" @click="deletePlace"/>
       <MyButton v-else :title="buttonTitle" :isDisabled="!isFilledPictures || !isFilledForm || isLoading" @click="addNewPlace"/>
     </div>
+    <LoadingSpinner v-if="isLoading"/>
   </div>
 </template>
 
 <script>
 import MyButton from './CustomComponents/MyButton.vue'
+import LoadingSpinner from './CustomComponents/LoadingSpinner.vue'
 import { router, routeNames } from '../router'
 import { mounths } from '../data/mounths.data'
+import { placeFields } from '../data/place.fields'
+import { validation } from '../services/validation.service'
 
 export default {
   components: {
     MyButton,
+    LoadingSpinner
   },
   data: () => ({
     place: {},
+    validation: {},
     hiddenOnly: false,
     addedPictures: [],
     mounths,
+    placeFields,
     isLoading: false,
   }),
   computed: {
@@ -102,7 +97,7 @@ export default {
       return this.$store.state.placesModule.pictures
     },
     isAdmin(){
-      return this.$store.state.userModule.user.name === "Admin"
+      return this.$store.state.userModule.user.role === "admin"
     },
     buttonTitle() {
       return this.isAdmin ? "Добавить место" : "Отправить на проверку"
@@ -115,20 +110,23 @@ export default {
     },
   },
   methods: {
+    validate(field, model){
+      this.validation[field.fieldName] = validation(model[field.fieldName], field.fieldName)
+    },
     async addNewPlace(){
       this.isLoading = true
-      await this.$store.dispatch('addNewPlace', [this.place, this.$refs.file.files])
-      this.isLoading = true
-      router.push({ name: routeNames.places })
+      const status = await this.$store.dispatch('addNewPlace', {info: this.place, pictures: this.$refs.file.files})
+      if (status === 200) {
+        router.push({ name: routeNames.places })
+      }
+      this.isLoading = false
     },
-    editPlace(){
+    async editPlace(){
       this.isLoading = true
       delete this.place.picture
-      const pictures = this.$refs.file.files
-      if (this.addedPictures.length){
-        this.$store.dispatch('editPlace', [this.place, pictures])
-      } else {
-      this.$store.dispatch('editPlace', [this.place])
+      const status = await this.$store.dispatch('editPlace', {info: this.place, pictures: this.$refs.file.files})
+      if (status === 200) {
+        router.push({ name: routeNames.newPlace })
       }
       this.isLoading = false
     },
@@ -140,6 +138,7 @@ export default {
     },
     getPictures() {
       this.$store.dispatch('getPictures', this.place.id)
+
     },
     addPlacePicture(){
       const files = this.$refs.file.files
@@ -161,6 +160,9 @@ export default {
     options(fieldName) {
       return new Set(this.places.map((place) => place[fieldName]))
     },
+    isCategoryField(category) {
+      return category ? category.includes(this.place.category) : true
+    }
   },
   created() {
     this.$store.dispatch("getPlaces")
@@ -177,18 +179,20 @@ export default {
     padding: 3%;
   }
 }
-
 .form {
-  @include grid-g20;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  justify-items: start;
-  margin: 20px 0;
+  display: grid;
 }
-
-.form-mobile {
-  grid-template-columns: 1fr;
-  gap: 10px;
+.input-text-wrong {
+  color: red;
+  font-size: 0.6em;
+  text-align: start;
+}
+.form__item {
+  display: grid;
+  margin: 10px 0;
+  grid-template-columns: 130px 1fr;
+  text-align: start;
+  align-items: center;
 }
 
 .form__input {
@@ -200,11 +204,10 @@ export default {
 .form__textarea {
   @include input;
   box-sizing: border-box;
-  height: 60px;
+  margin: 10px 0;
   padding: 15px;
   width: 100%;
   height: 200px;
-  margin-bottom: 20px;
   resize: vertical;
 }
 

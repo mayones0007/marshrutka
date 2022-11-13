@@ -2,7 +2,8 @@ export interface GetUserBody {
   user: {
     name: string,
     id: number,
-    avatar: string
+    avatar: string,
+    role: string,
   }
 }
 
