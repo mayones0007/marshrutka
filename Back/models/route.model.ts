@@ -22,6 +22,12 @@ export interface Route {
   price: number,
   views: number,
   ref: string,
+  picture: string,
+  category: string,
+  region: string,
+  way: string,
+  time: number,
+  persons: number,
 }
 
 interface DbQuery {
@@ -65,23 +71,34 @@ export class RouteModel {
       return route
     })
   }
-  async getRoutes(user: number | undefined): Promise<Route[]> {
+  async getRoutes(filters?: DbQuery, pagination?: DbQuery): Promise<Route[]> {
     return await knexService('routes')
+      .orderBy('hits', 'desc')
       .modify(function (query) {
-        if (user) {
-          query.where({ user })
+        if (filters) {
+          query.where(filters)
+        }
+        if (pagination) {
+          query.limit(pagination.limit)
+          query.offset(pagination.offset)
         }
       })
-      .orderBy('hits', 'desc')
       .then((routes) => {
         return routes
       })
   }
+
   async getRoute(id: DbQuery): Promise<Route> {
     await knexService('routes').where(id).increment('hits')
     return await knexService('routes').where(id).first()
       .then((route) => {
         return route
       })
+  }
+  async deleteRoute(id: string): Promise<void> {
+    const promises = []
+    promises.push(knexService('routes').where({ id }).del())
+    promises.push(knexService('favorites').where({ placeId: id }).del())
+    Promise.all(promises)
   }
 }

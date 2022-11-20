@@ -14,13 +14,14 @@
         </div>
       </div>
       <ButtonHeart :routeId="currentRouteInfo.id" class="item__button-heart"/>
+      <img v-if="isAdmin" :src="`${$baseUrl}/icons/close-btn.png`" class="item__button-delete" @click="deleteRoute">
     </div>
     <MyRoute :description="true"/>
   </div>
 </template>
 
 <script>
-import {router} from '../router'
+import {router, routeNames} from '../router'
 import ButtonHeart from './CustomComponents/ButtonHeart.vue'
 import Hits from './CustomComponents/Hits.vue'
 import MyRoute from './MyRoute.vue'
@@ -36,6 +37,9 @@ export default {
     currentRoute() {
       return router.currentRoute.value.params.id
     },
+    isAdmin() {
+      return this.$store.state.userModule.user.role === "admin"
+    },
     currentRouteInfo() {
       return this.$store.state.placesModule.routeInfo
     },
@@ -50,6 +54,12 @@ export default {
         return numWord(time / 24, ['день', 'дня', 'дней'])
       }
       return numWord(time, ['час', 'часа', 'часов'])
+    },
+  },
+  methods: {
+    deleteRoute() {
+      this.$store.dispatch("deleteRoute", this.currentRouteInfo.id)
+      router.push({ name: routeNames.places })
     },
   },
   async created(){
@@ -126,5 +136,14 @@ export default {
   display: flex;
   gap: 5px;
   align-items: center;
+}
+
+.item__button-delete{
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  right: 25px;
+  top: 60px;
+  cursor: pointer;
 }
 </style>

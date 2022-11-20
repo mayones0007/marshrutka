@@ -7,8 +7,11 @@ import { fileService } from "../services/file.service"
 export class PlaceController {
   async getPlaces(req: Request): Promise<AppResponse<Place[]>> {
     const role = req.user.role
-    const query = req.query
-    const places = await models.place.getPlaces(role, query)
+    const pagination = { offset: req.query.offset, limit: req.query.limit }
+    const filters = req.query
+    delete filters.offset
+    delete filters.limit
+    const places = await models.place.getPlaces(role, filters, pagination)
     return {
       status: 200,
       body: places

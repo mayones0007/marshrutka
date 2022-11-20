@@ -1,7 +1,10 @@
 <template>
     <div class="save-panel" :class="{'save-panel-mobile': !isDesktop}">
       <div class="name">
-        {{currentPlace.name}}
+        <div>
+          {{currentPlace.name}}
+          <router-link v-if="isAdmin" :to="{name: 'newPlace', params: {id: currentPlace.id}}"><img :src="`${$baseUrl}/icons/pensil.svg`"></router-link>
+        </div>
         <Hits :hits="currentPlace.hits" color="rgb(60, 60, 60)"/>
       </div>
       <div v-for="field in infoFields" :key="field.name" class="save-panel__item">
@@ -12,11 +15,11 @@
         <div v-else-if="field.fieldName === 'time'">{{currentTime}}</div>
         <div v-else>{{currentPlace[field.fieldName]}}</div>
       </div>
-      <div v-if="currentPlace.raiting" class="save-panel__item">
+      <div v-if="currentRaiting" class="save-panel__item">
         <div>Рейтинг</div>
         <div class="raiting">
           <img
-            v-for='star in currentPlace.raiting' :key="'star'+star"
+            v-for='star in currentRaiting' :key="'star'+star"
             :src="`${$baseUrl}/icons/star.svg`"
             alt="star"
             class="raiting__star"
@@ -58,6 +61,9 @@ export default {
     currentPlace() {
       return this.$store.state.placesModule.place
     },
+    currentRaiting() {
+      return this.$store.state.placesModule.raiting
+    },
     currentDifficulty() {
       return this.$store.state.placesModule.place.difficulty
     },
@@ -75,7 +81,10 @@ export default {
     },
     isDesktop(){
       return this.$store.state.appModule.isDesktop
-    }
+    },
+    isAdmin() {
+      return this.$store.state.userModule.user.name === "Admin"
+    },
   },
 }
 </script>

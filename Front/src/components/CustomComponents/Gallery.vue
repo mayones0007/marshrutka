@@ -2,15 +2,20 @@
   <div v-if="pictures.length">
     <div class="gallery-container" :class="{'gallery-container-vertical': !isDesktop}">
       <img
-        v-for="(n, i) in picturesCount"
+        :src="`${$baseUrl}/img/${this.pictures[0]}`" 
+        class="gallery-container__item"
+        @click="openGalleryPopup(0)"
+      >
+      <img
+        v-for="i in picturesCount"
         :key="this.pictures[i]"
-        :src="`${$baseUrl}/img/${this.pictures[i]}`" 
+        :src="`${$baseUrl}/min/${this.pictures[i]}`" 
         class="gallery-container__item"
         @click="openGalleryPopup(i)"
       >
-      <div v-if="this.pictures[picturesCount]" class="gallery-container__item" @click="openGalleryPopup(picturesCount)">
+      <div v-if="this.pictures[picturesCount]" class="gallery-container__item" @click="openGalleryPopup(picturesCount + 1)">
         <img
-          :src="`${$baseUrl}/img/${this.pictures[picturesCount]}`" 
+          :src="`${$baseUrl}/min/${this.pictures[picturesCount + 1]}`" 
           class="gallery-container__item" 
         >
         <div v-if="this.pictures.length > 4" class="gallery-container__item-last-text">+{{gallaryCount}}</div>
@@ -58,7 +63,7 @@ export default {
       return this.pictures.length-4
     },
     picturesCount() {
-      return this.pictures.length < 4 ? this.pictures.length : 3
+      return this.pictures.length < 4 ? this.pictures.length : 2
     },
     isDesktop(){
       return this.$store.state.appModule.isDesktop

@@ -9,7 +9,7 @@ export const compressAndRenamePicture = async (file) => {
   }
   const type = file.name.split('.')[1]
   const blob = file.slice(0, file.size, 'image/' + type)
-  if (file.size > 1348577) {
+  if (file.size > 1100000) {
     const newBlob = await imageCompression(blob, options)
     return new File([newBlob], uuidv4() + '.' + type, { type: 'image/' + type })
   } else {

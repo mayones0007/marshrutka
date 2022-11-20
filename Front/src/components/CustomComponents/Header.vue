@@ -18,7 +18,6 @@
         <router-link :to="{name: $options.routeNames.myRoute}" class="dropdown-content__link">Мой маршрут</router-link>
         <router-link v-if="isGuide" :to="{name: $options.routeNames.booking}" class="dropdown-content__link">Бронирования</router-link>
         <router-link :to="{name: $options.routeNames.myFavorites}" class="dropdown-content__link">Избранное</router-link>
-        <router-link :to="{name: $options.routeNames.routes}" class="dropdown-content__link">Популярные маршруты</router-link>
         <router-link :to="{name: $options.routeNames.newPlace}" class="dropdown-content__link">Добавить место</router-link>
         <router-link :to="{name: $options.routeNames.settings}" class="dropdown-content__link">Настройки</router-link>
         <div class="dropdown-content__link" @click="logOut">Выйти</div>
@@ -177,9 +176,10 @@ export default {
 .user-menu__dropdown-content {
   position: absolute;
   top: 80px;
-  right: -10px;
+  right: 0;
   background-color: #f1f1f1;
-  width: 205px;
+  min-width: 180px;
+  width: 100%;
   -webkit-appearance: none;
   box-shadow: 0px 8px 8px 0px rgba(0,0,0,0.1);
   border-radius: 0 0 5px 5px;

@@ -2,7 +2,7 @@
   <div class="share-button">
     <img :src="`${$baseUrl}/icons/share.svg`" alt="share" class="share-button__icon" @click="setShowShareLinks()">
     <div v-if="showShareLinks" class="share-button__links" :class="{'share-button__links-mobile': !isDesktop}">
-      <a v-for="social in socials" :key="social.alt" :href="social.shareref + this.$route.path + this.routeRef" target="_blank">
+      <a v-for="social in socials" :key="social.alt" :href="social.shareref + this.ref" target="_blank">
         <img :src="social.icon" :alt="social.alt" class="links__item">
       </a>
     </div>
@@ -13,7 +13,7 @@
 import { socials } from '../../data/socials.data'
 
 export default {
-  props: ['routeRef'],
+  props: ['shareRef'],
   data() {
     return {
       socials: socials,
@@ -23,6 +23,9 @@ export default {
   computed: {
     isDesktop(){
       return this.$store.state.appModule.isDesktop
+    },
+    ref() {
+      return this.$route.path + (this.shareRef ? this.shareRef : '')
     }
   },
   methods: {

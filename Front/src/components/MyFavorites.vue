@@ -1,7 +1,8 @@
 <template>
   <div class="page" :class="{'page-mobile': !isDesktop}">
-    <MasonryWall :items="myFavoriteRoutes" :columnWidth="350" type="route" header="Маршруты"/>
-    <MasonryWall :items="myFavorites" :columnWidth="350" type="place" header="Места"/>
+    <MasonryWall :items="myFavoriteRoutes" :columnWidth="350" type="routes" header="Маршруты"/>
+    <MasonryWall :items="myFavorites" :columnWidth="350" type="places" header="Места"/>
+    <h1 v-if="!myFavoriteRoutes.length && !myFavorites.length">Добавьте места в избранное</h1>
   </div>
 </template>
 

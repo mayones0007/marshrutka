@@ -30,8 +30,9 @@ export class PlaceModel {
         return place
       })
   }
-  async getPlaces(role: string, filters?: DbQuery): Promise<Place[]> {
+  async getPlaces(role: string, filters?: DbQuery, pagination?: DbQuery): Promise<Place[]> {
     return await knexService('places')
+    .orderBy('hits', 'desc')
     .modify(function (query) {
       if (role === 'user') {
         query.where('isAccepted', 1)
@@ -39,8 +40,11 @@ export class PlaceModel {
       if (filters) {
         query.where(filters)
       }
+      if (pagination) {
+        query.limit(pagination.limit)
+        query.offset(pagination.offset)
+      }
     })
-    .orderBy('hits','desc')
     .leftJoin('pictures', 'places.id', 'pictures.placeId')
     .select('places.*', 'pictures.fileName as picture')
     .groupBy('places.id')

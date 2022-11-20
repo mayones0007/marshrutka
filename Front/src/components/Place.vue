@@ -71,9 +71,6 @@ export default {
     currentPictures() {
       return this.$store.state.placesModule.pictures
     },
-    isAdmin() {
-      return this.$store.state.userModule.user.name === "Admin"
-    },
     isDesktop(){
       return this.$store.state.appModule.isDesktop
     },

@@ -1,7 +1,7 @@
 <template>
   <div>
     <Header/>
-    <router-view></router-view>
+    <router-view class="view"></router-view>
     <LoginPopup/>
     <Footer/>
   </div>
@@ -45,4 +45,9 @@ export default {
 
 <style lang="scss"> 
   @import "./styles/main.scss";
+
+  .view {
+    box-sizing: border-box;
+    min-height: calc(100vh - 160px);
+  }
 </style>

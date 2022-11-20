@@ -66,11 +66,24 @@ export class RouteController {
     }
   }
   async getRoutes(req: Request): Promise<AppResponse<Route[]>> {
-    const user = req.user ? req.user.userId : undefined
-    const routes = await models.route.getRoutes(user)
+    const pagination = { offset: req.query.offset, limit: req.query.limit }
+    const filters = req.query
+    delete filters.offset
+    delete filters.limit
+    const routes = await models.route.getRoutes(filters, pagination)
     return {
       status: 200,
       body: routes,
+    }
+  }
+  async deleteRoute(req: Request): Promise<AppResponse> {
+    const id = req.query.id as string
+    const route = await models.route.getRoute({ id })
+    fileService.deleteFiles('img', route.picture)
+    await models.route.deleteRoute(id)
+    return {
+      status: 200,
+      body: { message: 'Маршрут удален' },
     }
   }
 }

@@ -7,7 +7,6 @@ import MyFavorites from "./components/MyFavorites.vue";
 import Settings from "./components/Settings.vue";
 import NewPlace from "./components/NewPlace.vue";
 import Booking from "./components/Booking.vue";
-import Routes from "./components/Routes.vue";
 import Route from "./components/Route.vue";
 import { createRouter, createWebHistory } from "vue-router";
 
@@ -20,7 +19,6 @@ export const routeNames = {
   settings: 'settings',
   newPlace: 'newPlace',
   booking: 'Booking',
-  routes: 'routes',
   route: 'route'
 }
 
@@ -33,7 +31,6 @@ const routes = [
   { path: '/settings', name: routeNames.settings, component: Settings, meta: { title: "Marshrutka - создай свой маршрут" } },
   { path: '/:id', name: routeNames.place, component: Place, meta: { title: "Marshrutka - создай свой маршрут" } },
   { path: '/newplace', name: routeNames.newPlace, component: NewPlace, meta: { title: "Marshrutka - создай свой маршрут" } },
-  { path: '/routes', name: routeNames.routes, component: Routes, meta: { title: "Marshrutka - создай свой маршрут" } },
   { path: '/route:id', name: routeNames.route, component: Route, meta: { title: "Marshrutka - создай свой маршрут" } },
 ]
 export const router = createRouter({

@@ -23,11 +23,11 @@ export default {
     }
   },
   computed: {
-    places() {
-      return this.$store.state.placesModule.places
+    items() {
+      return this.$store.state.placesModule[this.table]
     },
     options() {
-      return new Set(this.places.map((place) => place[this.fieldName]))
+      return this.$store.state.placesModule.filters[this.fieldName].map(filter => filter[this.fieldName])
     },
     selectedOption() {
       const filters = this.$store.state.placesModule.appliedFilters
@@ -39,6 +39,9 @@ export default {
     },
     isChanged() {
       return (this.selectedOption !== this.name)
+    },
+    currentMethod() {
+      return this.table === 'places' ? 'getPlaces' : 'getRoutes'
     }
   },
   methods: {
@@ -47,12 +50,12 @@ export default {
     },
     setSelectedOption(option) {
       this.$store.commit('setAppliedFilters', {[this.fieldName]: option})
-      this.$store.dispatch("getPlaces")
+      this.$store.dispatch(this.currentMethod)
     },
     resetSelectedOption() {
       this.listFullSize = false
       this.$store.commit('resetAppliedFilter', this.fieldName)
-      this.$store.dispatch("getPlaces")
+      this.$store.dispatch(this.currentMethod)
     }
   },
 }
@@ -68,7 +71,7 @@ export default {
 .select__input {
   position: relative;
   display: flex;
-  width: 120px;
+  width: 150px;
   gap: 10px;
   justify-content: space-between;
   align-items: center;

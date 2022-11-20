@@ -14,6 +14,7 @@ export const placeFields = [
     autofull: true,
     required: true,
     info: true,
+    filter: true,
   },
   {
     fieldName: 'type',
@@ -22,6 +23,7 @@ export const placeFields = [
     autofull: true,
     required: false,
     info: true,
+    filter: true,
   },
   {
     fieldName: 'region',
@@ -86,11 +88,12 @@ export const placeFields = [
   },
   {
     fieldName: 'way',
-    name: 'Как добраться',
+    name: 'На чем',
     type: 'text',
     autofull: true,
     required: true,
     info: true,
+    filter: true,
   },
   {
     fieldName: 'site',
@@ -111,12 +114,22 @@ export const placeFields = [
     category: ['Культура', 'Еда', 'Религия'],
   },
   {
+    fieldName: 'isAccepted',
+    name: 'Подтверждено',
+    type: 'text',
+    autofull: false,
+    required: false,
+    info: false,
+    filter: true,
+    admin: true,
+  },
+  {
     fieldName: 'description',
     name: 'Описание',
     type: 'textarea',
     autofull: false,
     required: true,
-    placeholder: "Описание",
+    placeholder: "Описание*",
     info: false,
   },
 ]

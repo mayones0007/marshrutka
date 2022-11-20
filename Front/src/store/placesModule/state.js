@@ -4,10 +4,14 @@ export const state = () => ({
   places: [],
   appliedFilters: {},
   place: {},
+  raiting: null,
   reviews: [],
   pictures: [],
   route: [],
   routes: [],
   booking: [],
-  routeInfo: {}
+  routeInfo: {},
+  pagination: {},
+  page: 1,
+  isLastPage: false,
 })

@@ -1,20 +1,11 @@
 <template>
   <div class="page" :class="{'page-mobile': !isDesktop}">
     <h2>Добавить место</h2>
-      <div v-if="isAdmin" class="form">
-        <div class="form__item">
-          <label for="hiddenOnly">Cкрытые</label>
-          <input type="checkbox" id="hiddenOnly" :checked="hiddenOnly" v-model="hiddenOnly">
-        </div>
-        <select class="form__input" id="places" v-model="place" @change="getPictures">
-          <option v-for="place in this.places" :key="place.id" :value="place">{{place.name}}</option>
-        </select>
-      </div>
       <div class="form">
         <div v-for="field in this.placeFields" :key="field.name">
           <div v-if="isCategoryField(field.category)">
             <textarea v-if="field.type === 'textarea'" class="form__textarea" type="text" :placeholder="field.placeholder" v-model="place[field.fieldName]"></textarea>
-            <div v-else class="form__item">
+            <div v-else-if="!field.admin || field.admin === isAdmin" class="form__item">
               <label :for="field.fieldName">{{field.name}}{{field.required ? '*' : ''}}</label>
               <div>
                 <input 
@@ -34,20 +25,16 @@
             </div>
           </div>
         </div>
-        <div v-if="isAdmin" class="form__item">
-          <label for="isAccepted">Показывать</label>
-          <input type="checkbox" id="isAccepted" v-model="place.isAccepted" true-value=1 false-value=0>
-        </div>
       </div>
     <label>Фото (минимум 4)</label>
     <div class="gallery">
       <div v-for="picture in currentPictures" :key="picture" class="gallery__item">
-        <img :src="`${$baseUrl}/img/${picture}`" class="gallery__item-image">
+        <img :src="`${$baseUrl}/min/${picture}`" class="gallery__item-image">
         <img :src="`${$baseUrl}/icons/trash.svg`" class="gallery__item-button" @click="deletePlacePicture(picture)">
       </div>
-      <div v-for="picture in addedPictures" :key="picture" class="gallery__item">
+      <div v-for="(picture, index) in addedPictures" :key="picture" class="gallery__item">
         <img :src="picture" class="gallery__item-image">
-        <img :src="`${$baseUrl}/icons/trash.svg`" class="gallery__item-button" @click="deletePicture(picture)">
+        <img :src="`${$baseUrl}/icons/trash.svg`" class="gallery__item-button" @click="deletePicture(index)">
       </div>
       <input class="form__picture" type="file" id="file" ref="file" multiple accept="image/*" @change="addPlacePicture()">
       <label for="file" class="gallery__item">
@@ -68,7 +55,6 @@
 import MyButton from './CustomComponents/MyButton.vue'
 import LoadingSpinner from './CustomComponents/LoadingSpinner.vue'
 import { router, routeNames } from '../router'
-import { mounths } from '../data/mounths.data'
 import { placeFields } from '../data/place.fields'
 import { validation } from '../services/validation.service'
 
@@ -82,14 +68,11 @@ export default {
     validation: {},
     hiddenOnly: false,
     addedPictures: [],
-    mounths,
+    files: [],
     placeFields,
     isLoading: false,
   }),
   computed: {
-    places() {
-      return this.hiddenOnly ? this.$store.state.placesModule.places.filter((item) => item.isAccepted !== 1) : this.$store.state.placesModule.places
-    },
     isDesktop(){
       return this.$store.state.appModule.isDesktop
     },
@@ -103,10 +86,14 @@ export default {
       return this.isAdmin ? "Добавить место" : "Отправить на проверку"
     },
     isFilledForm() {
-      return Object.values(this.place).filter((item) => item !== "").length > 8
+      return !Object.values(this.validation).reduce((a, b) => a + b, '')
+      && placeFields.reduce((acc, field) => field.required === true ? acc && !!this.place[field.fieldName] : acc, true)
     },
     isFilledPictures() {
       return (this.currentPictures.length + this.addedPictures.length) > 3
+    },
+    currentRoute() {
+      return router.currentRoute.value.params.id
     },
   },
   methods: {
@@ -115,7 +102,7 @@ export default {
     },
     async addNewPlace(){
       this.isLoading = true
-      const status = await this.$store.dispatch('addNewPlace', {info: this.place, pictures: this.$refs.file.files})
+      const status = await this.$store.dispatch('addNewPlace', {info: this.place, pictures: this.files})
       if (status === 200) {
         router.push({ name: routeNames.places })
       }
@@ -124,25 +111,23 @@ export default {
     async editPlace(){
       this.isLoading = true
       delete this.place.picture
-      const status = await this.$store.dispatch('editPlace', {info: this.place, pictures: this.$refs.file.files})
+      const status = await this.$store.dispatch('editPlace', {info: this.place, pictures: this.files})
       if (status === 200) {
-        router.push({ name: routeNames.newPlace })
+        router.push({ name: routeNames.place, params: {id: this.place.id} })
       }
       this.isLoading = false
     },
     async deletePlace(){
       this.$store.dispatch('deletePlace', this.place.id)
-      await this.$store.dispatch("getPlaces")
-      this.$store.commit('setPictures', [])
-      this.place = {}
+      router.push({ name: routeNames.places })
     },
     getPictures() {
       this.$store.dispatch('getPictures', this.place.id)
 
     },
     addPlacePicture(){
-      const files = this.$refs.file.files
-      Array.from(files).forEach(file => {
+      this.files = [...this.files, ...this.$refs.file.files]
+      Array.from(this.$refs.file.files).forEach(file => {
           const reader = new FileReader()
           reader.onload = () => {
           this.addedPictures.push(reader.result)
@@ -150,23 +135,24 @@ export default {
         reader.readAsDataURL(file)
       })
     },
-    deletePicture(picture) {
-      this.addedPictures.splice(this.addedPictures.indexOf(picture),1)
+    deletePicture(index) {
+      this.files.splice(index,1)
+      this.addedPictures.splice(index,1)
     },
     async deletePlacePicture(picture) {
       await this.$store.dispatch("deletePlacePicture", picture)
       this.$store.dispatch("getPictures", this.place.id)
     },
     options(fieldName) {
-      return new Set(this.places.map((place) => place[fieldName]))
+      return this.$store.state.placesModule.filters[fieldName].map(filter => filter[fieldName])
     },
     isCategoryField(category) {
       return category ? category.includes(this.place.category) : true
     }
   },
   created() {
-    this.$store.dispatch("getPlaces")
-    this.$store.commit('setPictures', [])
+    this.$store.dispatch("getFilters")
+    this.currentRoute ? this.place = this.$store.state.placesModule.place : this.$store.commit('setPictures', [])
   }
 }
 

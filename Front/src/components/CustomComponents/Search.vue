@@ -32,16 +32,15 @@ export default {
   },
   routeNames,
   data: () => ({
-    selectedRegion: '',
     listFullSize: false,
     input: '',
   }),
   computed:{
     regions() {
-      return Object.fromEntries(Object.entries(this.$store.state.placesModule.filters.regions).filter(([key]) => key.toLowerCase().includes(this.input.toLowerCase())))
+      return this.$store.state.placesModule.filters.region.filter(region => region.region.toLowerCase().includes(this.input.toLowerCase()))
     },
     cities() {
-      return Object.fromEntries(Object.entries(this.$store.state.placesModule.filters.cities).filter(([key]) => key.toLowerCase().includes(this.input.toLowerCase())))
+      return this.$store.state.placesModule.filters.city.filter(city => city.city.toLowerCase().includes(this.input.toLowerCase()))
     },
   },
 
@@ -50,30 +49,30 @@ export default {
       this.$store.commit('setSelectedRegion', region)
       this.$store.commit('setAppliedFilters', {region})
       this.$store.dispatch("getPlaces")
+      this.$store.dispatch("getRoutes")
       if (router.currentRoute.name !== 'MyPlaces') {
         router.push({ name: routeNames.places })
       }
-      this.selectedRegion = ''
       this.input = ''
     },
     setSelectedCity (city) {
       this.$store.commit('setSelectedRegion', city)
       this.$store.commit('setAppliedFilters', {city})
       this.$store.dispatch("getPlaces")
+      this.$store.dispatch("getRoutes")
       if (router.currentRoute.name !== 'MyPlaces') {
         router.push({ name: routeNames.places })
       }
-      this.selectedRegion = ''
       this.input = ''
     },
     resetSelectedRegion () {
       this.$store.commit('setSelectedRegion', '')
-      this.$store.commit('setAppliedFilters', {})
+      this.$store.commit('resetAppliedFilters')
       this.$store.dispatch("getPlaces")
+      this.$store.dispatch("getRoutes")
       if (router.currentRoute.name !== 'MyPlaces') {
         router.push({ name: routeNames.places })
       }
-      this.selectedRegion = ''
       this.input = ''
     },
     placesAmountText(number) {

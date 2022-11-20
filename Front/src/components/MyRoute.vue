@@ -1,120 +1,114 @@
 <template>
   <div class="page" :class="{'page-no-header': !description,'page-mobile': !isDesktop}">
-    <div v-if="!this.mapIsShowed" class="map">
-      <img class="map__picture" :src="`${$baseUrl}/img/map.jpg`" alt="Карта">
-      <div class="map__button">
+    <div v-if="myRoute.length">
+      <div v-if="!this.mapIsShowed" class="map">
+        <img class="map__picture" :src="`${$baseUrl}/img/map.jpg`" alt="Карта">
+        <div class="map__button">
+          <MyButton 
+            title="Смотреть на карте"
+            @click="setMapIsShowed"
+          />
+        </div>
+      </div>
+      <div v-else class="map">
+        <yandex-map
+          :coords="coords" 
+          zoom="5"
+          :controls="controls"
+          :behaviors="behaviors"
+          @map-was-initialized="mapInitialized"
+        >
+        <ymap-marker 
+          :coords="coords" 
+          marker-id="Старт" 
+          hint-content=""
+        />
+        </yandex-map>
+      </div>
+      <div class="booking-form" :class="{'booking-form-mobile': !isDesktop}">
+        <div class="form__header">Забронировать</div>
+        <Datepicker
+          v-model="request.date"
+          class="form__date"
+          :class="{'form__date-mobile': !isDesktop}"
+          format="dd MMM"
+          placeholder="Дата"
+        />
+        <input
+          class="form__input"
+          v-model="request.persons"
+          type="number"
+          placeholder="Сколько человек"
+        >
+        <input
+          class="form__input"
+          v-model="request.phone"
+          placeholder="Номер телефона"
+          type="tel"
+        >
         <MyButton 
-          title="Смотреть на карте"
-          @click="setMapIsShowed"
+          title="Забронировать"
+          @click="booking"
+          :isDisabled="!myRoute.length"
         />
+        <div class="form__button-share">
+          <div v-if="!isDesktop">Поделиться с друзьями</div>
+          <ShareButton
+            :shareRef="shareRef"
+          />
+        </div>
       </div>
-    </div>
-    <div v-else class="map">
-      <yandex-map
-        :coords="coords" 
-        zoom="5"
-        :controls="controls"
-        :behaviors="behaviors"
-        @map-was-initialized="mapInitialized"
-      >
-      <ymap-marker 
-        :coords="coords" 
-        marker-id="Старт" 
-        hint-content=""
+      <RoutePoint
+        v-for='routePoint in myRoute'
+        :key="routePoint.id"
+        :routePoint="routePoint"
+        :isHideAddInRouteButton="!isNewRoute"
       />
-      </yandex-map>
-    </div>
-    <div class="booking-form" :class="{'booking-form-mobile': !isDesktop}">
-      <div class="form__header">Забронировать поездку</div>
-      <Datepicker
-        v-model="request.date"
-        class="form__date"
-        :class="{'form__date-mobile': !isDesktop}"
-        format="dd MMM"
-        placeholder="Дата"
-      />
-      <input
-        class="form__input"
-        v-model="request.persons"
-        type="number"
-        placeholder="Сколько человек"
-      >
-      <input
-        class="form__input"
-        v-model="request.phone"
-        placeholder="Номер телефона"
-        type="tel"
-      >
-      <MyButton 
-        title="Забронировать"
-        @click="booking"
+      <MyButton
+        v-if="isNewRoute"
+        title="Опубликовать маршрут"
+        @click="setPopup"
         :isDisabled="!myRoute.length"
+        class="form__button"
       />
-      <div class="form__button-share">
-        <div v-if="!isDesktop">Поделиться с друзьями</div>
-        <ShareButton
-          :routeRef="'?id=' + routeRef"
-        />
-      </div>
-    </div>
-    <RoutePoint
-      v-for='routePoint in myRoute'
-      :key="routePoint.id"
-      :routePoint="routePoint"
-      :isHideAddInRouteButton="!isNewRoute"
-    />
-    <MyButton
-      v-if="isNewRoute"
-      title="Опубликовать маршрут"
-      @click="setPopup"
-      :isDisabled="!myRoute.length"
-      class="form__button"
-    />
-    <Popup name="routeSave" v-if="this.$store.state.appModule.popup === 'routeSave'">
-      <h2>Опубликовать маршрут</h2>
-      <div class="form">
-        <input
-          class="form__input"
-          v-model="route.name"
-          type="text"
-          placeholder="Название"
-        >
-        <input
-          class="form__input"
-          v-model="route.city"
-          type="text"
-          placeholder="Город"
-        >
-        <input
-          class="form__input"
-          v-model="route.price"
-          type="number"
-          placeholder="Цена"
-        >
-        <input
-          class="form__input"
-          v-model="route.persons"
-          type="number"
-          placeholder="Кол-во человек"
-        >
-        <input
-          class="form__input"
-          v-model="route.time"
-          type="number"
-          placeholder="Время"
-        >
-        <textarea class="form__textarea" v-model="route.description" placeholder="Описание"/>
-        <div>
-          <img v-if="this.picture" :src="this.picture" class="form__picture">
-          <label v-else for="file" class="form__picture">
+      <Popup name="routeSave" v-if="this.$store.state.appModule.popup === 'routeSave'">
+        <h2>Опубликовать маршрут</h2>
+        <div class="form" :class="{'form-mobile': !isDesktop}">
+          <div v-for="field in this.routeFields" :key="field.name">
+            <div class="form__item">
+              <input 
+                class="form__input"
+                :id="field.fieldName"
+                v-model="route[field.fieldName]" 
+                :placeholder="field.name"
+                :type="field.type"
+                :list="field.name"
+                @blur="validate(field, this.route)"
+              >
+              <datalist v-if="field.autofull" :id="field.name">
+                <option v-for="option in options(field.fieldName)" :key="option">{{option}}</option>
+              </datalist>
+              <div v-if="this.validation[field.fieldName]" class="input-text-wrong">{{this.validation[field.fieldName]}}</div>
+            </div>
+          </div>
+        </div>
+        <textarea class="form__textarea" type="text" placeholder="Описание" v-model="route.description"></textarea>
+        <div class="gallery">
+          <img v-if="this.picture" :src="this.picture" class="gallery__picture">
+          <label v-else for="file" class="gallery__picture">
             <img :src="`${$baseUrl}/icons/plus.svg`">
             <div>ФОТО</div>
           </label>
-          <input class="form__input-picture" type="file" id="file" ref="file" accept="image/*" @change="addRoutePicture()">
+          <input class="gallery__input-picture" type="file" id="file" ref="file" accept="image/*" @change="addRoutePicture()">
         </div>
-      </div>
-      <MyButton @click="routeSave" title="Опубликовать маршрут"/>
-    </Popup>
+        <MyButton
+          title="Опубликовать маршрут"
+          :isDisabled="!inputIsCorrect"
+          @click="routeSave"
+        />
+      </Popup>
+    </div>
+    <h1 v-else>Добавьте места в маршрут</h1>
   </div>
 </template>
 
@@ -125,6 +119,8 @@ import ShareButton from '../components/CustomComponents/ShareButton.vue'
 import Popup from '../components/CustomComponents/Popup.vue'
 import Datepicker from '@vuepic/vue-datepicker'
 import {router} from '../router'
+import { routeFields } from '../data/route.fields'
+import { validation } from '../services/validation.service'
 import '@vuepic/vue-datepicker/src/VueDatePicker/style/main.scss'
 
 let myMap = null;
@@ -146,14 +142,19 @@ data(){
     behaviors: ['dblClickZoom'],
     controls: ['fullscreenControl'],
     request: {},
+    validation: {},
     route: {},
     picture: '',
     mapIsShowed: false,
-    }
-  },
+    routeFields
+  }
+},
 computed: {
   myRoute(){
     return this.$store.state.placesModule.route.length ? this.$store.state.placesModule.route : this.$store.state.userModule.myRoute
+  },
+  routes() {
+    return this.$store.state.placesModule.routes
   },
   isDesktop(){
     return this.$store.state.appModule.isDesktop
@@ -169,6 +170,12 @@ computed: {
   },
   isNewRoute() {
     return this.$route.name === "myRoute" && !this.$route.query.id && this.isGuide
+  },
+  inputIsCorrect(){
+    return !Object.values(this.validation).reduce((a, b) => a + b, '') && Object.keys(this.route).length >= routeFields.map(field => field.required).length && !Object.values(this.route).includes('')
+  },
+  shareRef() {
+    return this.description ? "" : "?id=" + this.routeRef
   }
 },
   methods: {
@@ -214,9 +221,16 @@ computed: {
     },
     setMapIsShowed() {
       this.mapIsShowed = !this.mapIsShowed
-    }
+    },
+    validate(field, model){
+      this.validation[field.fieldName] = validation(model[field.fieldName], field.fieldName)
+    },
+    options(fieldName) {
+      return new Set(this.routes.map((route) => route[fieldName]))
+    },
   },
   created() {
+    this.$store.dispatch("getRoutes")
     const ids = this.$route.query.id
     if(ids) {
       this.$store.dispatch("getRoute", ids)
@@ -263,28 +277,35 @@ computed: {
 .form {
   @include grid-g20;
   margin: 20px 0;
+  grid-template-columns: 1fr 1fr;
+  &-mobile {
+    grid-template-columns: 1fr;
+  }
 }
-.form__picture {
+.gallery {
+  margin-bottom: 20px;
+}
+.gallery__picture {
   height: 200px;
   width: 300px;
   border-radius: 5px;
   object-fit: cover;
+  cursor: pointer;
 }
-.form__input-picture {
+.gallery__input-picture {
   display: none;
 }
 .form__input {
   @include input;
-  box-sizing: border-box;
   width: 100%;
 }
 .form__textarea {
   @include input;
-  box-sizing: border-box;
   padding: 10px;
   width: 100%;
-  height: 100px;
+  height: 150px;
   resize: vertical;
+  margin-bottom: 20px;
 }
 .form__date {
   width: 100%;

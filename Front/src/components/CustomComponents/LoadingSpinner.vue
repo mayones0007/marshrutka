@@ -1,8 +1,14 @@
 <template>
-  <div class="background">
-  <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+  <div :class="{'background': !noBackGround}">
+    <div class="lds-spinner" :class="{'lds-spinner-noBackGround': noBackGround}"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
   </div>
 </template>
+
+<script>
+export default {
+  props: ['noBackGround'],
+}
+</script>
 
 <style lang="scss" scoped>
 .background {
@@ -14,6 +20,10 @@
 .lds-spinner {
   width: 80px;
   height: 80px;
+  margin: auto;
+  &-noBackGround {
+    margin-top: 20px;
+  }
 }
 .lds-spinner div {
   transform-origin: 40px 40px;

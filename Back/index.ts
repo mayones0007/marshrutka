@@ -171,6 +171,11 @@ app.get('/route', corsMiddleware, async (req: Request, res: Response) => {
   res.status(response.status).send(response.body)
 })
 
+app.delete('/route', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
+  const response = await controllers.route.deleteRoute(req)
+  res.status(response.status).send(response.body)
+})
+
 app.post('/booking', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
   const response = await controllers.booking.createBooking(req)
   res.status(response.status).send(response.body)
@@ -187,6 +192,6 @@ app.get('/booking', corsMiddleware, authMiddleware, async (req: Request, res: Re
 })
 
 app.get('/filters', corsMiddleware, async (req: Request, res: Response) => {
-  const response = await controllers.filter.getFilters()
+  const response = await controllers.filter.getFilters(req)
   res.status(response.status).send(response.body)
 })

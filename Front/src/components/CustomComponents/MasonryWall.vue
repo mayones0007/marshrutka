@@ -3,9 +3,9 @@
     <h2 v-if="header">{{header}}</h2>
     <masonry-wall :items="items" :column-width="columnWidth" :gap="20">
       <template #default="{ item }">
-        <div class="item" :style="`background-image: url(${$baseUrl}/img/${item.picture})`">
+        <div class="item" :style="`background-image: url(${$baseUrl}/min/${item.picture})`">
           <div class="item__info">
-            <div class="item__info-name">{{item.name}}</div>
+            <router-link :to="{name: currentType(), params: {id: item.id}}" class="item__info-name">{{item.name}}</router-link>
             <div>
               <div class="item__info-description">{{item.description}}</div>
               <div class="item__info-footer">
@@ -14,7 +14,6 @@
                 <div v-if="item.time">{{currentTime(item.time)}}</div>
                 <div v-if="item.way" class="card__info-persons">{{item.way}}<img :src="`${$baseUrl}/icons/${currentIcon(item.way)}.svg`"></div>
                 <Hits :hits="item.hits" color="white"/>
-                <router-link :to="{name: type, params: {id: item.id}}" class="item__info-footer-button">Смотреть</router-link>
               </div>
             </div>
           </div>
@@ -35,11 +34,14 @@ export default {
   components: {
     MasonryWall,
     Hits,
-    ButtonHeart
+    ButtonHeart,
   },
   methods: {
     currentProps(id) {
-      return this.type === 'route' ? {routeId: id} : {placeId: id}
+      return this.type === 'routes' ? {routeId: id} : {placeId: id}
+    },
+    currentType() {
+      return this.type === 'routes' ? 'route' : 'place'
     },
     currentTime(time) {
       if (time < 1) {
@@ -95,6 +97,11 @@ h2 {
 .item__info-name{
   font-size: 1.5em;
   margin-right: 35px;
+  text-decoration: none;
+  color: white;
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .item__info-description{
@@ -120,21 +127,6 @@ h2 {
 }
 .item__info-footer-price {
   font-size: 1.8em;
-}
-.item__info-footer-button {
-  font-size: 1em;
-  font-weight: 300;
-  padding: 8px;
-  border: solid white 1px;
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.15);
-  transition-duration: 300ms;
-  cursor: pointer;
-  text-decoration: none;
-  color: white;
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.639);
-  }
 }
 .card__info-persons {
   display: flex;

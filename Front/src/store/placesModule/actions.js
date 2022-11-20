@@ -3,10 +3,12 @@ import { compressAndRenamePicture } from "../../services/file.service"
 
 export const actions = {
 
-  async getPlaces({ state, commit }) {
+  async getPlaces({ state, commit }, page) {
+    page ? commit('setPagination', page) : commit('resetPagination')
     try {
-      const response = await (await axiosInstance.get('places', { params: state.appliedFilters }))
-      commit("setPlaces", response.data)
+      const response = await axiosInstance.get('places', { params: {...state.appliedFilters, ...state.pagination }})
+      page ? commit("setPlaces", response.data) : commit("resetPlaces", response.data)
+      commit("setIsLastPage", response.data.length < state.pagination.limit)
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
@@ -73,7 +75,7 @@ export const actions = {
       Object.values(place.pictures).forEach(file => {
         files.push(compressAndRenamePicture(file))
       })
-      Promise.all(files).then(async (list) => {
+      return Promise.all(files).then(async (list) => {
         list.forEach(file => formData.append('images', file))
         const response = await axiosInstance.post('place', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         return response.status
@@ -93,7 +95,7 @@ export const actions = {
           files.push(compressAndRenamePicture(file))
         })
       }
-      Promise.all(files).then(async(list) => {
+      return Promise.all(files).then(async(list) => {
         list.forEach(file => formData.append('images', file))
         const response = await axiosInstance.patch('place', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
         return response.status
@@ -151,10 +153,12 @@ export const actions = {
     }
   },
 
-  async getRoutes({ commit }) {
+  async getRoutes({ state, commit }, page) {
+    page ? commit('setPagination', page) : commit('resetPagination')
     try {
-      const response = await axiosInstance.get('routes')
-      commit('setRoutes', response.data)
+      const response = await axiosInstance.get('routes', { params: { ...state.appliedFilters, ...state.pagination } })
+      page ? commit("setRoutes", response.data) : commit("resetRoutes", response.data)
+      commit("setIsLastPage", response.data.length < state.pagination.limit)
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
@@ -177,9 +181,9 @@ export const actions = {
     }
   },
 
-  async getFilters({ commit }) {
+  async getFilters({ state, commit }) {
     try {
-      const response = await axiosInstance.get('filters')
+      const response = await axiosInstance.get('filters', { params: state.appliedFilters })
       commit('setFilters', response.data)
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
@@ -202,6 +206,14 @@ export const actions = {
     try {
       await axiosInstance.post('routes', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
       commit('setPopup')
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e)
+    }
+  },
+  async deleteRoute({ dispatch }, id) {
+    try {
+      await axiosInstance.delete('route', { params: { id } })
+      dispatch("getRoutes")
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }

@@ -9,6 +9,10 @@ export const mutations = {
   },
 
   setPlaces(state, places) {
+    state.places = [...state.places, ...places]
+  },
+
+  resetPlaces(state, places) {
     state.places = places
   },
 
@@ -18,7 +22,7 @@ export const mutations = {
 
   setReviews(state, reviews) {
     state.reviews = reviews
-    state.place.raiting = Math.round(reviews.reduce((acc, num) => acc + num.raiting, 0) / reviews.length)
+    state.raiting = Math.round(reviews.reduce((acc, num) => acc + num.raiting, 0) / reviews.length)
   },
 
   setPictures(state, pictures) {
@@ -33,6 +37,10 @@ export const mutations = {
     state.appliedFilters = { ...state.appliedFilters, ...filter }
   },
 
+  resetAppliedFilters(state) {
+    state.appliedFilters = {}
+  },
+
   resetAppliedFilter(state, filter) {
     delete state.appliedFilters[filter]
   },
@@ -45,11 +53,29 @@ export const mutations = {
     state.routeInfo = payload
   },
 
-  setRoutes(state, payload) {
-    state.routes = payload
+  setRoutes(state, routes) {
+    state.routes = [...state.routes, ...routes]
+  },
+
+  resetRoutes(state, routes) {
+    state.routes = routes
   },
 
   setBooking(state, payload) {
     state.booking = payload
+  },
+
+  setPagination(state, payload) {
+    state.pagination.offset = state.pagination.limit * payload
+    state.page++
+  },
+
+  resetPagination(state) {
+    state.pagination = { limit: 6, offset: 0 }
+    state.page = 1
+  },
+
+  setIsLastPage(state, payload) {
+    state.isLastPage = payload
   },
 }

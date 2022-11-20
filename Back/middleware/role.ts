@@ -19,7 +19,7 @@ export const roleMiddleware = function (req: Request, res: Response, next: NextF
     if (authHeader) {
       const accessToken = authHeader.split(' ')[1]
       const decoded = <jwt.verifiedUser>jwt.verify(accessToken, config.jwtSecret)
-      req.user = {role: decoded.role}
+      req.user = { userId: decoded.userId, role: decoded.role }
     } else {
       req.user = {role: 'user'}
     }
