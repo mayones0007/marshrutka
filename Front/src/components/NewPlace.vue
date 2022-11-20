@@ -18,7 +18,7 @@
                   @blur="validate(field, this.place)"
                 >
                 <datalist v-if="field.autofull" :id="field.name">
-                  <option v-for="option in options(field.fieldName)" :key="option">{{option}}</option>
+                  <option v-for="option in options(field.fieldName)" :key="option">{{option[field.fieldName]}}</option>
                 </datalist>
                 <div v-if="this.validation[field.fieldName]" class="input-text-wrong">{{this.validation[field.fieldName]}}</div>
               </div>
@@ -144,7 +144,7 @@ export default {
       this.$store.dispatch("getPictures", this.place.id)
     },
     options(fieldName) {
-      return this.$store.state.placesModule.filters[fieldName].map(filter => filter[fieldName])
+      return this.$store.state.placesModule.filters[fieldName]
     },
     isCategoryField(category) {
       return category ? category.includes(this.place.category) : true

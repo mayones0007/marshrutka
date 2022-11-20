@@ -5,6 +5,7 @@ import { corsMiddleware } from './middleware/cors';
 import fileupload from 'express-fileupload';
 import { authMiddleware } from './middleware/auth';
 import { roleMiddleware } from './middleware/role';
+const compression = require('compression')
 const app = express()
 const port = 3000
 
@@ -20,7 +21,7 @@ declare module 'express-serve-static-core' {
   }
 }
 
-app.use(bodyParser.json(), express.static('public'), fileupload())
+app.use(bodyParser.json(), compression() ,express.static('public'), fileupload())
 
 app.options('*', corsMiddleware, (req, res) => {
   res.status(204).send()

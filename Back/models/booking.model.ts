@@ -19,7 +19,9 @@ interface DbQuery {
 
 export class BookingModel {
   async getBookings(guideId: number): Promise<Booking[]> {
-    return await knexService('bookings').where({ guideId }).orWhere({ guideId: null }).leftJoin('users', 'bookings.userId', 'users.id').select('bookings.*', 'users.name as userName')
+    const timeElapsed = Date.now()
+    const today = new Date(timeElapsed)
+    return await knexService('bookings').where({ guideId }).orWhere({ guideId: null }).andWhere('date', '>', today.toISOString()).leftJoin('users', 'bookings.userId', 'users.id').select('bookings.*', 'users.name as userName')
       .then((bookings) => {
         return bookings
       })
