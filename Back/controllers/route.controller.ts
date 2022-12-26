@@ -65,6 +65,20 @@ export class RouteController {
       body: { message: 'Маршрут сохранен' },
     }
   }
+  async editRoute(req: Request): Promise<AppResponse> {
+    const route = JSON.parse(req.body.route)
+    if (req.files) {
+      fileService.deleteFiles('img', route.picture)
+      const file = req.files.picture as UploadedFile
+      fileService.saveFiles('img', file)
+      route.picture = file.name
+    }
+    const routeId = await models.route.editRoute({ ...route, user: req.user.userId })
+    return {
+      status: 200,
+      body: { message: 'Маршрут сохранен'},
+    }
+  }
   async getRoutes(req: Request): Promise<AppResponse<Route[]>> {
     const pagination = { offset: req.query.offset, limit: req.query.limit }
     const filters = req.query

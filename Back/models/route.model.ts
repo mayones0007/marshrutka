@@ -58,6 +58,10 @@ export class RouteModel {
         }
       })
   }
+  async editRoute(newRoute: DbQuery): Promise<void> {
+    await knexService('routes').where({ id: newRoute.id }).del()
+    await knexService('routes').insert(newRoute)
+  }
   async deleteRoutePoint(dbQuery: DbQuery): Promise<void> {
     await knexService('route').where(dbQuery).del()
   }

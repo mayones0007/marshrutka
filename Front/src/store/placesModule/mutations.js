@@ -78,4 +78,8 @@ export const mutations = {
   setIsLastPage(state, payload) {
     state.isLastPage = payload
   },
+
+  setIsLastRoutesPage(state, payload) {
+    state.isLastRoutesPage = payload
+  },
 }

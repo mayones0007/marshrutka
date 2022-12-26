@@ -1,5 +1,5 @@
 <template>
-  <div class="page" :class="{'page-no-header': !description,'page-mobile': !isDesktop}">
+  <div class="page" :class="{'page-no-header': !routeInfo,'page-mobile': !isDesktop}">
     <div v-if="myRoute.length">
       <div v-if="!this.mapIsShowed" class="map">
         <img class="map__picture" :src="`${$baseUrl}/img/map.jpg`" alt="Карта">
@@ -33,6 +33,11 @@
           :class="{'form__date-mobile': !isDesktop}"
           format="dd MMM"
           placeholder="Дата"
+          locale="ru"
+          :format-locale="ru"
+          :enable-time-picker="false"
+          select-text="Выбрать"
+          cancel-text="Отмена"
         />
         <input
           class="form__input"
@@ -72,7 +77,7 @@
         class="form__button"
       />
       <Popup name="routeSave" v-if="this.$store.state.appModule.popup === 'routeSave'">
-        <h2>Опубликовать маршрут</h2>
+        <h2>Маршрут</h2>
         <div class="form" :class="{'form-mobile': !isDesktop}">
           <div v-for="field in this.routeFields" :key="field.name">
             <div class="form__item">
@@ -95,6 +100,9 @@
         <textarea class="form__textarea" type="text" placeholder="Описание" v-model="route.description"></textarea>
         <div class="gallery">
           <img v-if="this.picture" :src="this.picture" class="gallery__picture">
+          <label v-else-if="route.picture" for="file">
+            <img :src="`${$baseUrl}/img/${route.picture}`" class="gallery__picture">
+          </label>
           <label v-else for="file" class="gallery__picture">
             <img :src="`${$baseUrl}/icons/plus.svg`">
             <div>ФОТО</div>
@@ -102,7 +110,7 @@
           <input class="gallery__input-picture" type="file" id="file" ref="file" accept="image/*" @change="addRoutePicture()">
         </div>
         <MyButton
-          title="Опубликовать маршрут"
+          :title="routeInfo ? 'Сохранить маршрут' : 'Опубликовать маршрут'"
           :isDisabled="!inputIsCorrect"
           @click="routeSave"
         />
@@ -122,10 +130,10 @@ import {router} from '../router'
 import { routeFields } from '../data/route.fields'
 import { validation } from '../services/validation.service'
 import '@vuepic/vue-datepicker/src/VueDatePicker/style/main.scss'
+import { ru } from 'date-fns/locale/index'
 
 let myMap = null;
 export default {
-  props: ['description'],
   components: {
     RoutePoint,
     MyButton,
@@ -133,8 +141,8 @@ export default {
     Popup,
     Datepicker
   },
-data(){
-  return{
+data() {
+  return {
     coords: [
       54.828966,
       39.831893,
@@ -146,7 +154,8 @@ data(){
     route: {},
     picture: '',
     mapIsShowed: false,
-    routeFields
+    routeFields,
+    ru
   }
 },
 computed: {
@@ -175,7 +184,10 @@ computed: {
     return !Object.values(this.validation).reduce((a, b) => a + b, '') && Object.keys(this.route).length >= routeFields.map(field => field.required).length && !Object.values(this.route).includes('')
   },
   shareRef() {
-    return this.description ? "" : "?id=" + this.routeRef
+    return this.routeInfo ? "" : "?id=" + this.routeRef
+  },
+  routeInfo() {
+    return this.$store.state.placesModule.routeInfo
   }
 },
   methods: {
@@ -205,8 +217,10 @@ computed: {
       this.request = {}
     },
     routeSave(){
-       this.$store.dispatch('routeSave', {info: {...this.route, ref: this.routeRef}, picture: this.$refs.file.files[0]})
-       this.route = {}
+      this.routeInfo ?
+      this.$store.dispatch('routeEdit', {info: this.route, picture: this.$refs.file.files[0]}) :
+      this.$store.dispatch('routeSave', {info: {...this.route, ref: this.routeRef}, picture: this.$refs.file.files[0]})
+      this.route = {}
     },
     setPopup(){
       this.$store.commit('setPopup', 'routeSave')
@@ -235,6 +249,11 @@ computed: {
     if(ids) {
       this.$store.dispatch("getRoute", ids)
     }
+  },
+  watch: {
+    routeInfo() {
+      this.route = this.routeInfo
+    }     
   }
 }
 </script>

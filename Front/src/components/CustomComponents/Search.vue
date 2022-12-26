@@ -1,5 +1,5 @@
 <template>
-  <div class="search" @click="toggleSearchList">
+  <div class="search" @click="toggleSearchList" v-click-outside-element="hideSelectList">
     <input class="search__input" :class="{'search__input-active': listFullSize}" type="text" placeholder="Куда вы собираетесь?" v-model="input">
     <div v-if="listFullSize" class="search__list">
       <div v-for="region in regions" :key="region" class="search__list-item" @click="setSelectedRegion(region.region)">
@@ -80,7 +80,10 @@ export default {
     },
     toggleSearchList() {
       this.listFullSize = !this.listFullSize
-    }
+    },
+    hideSelectList() {
+      this.listFullSize = false
+    },
   },
 }
 </script>

@@ -24,6 +24,9 @@
   &:focus {
     outline: 0;
   }
+  &:hover {
+    border: solid rgb(172, 172, 172) 1px;
+  }
 };
 
 @mixin background_popup {

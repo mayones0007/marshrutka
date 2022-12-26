@@ -33,7 +33,7 @@
     <div class="page" :class="{'page-mobile': !isDesktop}">
       <MasonryWall :items="items" :columnWidth="350" :type="itemsType"/>
       <LoadingSpinner
-        v-if="!this.isLastPage"
+        v-if="itemsType === 'places' ? !isLastPage : !isLastRoutesPage"
         noBackGround=true
       />
     </div>
@@ -88,6 +88,9 @@ export default {
     isLastPage(){
       return this.$store.state.placesModule.isLastPage
     },
+    isLastRoutesPage(){
+      return this.$store.state.placesModule.isLastRoutesPage
+    },
     items() {
       return this.$store.state.placesModule[this.itemsType]
     },
@@ -115,7 +118,6 @@ export default {
         clearTimeout(this.timeout)
       }
       this.timeout = setTimeout(async() => {
-       
         if (document.body.scrollHeight - window.innerHeight - 200 < window.scrollY && !this.isLastPage) {
           this.$store.dispatch(this.currentMethod(), this.$store.state.placesModule.page)
         }

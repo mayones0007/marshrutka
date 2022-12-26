@@ -158,7 +158,7 @@ export const actions = {
     try {
       const response = await axiosInstance.get('routes', { params: { ...state.appliedFilters, ...state.pagination } })
       page ? commit("setRoutes", response.data) : commit("resetRoutes", response.data)
-      commit("setIsLastPage", response.data.length < state.pagination.limit)
+      commit("setIsLastRoutesPage", response.data.length < state.pagination.limit)
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }
@@ -210,6 +210,21 @@ export const actions = {
       console.log("Ошибка HTTP: " + e)
     }
   },
+
+  async routeEdit({ commit }, route) {
+    const formData = new FormData()
+    formData.append('route', JSON.stringify(route.info))
+    if (route.picture) {
+      formData.append('picture', await compressAndRenamePicture(route.picture))
+    }
+    try {
+      await axiosInstance.patch('route', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+      commit('setPopup')
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e)
+    }
+  },
+
   async deleteRoute({ dispatch }, id) {
     try {
       await axiosInstance.delete('route', { params: { id } })

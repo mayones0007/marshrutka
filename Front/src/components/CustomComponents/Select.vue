@@ -1,5 +1,5 @@
 <template>
-  <div class="select">
+  <div class="select" v-click-outside-element="hideSelectList">
     <div class="select__input" :class="{'select__input-checked': listFullSize}" @click="toggleSelectList">
       <div>{{selectedOption}}</div>
       <img :src="`${$baseUrl}/icons/arrow.png`" alt="arrow" class="input__arrow" :class="{'input__arrow-down': listFullSize}">
@@ -47,6 +47,9 @@ export default {
   methods: {
     toggleSelectList() {
       this.listFullSize = !this.listFullSize
+    },
+    hideSelectList() {
+      this.listFullSize = false
     },
     setSelectedOption(option) {
       this.$store.commit('setAppliedFilters', {[this.fieldName]: option})

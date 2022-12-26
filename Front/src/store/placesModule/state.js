@@ -14,4 +14,5 @@ export const state = () => ({
   pagination: {},
   page: 1,
   isLastPage: false,
+  isLastRoutesPage: false,
 })

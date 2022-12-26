@@ -40,6 +40,7 @@ export const initInterceptor = (axiosInstance) => {
       showToast(toastTypes.ERROR, error.response.data.message, 'bottom', 'right')
     }
     showToast(toastTypes.ERROR, error.response.data.message, 'bottom', 'right')
+    console.log('before reject')
     return Promise.reject(error);
   })
 }

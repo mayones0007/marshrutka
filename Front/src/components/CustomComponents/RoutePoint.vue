@@ -115,9 +115,11 @@ export default {
 
 .route-point__description {
   display: -webkit-box;
-  -webkit-line-clamp: 8;
+  -webkit-line-clamp: 10;
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
+  white-space: pre-line;
+  line-height: 20px;
   text-align: justify;
   overflow: hidden;
   font-weight: 300;
