@@ -1,6 +1,7 @@
 .DS_Store
 *.sqlite3
 node_modules
+img
 
 
 # local env files
