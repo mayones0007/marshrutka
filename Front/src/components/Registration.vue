@@ -1,6 +1,6 @@
 <template>
   <div class="registration">
-    <div class="registration__form">
+    <div v-if="!step" class="registration__form">
       <h2>Регистрация</h2>
       <div v-for="field in userFields" :key="field.name">
         <div v-if="isRoleField(field.role)">
@@ -9,7 +9,7 @@
               class="form__input-text"
               v-model="user[field.name]"
               :type="field.currentType || field.type"
-              :placeholder="field.placeholder"
+              :placeholder="field.placeholder + (field.required ? '*' : '')"
               @blur="validate(field.name)"
             >
             <img
@@ -23,12 +23,26 @@
         </div>
       </div>
       <div class="form__item">
-        <label for="role">Вы гид?</label>
         <input type="checkbox" id="role" v-model="user.role" true-value='guide' false-value='user'>
+        <label for="role">Зарегистрироваться как гид</label>
       </div>
       <MyButton 
-        title="Зарегистрироваться"
+        title="Следующий шаг"
         :isDisabled="!inputIsCorrect"
+        @click="sendEmail"
+      />
+    </div>
+    <div v-if="step" class="registration__form">
+      <h2>Подтвердите Ваш адрес e-mail</h2>
+      <input
+        class="form__input-text"
+        v-model="enterCode"
+        type="text"
+        placeholder="Введите код из письма"
+      >
+      <MyButton 
+        title="Закончить регистрацию"
+        :isDisabled="!codeIsCorrect"
         @click="registration"
       />
     </div>
@@ -39,6 +53,7 @@
 import MyButton from './CustomComponents/MyButton.vue'
 import { validation } from '../services/validation.service'
 import { userFields } from '../data/user.fields'
+
 export default {
   components: {
     MyButton,
@@ -47,10 +62,16 @@ export default {
     userFields,
     user: {},
     validation: {},
+    code: null,
+    enterCode: null,
+    step: 0,
   }),
   computed: {
     inputIsCorrect(){
       return !Object.values(this.validation).reduce((a, b) => a + b, '') && Object.keys(this.user).length >= userFields.map(field => field.required).length && !Object.values(this.user).includes('')
+    },
+    codeIsCorrect(){
+      return this.code === this.enterCode
     },
   },
   methods: {
@@ -59,6 +80,11 @@ export default {
     },
     registration(){
       this.$store.dispatch('registration', this.user)
+    },
+    async sendEmail(){
+      this.code = this.user.email.substr(this.user.email.length - 1, 1) + this.user.phone.substr(6, 1) + this.user.phone.substr(1, 2) + this.user.phone.substr(8, 2)
+      const status = await this.$store.dispatch('sendEmail', {to: this.user.email, phone: this.user.phone})
+      status === 200 ? this.step = 1 : this.user.email = ''
     },
     isRoleField(role) {
       return role ? role.includes(this.user.role) : true

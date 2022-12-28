@@ -215,8 +215,4 @@ export default {
   line-height: 300%;
   color: black;
 }
-.user-menu-mobile .dropdown-content__link {
-  line-height: 300%;
-  color: black;
-}
 </style>

@@ -5,7 +5,7 @@ import { AppResponse } from "./response.model"
 export class FilterController {
   async getFilters(req: Request): Promise<AppResponse<any>> {
     const query = req.query
-    const filters = await models.filter.getFilters()
+    const filters = await models.filter.getFilters(query)
     return {
       status: 200,
       body: filters

@@ -82,9 +82,10 @@ export class RouteController {
   async getRoutes(req: Request): Promise<AppResponse<Route[]>> {
     const pagination = { offset: req.query.offset, limit: req.query.limit }
     const filters = req.query
+    const role = req.user.role
     delete filters.offset
     delete filters.limit
-    const routes = await models.route.getRoutes(filters, pagination)
+    const routes = await models.route.getRoutes(filters, pagination, role)
     return {
       status: 200,
       body: routes,

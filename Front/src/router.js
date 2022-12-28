@@ -41,7 +41,7 @@ export const router = createRouter({
 router.beforeEach((to, from, next) =>{
   window.scroll(0, 0)
   if (to.meta.title) {
-    document.title = to.meta.title;
+    document.title = to.meta.title
   }
   next()
 })

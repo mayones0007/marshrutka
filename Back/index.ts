@@ -157,12 +157,17 @@ app.post('/routes', corsMiddleware, authMiddleware, async (req: Request, res: Re
   res.status(response.status).send(response.body)
 })
 
+app.post('/email', corsMiddleware, async (req: Request, res: Response) => {
+  const response = await controllers.user.sendEmail(req)
+  res.status(response.status).send(response.body)
+})
+
 app.get('/myroutes', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
   const response = await controllers.route.getRoutes(req)
   res.status(response.status).send(response.body)
 })
 
-app.get('/routes', corsMiddleware, async (req: Request, res: Response) => {
+app.get('/routes', corsMiddleware, roleMiddleware, async (req: Request, res: Response) => {
   const response = await controllers.route.getRoutes(req)
   res.status(response.status).send(response.body)
 })

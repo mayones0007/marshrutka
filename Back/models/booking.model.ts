@@ -21,7 +21,7 @@ export class BookingModel {
   async getBookings(guideId: number): Promise<Booking[]> {
     const timeElapsed = Date.now()
     const today = new Date(timeElapsed)
-    return await knexService('bookings').where({ guideId }).orWhere({ guideId: null }).andWhere('date', '>', today.toISOString()).leftJoin('users', 'bookings.userId', 'users.id').select('bookings.*', 'users.name as userName')
+    return await knexService('bookings').where({ guideId }).orWhere({ guideId: null }).andWhere('date', '>', today.toISOString()).leftJoin('users', 'bookings.userId', 'users.id').select('bookings.*', 'users.name as userName').orderBy('date')
       .then((bookings) => {
         return bookings
       })

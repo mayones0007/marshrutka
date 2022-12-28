@@ -52,12 +52,6 @@ export class PlaceModel {
       return places
     })
   }
-  async getFilters() {
-    return await knexService('places').count('regions')
-    .then((filters) => {
-      return filters
-    })
-  }
   async addPlace(place: NewPlace): Promise<number> {
     return await knexService('places').insert(place)
       .then((id) => {

@@ -3,9 +3,10 @@ import { compressAndRenamePicture } from "../../services/file.service"
 
 export const actions = {
 
-  async getPlaces({ state, commit }, page) {
+  async getPlaces({ state, commit, dispatch }, page) {
     page ? commit('setPagination', page) : commit('resetPagination')
     try {
+      dispatch("getFilters") 
       const response = await axiosInstance.get('places', { params: {...state.appliedFilters, ...state.pagination }})
       page ? commit("setPlaces", response.data) : commit("resetPlaces", response.data)
       commit("setIsLastPage", response.data.length < state.pagination.limit)

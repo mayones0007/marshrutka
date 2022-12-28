@@ -36,25 +36,25 @@
           locale="ru"
           :format-locale="ru"
           :enable-time-picker="false"
+          :min-date="new Date()"
           select-text="Выбрать"
-          cancel-text="Отмена"
+          cancel-text=""
         />
         <input
           class="form__input"
-          v-model="request.persons"
+          v-model.trim="request.persons"
           type="number"
           placeholder="Сколько человек"
         >
         <input
           class="form__input"
-          v-model="request.phone"
+          v-model.trim="request.phone"
           placeholder="Номер телефона"
           type="tel"
         >
         <MyButton 
           title="Забронировать"
           @click="booking"
-          :isDisabled="!myRoute.length"
         />
         <div class="form__button-share">
           <div v-if="!isDesktop">Поделиться с друзьями</div>
@@ -79,25 +79,29 @@
       <Popup name="routeSave" v-if="this.$store.state.appModule.popup === 'routeSave'">
         <h2>Маршрут</h2>
         <div class="form" :class="{'form-mobile': !isDesktop}">
-          <div v-for="field in this.routeFields" :key="field.name">
-            <div class="form__item">
-              <input 
+          <div v-for="field in this.routeFields" :key="field.name" :class="{'form__span': field.type === 'textarea' || field.type === 'checkbox', 'form__span-mobile': !isDesktop}">
+            <textarea v-if="field.type === 'textarea'" type="text" class="form__textarea" :placeholder="field.name + (field.required ? '*' : '')" v-model.trim="route[field.fieldName]"></textarea>
+            <div v-else-if="!field.admin || field.admin === isAdmin" class="form__item">
+              <label v-if="field.type === 'checkbox'" :for="field.fieldName">{{field.name}}</label>
+              <input
                 class="form__input"
                 :id="field.fieldName"
-                v-model="route[field.fieldName]" 
-                :placeholder="field.name"
+                v-model.trim="route[field.fieldName]" 
+                :placeholder="field.name + (field.required ? '*' : '')"
                 :type="field.type"
                 :list="field.name"
                 @blur="validate(field, this.route)"
+                true-value='1'
+                false-value='0'
+                min="1"
               >
               <datalist v-if="field.autofull" :id="field.name">
-                <option v-for="option in options(field.fieldName)" :key="option">{{option}}</option>
+                <option v-for="option in options(field.fieldName)" :key="option">{{option[field.fieldName]}}</option>
               </datalist>
               <div v-if="this.validation[field.fieldName]" class="input-text-wrong">{{this.validation[field.fieldName]}}</div>
             </div>
           </div>
         </div>
-        <textarea class="form__textarea" type="text" placeholder="Описание" v-model="route.description"></textarea>
         <div class="gallery">
           <img v-if="this.picture" :src="this.picture" class="gallery__picture">
           <label v-else-if="route.picture" for="file">
@@ -110,7 +114,7 @@
           <input class="gallery__input-picture" type="file" id="file" ref="file" accept="image/*" @change="addRoutePicture()">
         </div>
         <MyButton
-          :title="routeInfo ? 'Сохранить маршрут' : 'Опубликовать маршрут'"
+          :title="routeInfo.id ? 'Сохранить маршрут' : 'Опубликовать маршрут'"
           :isDisabled="!inputIsCorrect"
           @click="routeSave"
         />
@@ -131,6 +135,7 @@ import { routeFields } from '../data/route.fields'
 import { validation } from '../services/validation.service'
 import '@vuepic/vue-datepicker/src/VueDatePicker/style/main.scss'
 import { ru } from 'date-fns/locale/index'
+import { showToast, toastTypes } from "../toast"
 
 let myMap = null;
 export default {
@@ -180,15 +185,20 @@ computed: {
   isNewRoute() {
     return this.$route.name === "myRoute" && !this.$route.query.id && this.isGuide
   },
-  inputIsCorrect(){
-    return !Object.values(this.validation).reduce((a, b) => a + b, '') && Object.keys(this.route).length >= routeFields.map(field => field.required).length && !Object.values(this.route).includes('')
+  inputIsCorrect() {
+    return !Object.values(this.validation).reduce((a, b) => a + b, '')
+    && routeFields.reduce((acc, field) => field.required === true ? acc && !!this.route[field.fieldName] : acc, true)
+    && (this.picture || this.route.picture)
   },
   shareRef() {
-    return this.routeInfo ? "" : "?id=" + this.routeRef
+    return this.routeInfo.id ? "" : "?id=" + this.routeRef
   },
   routeInfo() {
     return this.$store.state.placesModule.routeInfo
-  }
+  },
+  isAdmin() {
+    return this.$store.state.userModule.user.role === "admin"
+  },
 },
   methods: {
     newRoute(){
@@ -213,16 +223,23 @@ computed: {
       this.newRoute()
     },
     booking(){
+      if (!(this.request.phone && this.request.persons && this.request.date)) {
+        return showToast(toastTypes.ERROR, 'Заполните все поля формы', 'bottom', 'right')
+      }
+      if (validation(this.request.phone, 'phone')) {
+        return showToast(toastTypes.ERROR, 'Введен неверный номер телефона', 'bottom', 'right')
+      }
       this.$store.dispatch('addBooking', {...this.request, ref: router.currentRoute.value.params.id ? 'route' + router.currentRoute.value.params.id : 'myroute?id=' + this.routeRef})
       this.request = {}
     },
     routeSave(){
-      this.routeInfo ?
+      this.routeInfo.id ?
       this.$store.dispatch('routeEdit', {info: this.route, picture: this.$refs.file.files[0]}) :
       this.$store.dispatch('routeSave', {info: {...this.route, ref: this.routeRef}, picture: this.$refs.file.files[0]})
-      this.route = {}
     },
     setPopup(){
+      this.$store.commit('resetAppliedFilters')
+      this.$store.dispatch("getFilters")
       this.$store.commit('setPopup', 'routeSave')
     },
     addRoutePicture(){
@@ -240,11 +257,10 @@ computed: {
       this.validation[field.fieldName] = validation(model[field.fieldName], field.fieldName)
     },
     options(fieldName) {
-      return new Set(this.routes.map((route) => route[fieldName]))
+      return this.$store.state.placesModule.filters[fieldName]
     },
   },
   created() {
-    this.$store.dispatch("getRoutes")
     const ids = this.$route.query.id
     if(ids) {
       this.$store.dispatch("getRoute", ids)
@@ -290,15 +306,18 @@ computed: {
 	animation: gradient 15s ease infinite;
   padding: 30px 20px;
   &-mobile {
-    flex-direction: column
+    flex-direction: column;
+    overflow: scroll;
   }
 }
 .form {
   @include grid-g20;
   margin: 20px 0;
   grid-template-columns: 1fr 1fr;
+  width: 50vw;
   &-mobile {
     grid-template-columns: 1fr;
+    width: 87vw;
   }
 }
 .gallery {
@@ -324,10 +343,18 @@ computed: {
   width: 100%;
   height: 150px;
   resize: vertical;
-  margin-bottom: 20px;
+}
+.form__span {
+  grid-column: 1 / span 2;
+  &-mobile {
+    grid-column: 1;
+  }
 }
 .form__date {
   width: 100%;
+}
+.form__item {
+  display: grid;
 }
 .form__header {
   font-weight: 500;
@@ -366,5 +393,10 @@ computed: {
   bottom: 50%;
   left: 50%;
   transform: translate(-50%, 90%)
+}
+.input-text-wrong {
+  color: red;
+  font-size: 0.6em;
+  text-align: start;
 }
 </style>

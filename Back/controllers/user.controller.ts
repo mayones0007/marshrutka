@@ -5,6 +5,7 @@ import { GetUserBody, LoginUserBody, Tokens } from "./interfaces/user.interface"
 import { AppResponse } from "./response.model"
 import { fileService } from '../services/file.service'
 import { UploadedFile } from "express-fileupload"
+import { emailService } from "../services/mail.service"
 
 export class UserController {
   async getUser(req: Request): Promise<AppResponse<GetUserBody> | AppResponse> {
@@ -22,6 +23,24 @@ export class UserController {
         user:
           { name: user.name, id: user.id, avatar: user.avatar, role: user.role }
       }
+    }
+  }
+
+  async sendEmail(req: Request): Promise<AppResponse> {
+    const email = req.body
+    const userEmail = await models.user.getUser({ email: email.to })
+    if (userEmail) {
+      return {
+        status: 400,
+        body: { message: 'Пользователь с таким email уже существует' }
+      }
+    }
+    email.subject = 'Код подтверждения'
+    email.text = 'Ваш код подтверждения: ' + req.body.to.substr(req.body.to.length - 1, 1) + req.body.phone.substr(6, 1) + req.body.phone.substr(1, 2) + req.body.phone.substr(8, 2)
+    emailService.sendEmail(email)
+    return {
+      status: 200,
+      body: { message: 'Отправлено письмо на Ваш email' }
     }
   }
 
@@ -47,7 +66,6 @@ export class UserController {
     }
 
     const user = await models.user.addUser({ ...req.body, createdAt: new Date() })
-
     const { accessToken, refreshToken} = authService.getTokens(user.id, user.role)
     return {
       status: 200,

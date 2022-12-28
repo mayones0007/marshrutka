@@ -18,7 +18,7 @@ export const routeFields = [
   },
   {
     fieldName: 'region',
-    name: 'Регион',
+    name: 'Регион отправления',
     type: 'text',
     autofull: true,
     required: true,
@@ -26,7 +26,7 @@ export const routeFields = [
   },
   {
     fieldName: 'city',
-    name: 'Город',
+    name: 'Город отправления',
     type: 'text',
     autofull: true,
     required: true,
@@ -34,7 +34,7 @@ export const routeFields = [
   },
   {
     fieldName: 'time',
-    name: 'Время',
+    name: 'Время в часах',
     type: 'number',
     autofull: false,
     required: false,
@@ -65,5 +65,24 @@ export const routeFields = [
     required: true,
     info: true,
     filter: true,
+  },
+  {
+    fieldName: 'description',
+    name: 'Описание',
+    type: 'textarea',
+    autofull: false,
+    required: true,
+    placeholder: "Описание*",
+    info: false,
+  },
+  {
+    fieldName: 'isAccepted',
+    name: 'Подтверждено',
+    type: 'checkbox',
+    autofull: false,
+    required: false,
+    info: false,
+    filter: true,
+    admin: true,
   },
 ]

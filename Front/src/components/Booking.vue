@@ -1,20 +1,37 @@
 <template>
   <div class="page" :class="{'page-mobile': !isDesktop}">
-    <table class="table">
+    <h1>Бронирования</h1>
+    <table v-if="isDesktop" class="table">
       <tr>
         <th v-for="field in this.bookingFields" :key="field.fieldName">{{field.name}}</th>
+        <th class="control">Действия</th>
       </tr>
       <tr v-for="booking in currentBookings" :key="booking.id">
         <td v-for="field in this.bookingFields" :key="field.fieldName">
           <div v-if="field.fieldName === 'date'">{{prepareDate(booking.date)}}</div>
+          <a v-else-if="field.fieldName === 'phone'" :href="`tel:${booking.phone}`">{{booking.phone}}</a>
           <div v-else>{{booking[field.fieldName]}}</div>
         </td>
+        <td class="table__buttons">
+          <router-link :to="booking.ref">Смотреть маршрут</router-link>
+          <MyButton :isRed="booking.guideId === this.user.id" :title="buttonTitle(booking.guideId)" @click="setBooking(booking.id)"/>
+        </td>
+      </tr>
+    </table>
+    <div v-else class="cards">
+      <div v-for="booking in currentBookings" :key="booking.id" class="card">
+        <div v-for="field in this.bookingFields" :key="field.fieldName" class="card__field">
+          <div>{{field.name}}</div>
+          <div v-if="field.fieldName === 'date'">{{prepareDate(booking.date)}}</div>
+          <a v-else-if="field.fieldName === 'phone'" :href="`tel:${booking.phone}`">{{booking.phone}}</a>
+          <div v-else>{{booking[field.fieldName]}}</div>
+        </div>
         <div class="table__buttons">
           <router-link :to="booking.ref">Смотреть маршрут</router-link>
           <MyButton :isRed="booking.guideId === this.user.id" :title="buttonTitle(booking.guideId)" @click="setBooking(booking.id)"/>
         </div>
-      </tr>
-    </table>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -60,18 +77,52 @@ export default {
 
 <style lang="scss" scoped>
 .page {
-  padding: 3% 20%;
+  padding: 1% 3%;
+  font-weight: 300;
   &-mobile {
     padding: 3%;
   }
 }
 .table{
   width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  border: 1px solid #ddd;
+}
+tr:nth-child(even){background-color: #f2f2f2;}
+tr:hover {background-color: #00c67d26;}
+th {
+  height: 40px;
+  background-color: rgb(0, 180, 120);
+  color: white;
 }
 .table__buttons {
-  display: grid;
+  display: flex;
   align-items: center;
+  gap: 35px;
+  justify-content: flex-end;
+}
+.control {
+  width: 320px;
+}
+.cards {
+  display: grid;
   gap: 20px;
-  grid-template-columns: 145px 120px;
+}
+.card {
+  display: grid;
+  gap: 10px;
+  padding: 15px;
+  background: rgb(235, 246, 255);
+  border: solid #ddd 1px;
+  border-radius: 10px;
+}
+.card__field {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  text-align: start;
+  padding-bottom: 5px;
+  border-bottom: solid #ddd 1px;
 }
 </style>

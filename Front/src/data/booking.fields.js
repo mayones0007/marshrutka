@@ -1,7 +1,7 @@
 export const bookingFields = [
   {
     fieldName: 'id',
-    name: 'ID заявки',
+    name: 'ID',
     type: 'number',
     required: false,
     info: true,
@@ -10,13 +10,6 @@ export const bookingFields = [
     fieldName: 'date',
     name: 'Дата',
     type: 'date',
-    required: true,
-    info: false,
-  },
-  {
-    fieldName: 'persons',
-    name: 'Кол-во человек',
-    type: 'number',
     required: true,
     info: false,
   },
@@ -31,6 +24,13 @@ export const bookingFields = [
     fieldName: 'phone',
     name: 'Телефон',
     type: 'tel',
+    required: true,
+    info: false,
+  },
+  {
+    fieldName: 'persons',
+    name: 'Кол-во человек',
+    type: 'number',
     required: true,
     info: false,
   },

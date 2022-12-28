@@ -32,6 +32,7 @@ export default {
     if(localStorage.getItem('userData')){
       this.$store.dispatch('getUser')
     }
+    this.$store.dispatch("getFilters")
     this.$store.commit('setIsDesktop', isDesktop())
     window.addEventListener('resize', () => {
       if (this.timeout) {

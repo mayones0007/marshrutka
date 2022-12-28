@@ -125,7 +125,6 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch("getFilters")
     this.$store.dispatch("getRoutes")
     this.$store.dispatch("getPlaces")
     window.addEventListener('scroll', this.loadMorePlaces) 

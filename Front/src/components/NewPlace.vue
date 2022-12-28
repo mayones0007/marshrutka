@@ -151,7 +151,6 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch("getFilters")
     this.currentRoute ? this.place = this.$store.state.placesModule.place : this.$store.commit('setPictures', [])
   }
 }

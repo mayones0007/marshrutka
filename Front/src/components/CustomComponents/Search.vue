@@ -112,7 +112,7 @@ export default {
   width: 100%;
   max-height: 200px;
   overflow: scroll;
-  top: 42px;
+  top: 40px;
   background-color: white;
   box-shadow: 0px 8px 8px 0px rgba(0,0,0,0.1);
   border-radius: 0 0 5px 5px;

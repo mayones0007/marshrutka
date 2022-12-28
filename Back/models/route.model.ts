@@ -75,12 +75,15 @@ export class RouteModel {
       return route
     })
   }
-  async getRoutes(filters?: DbQuery, pagination?: DbQuery): Promise<Route[]> {
+  async getRoutes(filters?: DbQuery, pagination?: DbQuery, role?: string): Promise<Route[]> {
     return await knexService('routes')
       .orderBy('hits', 'desc')
       .modify(function (query) {
         if (filters) {
           query.where(filters)
+        }
+        if (role === 'user') {
+          query.where('isAccepted', 1)
         }
         if (pagination) {
           query.limit(pagination.limit)

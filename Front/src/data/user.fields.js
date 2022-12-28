@@ -6,12 +6,6 @@ export const userFields = [
     required: true
   },
   {
-    name: 'email',
-    placeholder: 'E-mail',
-    type: 'email',
-    required: true
-  },
-  {
     name: 'password',
     placeholder: 'Пароль',
     type: 'password',
@@ -22,5 +16,11 @@ export const userFields = [
     placeholder: 'Номер телефона',
     type: 'tel',
     required: true,
+  },
+  {
+    name: 'email',
+    placeholder: 'E-mail',
+    type: 'email',
+    required: true
   },
 ]

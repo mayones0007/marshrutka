@@ -1,5 +1,5 @@
 <template>
-  <div class="share-button">
+  <div class="share-button" v-click-outside-element="hideShareLinks">
     <img :src="`${$baseUrl}/icons/share.svg`" alt="share" class="share-button__icon" @click="setShowShareLinks()">
     <div v-if="showShareLinks" class="share-button__links" :class="{'share-button__links-mobile': !isDesktop}">
       <a v-for="social in socials" :key="social.alt" :href="social.shareref + this.ref" target="_blank">
@@ -31,6 +31,9 @@ export default {
   methods: {
     setShowShareLinks() {
       this.showShareLinks = !this.showShareLinks
+    },
+    hideShareLinks() {
+      this.showShareLinks = false
     }
   }
 }

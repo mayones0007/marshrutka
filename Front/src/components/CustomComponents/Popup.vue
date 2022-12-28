@@ -39,6 +39,8 @@ export default {
   transform:translate(-50%,-50%);
   text-align: center;
   min-width: 340px;
+  max-height: 100vh;
+  overflow: scroll;
 }
 
 .popup__button-close {

@@ -65,6 +65,15 @@ export const actions = {
     }
   },
 
+  async sendEmail(_context, email) {
+    try {
+      const response = await axiosInstance.post('email', email)
+      return response.status
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e)
+    }
+  },
+
   async addFavorite({ dispatch }, favorite) {
     try {
       const response = await axiosInstance.post('favorite', favorite)
