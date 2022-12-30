@@ -31,8 +31,11 @@ export default {
   font-size: 0.9em;
   &:hover {
     filter: grayscale(0.2);
+    border: none;
   }
-
+  &:focus {
+    border: none;
+  }
   &-disabled {
     background-color: rgb(172, 172, 172);
     cursor: default;
