@@ -88,7 +88,9 @@ export default {
       }
     },
     hideMenu() {
-      this.isFullMenuSize = false
+      if(!isDesktop()) {
+        this.isFullMenuSize = false
+      }
     }
   },
 }
