@@ -23,6 +23,7 @@ export default {
   background-color: rgb(0, 201, 134);
   color: white;
   border: none;
+  -webkit-appearance: none;
   box-sizing: border-box;
   border-radius: 5px;
   cursor: pointer;
