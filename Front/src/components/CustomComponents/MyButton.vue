@@ -23,17 +23,14 @@ export default {
   background-color: rgb(0, 201, 134);
   color: white;
   border: none;
-  -webkit-appearance: none;
-  box-sizing: border-box;
   border-radius: 5px;
   cursor: pointer;
   font-family: 'Roboto', Arial, sans-serif;
   font-size: 0.9em;
   &:hover {
     filter: grayscale(0.2);
-    border: none;
   }
-  &:focus {
+  &:active {
     border: none;
   }
   &-disabled {
