@@ -22,7 +22,7 @@ export default {
   padding: 10px;
   background-color: rgb(0, 201, 134);
   color: white;
-  border: 0;
+  border: 2px solid rgb(0, 201, 134);
   box-sizing: border-box;
   border-radius: 5px;
   cursor: pointer;

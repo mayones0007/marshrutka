@@ -194,8 +194,6 @@ export default {
   display: grid;
   text-decoration: none;
   color: transparent;
-  transition-duration: 300ms;
-  transition-property: line-height color;
   font-size: 0.9em;
   line-height: 0%;
   font-weight: 300;
