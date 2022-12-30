@@ -19,6 +19,9 @@ export default {
 
 <style lang="scss" scoped>
 .button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   padding: 10px;
   background-color: rgb(0, 201, 134);
   color: white;
@@ -29,9 +32,6 @@ export default {
   font-size: 0.9em;
   &:hover {
     filter: grayscale(0.2);
-  }
-  &:active {
-    border: none;
   }
   &-disabled {
     background-color: rgb(172, 172, 172);
