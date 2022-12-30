@@ -26,10 +26,28 @@ export class UserController {
     }
   }
 
+  async rePassword(req: Request): Promise<AppResponse> {
+    const email = req.body
+    const user = await models.user.getUser({ email: email.to })
+    if (!user) {
+      return {
+        status: 400,
+        body: { message: 'Пользователя с таким email не существует' }
+      }
+    }
+    email.subject = 'Напоминание пароля'
+    email.text = 'Ваш пароль: ' + user.password
+    emailService.sendEmail(email)
+    return {
+      status: 200,
+      body: { message: 'Письмо с паролем отправлено на Ваш email' }
+    }
+  }
+
   async sendEmail(req: Request): Promise<AppResponse> {
     const email = req.body
-    const userEmail = await models.user.getUser({ email: email.to })
-    if (userEmail) {
+    const user = await models.user.getUser({ email: email.to })
+    if (user) {
       return {
         status: 400,
         body: { message: 'Пользователь с таким email уже существует' }
@@ -103,7 +121,7 @@ export class UserController {
     if (!email || !password) {
       return {
         status: 400,
-        body: { message: 'E-mail и/или пароль отсутствуют' }
+        body: { message: 'Введите e-mail и пароль' }
       }
     }
 
@@ -144,11 +162,19 @@ export class UserController {
     } 
     const password = req.body.password
     const email = req.body.email
+    const name = req.body.name
     const newPassword = req.body.newPassword
     const newEmail = req.body.newEmail
     const updatedAt = new Date()
     const user = await models.user.getUser({ id })
-
+    
+    if (name) {
+      models.user.editUser({ id }, { name, updatedAt })
+      return {
+        status: 200,
+        body: { message: 'Имя обновлено' }
+      }
+    }
     if (email && newEmail) {
       if (user.email !== email) {
         return {

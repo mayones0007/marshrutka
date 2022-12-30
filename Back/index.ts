@@ -162,6 +162,11 @@ app.post('/email', corsMiddleware, async (req: Request, res: Response) => {
   res.status(response.status).send(response.body)
 })
 
+app.post('/repassword', corsMiddleware, async (req: Request, res: Response) => {
+  const response = await controllers.user.rePassword(req)
+  res.status(response.status).send(response.body)
+})
+
 app.get('/myroutes', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
   const response = await controllers.route.getRoutes(req)
   res.status(response.status).send(response.body)

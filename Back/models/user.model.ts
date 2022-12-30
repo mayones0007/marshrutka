@@ -21,6 +21,7 @@ interface NewUser {
 }
 
 interface editUser {
+  name?: string,
   email?: string,
   password?: string,
   avatar?: string,
