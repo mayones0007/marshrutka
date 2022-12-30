@@ -1,15 +1,13 @@
 <template>
-  <div class="select" v-click-outside-element="hideSelectList">
-    <div class="select__input" :class="{'select__input-checked': listFullSize}" @click="toggleSelectList">
-      <div>{{selectedOption}}</div>
-      <img :src="`${$baseUrl}/icons/arrow.png`" alt="arrow" class="input__arrow" :class="{'input__arrow-down': listFullSize}">
-      <div v-if="listFullSize" class="input__options">
-        <div v-for="option in options" :key="option" class="input__option" @click="setSelectedOption(option)">
-          <div>{{option}}</div>
-        </div>
+  <div class="select__input" :class="{'select__input-checked': listFullSize}" @click="toggleSelectList" v-click-outside-element="hideSelectList">
+    <div>{{selectedOption}}</div>
+    <img v-if="isChanged" :src="`${$baseUrl}/icons/close.svg`" alt="close" class="select__reset-button" @click="resetSelectedOption">
+    <img v-else :src="`${$baseUrl}/icons/arrow.png`" alt="arrow" class="input__arrow" :class="{'input__arrow-down': listFullSize}">
+    <div v-if="listFullSize" class="input__options">
+      <div v-for="option in options" :key="option" class="input__option" @click="setSelectedOption(option)">
+        <div>{{option}}</div>
       </div>
     </div>
-    <img v-if="isChanged" :src="`${$baseUrl}/icons/close.svg`" alt="close" class="select__reset-button" @click="resetSelectedOption">
   </div>
 </template>
 
@@ -65,11 +63,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.select {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
 
 .select__input {
   position: relative;
