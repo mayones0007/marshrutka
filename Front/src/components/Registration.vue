@@ -1,5 +1,5 @@
 <template>
-  <div class="registration">
+  <div>
     <div v-if="!step" class="registration__form">
       <h2>Регистрация</h2>
       <div v-for="field in userFields" :key="field.name">
@@ -104,13 +104,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.registration {
-  width: 350px;
-  margin: 100px auto;
-}
 
 .registration__form {
   display: grid;
+  width: 350px;
   gap: 20px;
   text-align: center;
 }

@@ -1,7 +1,7 @@
 <template>
   <div>
     <Header/>
-    <router-view class="view"></router-view>
+    <div class="view" :class="{'view-mobile': !isDesktop}"><router-view class="view-page" :class="{'view-page-mobile': !isDesktop}"></router-view></div>
     <LoginPopup/>
     <Footer/>
   </div>
@@ -26,7 +26,10 @@ export default {
   computed: {
     getUser() {
       return this.$store.state.userModule.user
-    }
+    },
+    isDesktop(){
+      return this.$store.state.appModule.isDesktop
+    },
   },
   mounted(){
     if(localStorage.getItem('userData')){
@@ -46,9 +49,19 @@ export default {
 
 <style lang="scss"> 
   @import "./styles/main.scss";
-
   .view {
-    box-sizing: border-box;
+    display: flex;
     min-height: calc(100vh - 160px);
+    align-items: center;
+    justify-content: center;
+    &-mobile {
+      min-height: calc(100vh - 220px);
+    }
+  }
+  .view-page {
+    padding: 2% 10%;
+    &-mobile {
+      padding: 5% 2%;
+    }
   }
 </style>

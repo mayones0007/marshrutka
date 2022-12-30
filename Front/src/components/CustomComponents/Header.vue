@@ -8,7 +8,7 @@
       v-if="isDesktop || isStartPage"
       :class="{'search-form-mobile': !isDesktop}"
     />
-    <div :class="{'user-menu': isDesktop, 'user-menu-mobile': !isDesktop}" @click="toggleMenuSize" @click.self="toggleMenuSize">
+    <div :class="{'user-menu': isDesktop, 'user-menu-mobile': !isDesktop}" @click="toggleMenuSize" v-click-outside-element="hideMenu">
       <Avatar
         :userName="isDesktop ? userInfo.name : ''"
         :userImg="`${$baseUrl}/avatars/`+ userInfo.avatar"
@@ -87,6 +87,9 @@ export default {
         this.isFullMenuSize = !this.isFullMenuSize
       }
     },
+    hideMenu() {
+      this.isFullMenuSize = false
+    }
   },
 }
 </script>
@@ -190,6 +193,7 @@ export default {
   text-decoration: none;
   color: transparent;
   transition-duration: 300ms;
+  transition-property: line-height color;
   font-size: 0.9em;
   line-height: 0%;
   font-weight: 300;
@@ -212,6 +216,10 @@ export default {
 }
 
 .user-menu:hover .dropdown-content__link {
+  line-height: 300%;
+  color: black;
+}
+.user-menu-mobile .dropdown-content__link {
   line-height: 300%;
   color: black;
 }

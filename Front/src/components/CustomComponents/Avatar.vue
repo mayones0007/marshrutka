@@ -6,7 +6,7 @@
       :class="{'avatar__image-big': isBig}" 
       :src="userImg"
       alt="avt">
-    <div v-if="userName" class="avatar__name">{{userName}}</div>
+    <div v-if="userName" class="avatar__name" :class="{'avatar__name-big': isBig}" >{{userName}}</div>
   </div>
 </template>
 
@@ -30,12 +30,15 @@ export default {
   border-radius: 50%;
   object-fit: cover;
   &-big {
-    height: 100px;
-    width: 100px;
+    height: 150px;
+    width: 150px;
   }
 }
 
 .avatar__name {
-  font-weight: 400;
+  font-weight: 300;
+  &-big {
+    font-size: 2rem;
+  }
 }
 </style>

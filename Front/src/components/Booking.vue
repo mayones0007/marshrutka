@@ -1,5 +1,5 @@
 <template>
-  <div class="page" :class="{'page-mobile': !isDesktop}">
+  <div class="page">
     <h1>Бронирования</h1>
     <table v-if="isDesktop" class="table">
       <tr>
@@ -77,13 +77,10 @@ export default {
 
 <style lang="scss" scoped>
 .page {
-  padding: 1% 3%;
-  font-weight: 300;
-  &-mobile {
-    padding: 3%;
-  }
+  width: 100%;
+  align-self: flex-start;
 }
-.table{
+.table {
   width: 100%;
   border-collapse: collapse;
 }

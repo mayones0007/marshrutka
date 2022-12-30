@@ -1,5 +1,5 @@
 <template>
-  <div class="page" :class="{'page-mobile': !isDesktop}">
+  <div>
     <MasonryWall :items="myFavoriteRoutes" :columnWidth="350" type="routes" header="Маршруты"/>
     <MasonryWall :items="myFavorites" :columnWidth="350" type="places" header="Места"/>
     <h1 v-if="!myFavoriteRoutes.length && !myFavorites.length">Добавьте места в избранное</h1>
@@ -19,21 +19,9 @@ export default {
     myFavorites () {
       return this.$store.state.userModule.myFavorites
     },
-    isDesktop(){
-      return this.$store.state.appModule.isDesktop
-    },
   },
   created(){
     this.$store.dispatch("getFavoriteRoutes")
   },
 }
 </script>
-
-<style lang="scss" scoped>
-.page {
-  padding: 2% 10%;
-  &-mobile {
-    padding: 2%;
-  }
-}
-</style>

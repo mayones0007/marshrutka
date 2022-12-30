@@ -49,15 +49,7 @@ export const actions = {
     }
   },
 
-  async replaceUserEmail(_context, user) {
-    try {
-      await axiosInstance.patch('user', user)
-    } catch (e) {
-      console.log("Ошибка HTTP: " + e)
-    }
-  },
-
-  async replaceUserPassword(_context, user) {
+  async replaceUser(_context, user) {
     try {
       await axiosInstance.patch('user', user)
     } catch (e) {
@@ -69,6 +61,14 @@ export const actions = {
     try {
       const response = await axiosInstance.post('email', email)
       return response.status
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e)
+    }
+  },
+
+  async rePassword(_context, email) {
+    try {
+      await axiosInstance.post('repassword', email)
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }

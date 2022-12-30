@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="{'page': !isDesktop}">
     <div class="item" :class="{'item-mobile': !isDesktop}" :style="`background-image: url(${$baseUrl}/img/${currentRouteInfo.picture})`">
       <div class="item__card" :class="{'item__card-mobile': !isDesktop}">
         <div class="card__name">
@@ -81,13 +81,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.page {
+  padding: 0;
+  width: 100%;
+}
+
 .item {
   position: relative;
   background-size: cover;
   background-position: center;
   color: white;
   border-radius: 20px 20px 0 0;
-  margin: 2% 10% 0 10%;
   box-shadow: 2px 2px 15px 4px rgba(0, 0, 0, 0.2);
   filter: brightness(0.9);
   &-mobile {

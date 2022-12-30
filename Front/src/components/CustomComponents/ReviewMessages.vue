@@ -2,12 +2,12 @@
   <div>
     <h2>{{titleText}}</h2>
     <div class="rewiew-messages">
-      <div class="rewiew-message" v-for='review in currentReviews' :key="review">
+      <div class="rewiew-message" :class="{'rewiew-message-horizontal': !isDesktop}" v-for='review in currentReviews' :key="review">
         <Avatar
           :userName="review.name"
           :userImg="`${$baseUrl}/avatars/`+ review.avatar"
         />
-        <div class="review-date"  :class="{'review-date-horizontal': horizontal}">
+        <div class="review-date" :class="{'review-date-horizontal': horizontal}">
           {{prepareDate(review.createdAt)}}
           <div>
             <img
@@ -85,6 +85,9 @@ export default {
   background-color:aliceblue;
   border-radius: 5px;
   border: solid rgb(240, 240, 240) 1px;
+  &-horizontal {
+    padding: 10px;
+  }
 }
 
 .rewiew-text {

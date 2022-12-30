@@ -93,15 +93,13 @@ export default {
 <style scoped lang="scss">
 
 .page {
-  padding: 20px 60px;
   display: grid;
   grid-template-columns: 1fr 350px;
   align-items: start;
   gap: 20px;
   &-mobile {
-    padding: 3%;
+    padding-top: 0;
     grid-template-columns: 1fr;
-    text-align: start;
   }
 }
 
@@ -119,6 +117,7 @@ export default {
   background-color:rgb(249, 249, 249);
   border-radius: 5px;
   border: solid rgb(240, 240, 240) 1px;
+  margin-bottom: 15px;
 }
 
 .review__input {

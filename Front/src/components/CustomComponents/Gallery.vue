@@ -104,6 +104,7 @@ export default {
 .gallery-container-vertical {
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 3fr 1fr;
+  gap: 5px;
 }
 
 .gallery-container-vertical .gallery-container__item:first-child{

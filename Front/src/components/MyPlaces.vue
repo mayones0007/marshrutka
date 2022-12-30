@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page">
     <div class="welcome" :class="{'welcome-mobile': !isDesktop}">
       <img class="welcome__picture" :src="`${$baseUrl}/img/${welcomeImage.image}`" alt="Маршрутка">
       <div class="welcome__text">{{ welcomeImage.text }}</div>
@@ -30,7 +30,7 @@
         <div v-if="this.routes.length" class="switcher__item" :class="{'switcher__item-active': isCurrentType('routes')}" @click="setItems('routes')">Маршруты</div>
       </div>
     </div>
-    <div class="page" :class="{'page-mobile': !isDesktop}">
+    <div class="places" :class="{'places-mobile': !isDesktop}">
       <MasonryWall :items="items" :columnWidth="350" :type="itemsType"/>
       <LoadingSpinner
         v-if="itemsType === 'places' ? !isLastPage : !isLastRoutesPage"
@@ -139,6 +139,10 @@ export default {
 
 <style lang="scss" scoped>
 .page {
+  padding: 0;
+  width: 100%;
+}
+.places {
   padding: 2% 10%;
   &-mobile {
     padding: 2%;

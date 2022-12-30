@@ -1,6 +1,6 @@
 <template>
-  <div class="page" :class="{'page-mobile': !isDesktop}">
-    <h2>Добавить место</h2>
+  <div class="page">
+    <h1>Новое место</h1>
       <div class="form">
         <div v-for="field in this.placeFields" :key="field.name">
           <div v-if="isCategoryField(field.category)">
@@ -73,9 +73,6 @@ export default {
     isLoading: false,
   }),
   computed: {
-    isDesktop(){
-      return this.$store.state.appModule.isDesktop
-    },
     currentPictures() {
       return this.$store.state.placesModule.pictures
     },
@@ -159,10 +156,7 @@ export default {
 
 <style lang="scss" scoped>
 .page {
-  padding: 3% 20%;
-  &-mobile {
-    padding: 3%;
-  }
+  width: 100%;
 }
 .form {
   display: grid;

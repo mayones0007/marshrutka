@@ -1,5 +1,5 @@
 <template>
-  <div class="page" :class="{'page-no-header': !routeInfo,'page-mobile': !isDesktop}">
+  <div :class="{'page': !isDesktop}">
     <div v-if="myRoute.length">
       <div v-if="!this.mapIsShowed" class="map">
         <img class="map__picture" :src="`${$baseUrl}/img/map.jpg`" alt="Карта">
@@ -276,13 +276,8 @@ computed: {
 
 <style lang="scss" scoped>
 .page {
-  padding: 0 10% 2% 10%;
-  &-no-header {
-    padding-top: 2%;
-  }
-  &-mobile {
-    padding: 0;
-  }
+  padding: 0;
+  width: 100%;
 }
 
 .map {
