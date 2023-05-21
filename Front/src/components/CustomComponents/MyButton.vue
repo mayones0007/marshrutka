@@ -19,9 +19,6 @@ export default {
 
 <style lang="scss" scoped>
 .button {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
   padding: 10px;
   background-color: rgb(0, 201, 134);
   color: white;
