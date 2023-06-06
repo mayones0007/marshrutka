@@ -28,8 +28,17 @@ export class FilterModel {
         query.where(filters)
       }
     }).distinct('isAccepted').groupBy('isAccepted').count('isAccepted as count')
+    const date = await knexService('places').where('isAccepted', 1).modify(function (query) {
+      if (filters) {
+        query.where(filters)
+      }
+    }).distinct('date').groupBy('date').count('date as count')
+    const price = await knexService('places').where('isAccepted', 1).modify(function (query) {
+      if (filters) {
+        query.where(filters)
+      }
+    }).distinct('price').groupBy('price').count('price as count')
 
-    const price = await knexService('routes').distinct('price').groupBy('price').count('price as count')
-    return { city, region, way, category, type, isAccepted, price }
+    return { city, region, way, category, type, isAccepted, price, date }
   }
 }
