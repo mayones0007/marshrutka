@@ -57,7 +57,7 @@ export default {
   data(){
     return {
       isFullSizeFilters: false,
-      itemsType: 'places',
+      itemsType: 'routes',
       routeFields,
       placeFields
     }

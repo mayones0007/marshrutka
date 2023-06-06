@@ -31,7 +31,6 @@
           v-model="request.date"
           class="form__date"
           :class="{'form__date-mobile': !isDesktop}"
-          format="dd MMM"
           placeholder="Дата"
           locale="ru"
           :format-locale="ru"
@@ -83,7 +82,19 @@
             <textarea v-if="field.type === 'textarea'" type="text" class="form__textarea" :placeholder="field.name + (field.required ? '*' : '')" v-model.trim="route[field.fieldName]"></textarea>
             <div v-else-if="!field.admin || field.admin === isAdmin" class="form__item">
               <label v-if="field.type === 'checkbox'" :for="field.fieldName">{{field.name}}</label>
+              <Datepicker
+                v-if="field.type === 'date'"
+                v-model="route[field.fieldName]"
+                placeholder="Дата"
+                locale="ru"
+                :format-locale="ru"
+                :enable-time-picker="false"
+                :min-date="new Date()"
+                select-text="Выбрать"
+                cancel-text=""
+              />
               <input
+                v-else
                 class="form__input"
                 :id="field.fieldName"
                 v-model.trim="route[field.fieldName]" 

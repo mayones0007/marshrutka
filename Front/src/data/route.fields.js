@@ -8,6 +8,13 @@ export const routeFields = [
     info: false,
   },
   {
+    fieldName: 'date',
+    name: 'Дата',
+    type: 'date',
+    info: true,
+    filter: true,
+  },
+  {
     fieldName: 'category',
     name: 'Категория',
     type: 'text',
