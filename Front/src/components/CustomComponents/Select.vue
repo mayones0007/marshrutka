@@ -5,14 +5,14 @@
     <img v-else :src="`${$baseUrl}/icons/arrow.png`" alt="arrow" class="input__arrow" :class="{'input__arrow-down': listFullSize}">
     <div v-if="listFullSize" class="input__options">
       <div v-for="option in options" :key="option" class="input__option" @click="setSelectedOption(option)">
-        <div>{{option}}</div>
+        <div>{{optionName(option)}}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-
+import moment from 'moment'
 export default {
   props: ['name', 'fieldName', 'table'],
   data () {
@@ -30,7 +30,7 @@ export default {
     selectedOption() {
       const filters = this.$store.state.placesModule.appliedFilters
       if (this.fieldName in filters) {
-        return filters[this.fieldName]
+        return this.optionName(filters[this.fieldName])
       } else {
         return this.name
       }
@@ -40,7 +40,7 @@ export default {
     },
     currentMethod() {
       return this.table === 'places' ? 'getPlaces' : 'getRoutes'
-    }
+    },
   },
   methods: {
     toggleSelectList() {
@@ -57,7 +57,10 @@ export default {
       this.listFullSize = false
       this.$store.commit('resetAppliedFilter', this.fieldName)
       this.$store.dispatch(this.currentMethod)
-    }
+    },
+    optionName(option) {
+      return option.includes('Z') ? moment(option).locale('ru').format('LL') : option
+    },
   },
 }
 </script>

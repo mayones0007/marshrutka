@@ -33,7 +33,9 @@ export class FilterModel {
         query.where(filters)
       }
     }).distinct('price').groupBy('price').count('price as count')
-    const date = await knexService('routes').where('isAccepted', 1).modify(function (query) {
+    const timeElapsed = Date.now()
+    const today = new Date(timeElapsed)
+    const date = await knexService('routes').where('isAccepted', 1).andWhere('date', '>', today.toISOString()).modify(function (query) {
       if (filters) {
         query.where(filters)
       }

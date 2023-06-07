@@ -29,6 +29,7 @@
         <div class="form__header">Забронировать</div>
         <Datepicker
           v-model="request.date"
+          :disabled="!!route.date"
           class="form__date"
           :class="{'form__date-mobile': !isDesktop}"
           placeholder="Дата"
@@ -43,6 +44,7 @@
           class="form__input"
           v-model.trim="request.persons"
           type="number"
+          min="1"
           placeholder="Сколько человек"
         >
         <input
@@ -280,6 +282,7 @@ computed: {
   watch: {
     routeInfo() {
       this.route = this.routeInfo
+      this.request.date = this.routeInfo.date
     }     
   }
 }
