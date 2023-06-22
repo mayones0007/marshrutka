@@ -61,6 +61,10 @@ export const mutations = {
     state.routes = routes
   },
 
+  setBookings(state, payload) {
+    state.bookings = payload
+  },
+
   setBooking(state, payload) {
     state.booking = payload
   },

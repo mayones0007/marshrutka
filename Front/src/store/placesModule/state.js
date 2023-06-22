@@ -9,6 +9,7 @@ export const state = () => ({
   pictures: [],
   route: [],
   routes: [],
+  bookings: [],
   booking: [],
   routeInfo: {},
   pagination: {},

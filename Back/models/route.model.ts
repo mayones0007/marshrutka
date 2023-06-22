@@ -51,6 +51,8 @@ export class RouteModel {
   }
   async addRoute(newRoute: DbQuery): Promise<void> {
     await knexService('route').where({userId: newRoute.user}).del()
+    delete newRoute.avatar
+    delete newRoute.userName
     await knexService('routes').where(newRoute).first()
       .then(async (route) => {
         if (!route) {
@@ -60,6 +62,8 @@ export class RouteModel {
   }
   async editRoute(newRoute: DbQuery): Promise<void> {
     await knexService('routes').where({ id: newRoute.id }).del()
+    delete newRoute.avatar
+    delete newRoute.userName
     await knexService('routes').insert(newRoute)
   }
   async deleteRoutePoint(dbQuery: DbQuery): Promise<void> {
@@ -97,10 +101,15 @@ export class RouteModel {
 
   async getRoute(id: DbQuery): Promise<Route> {
     await knexService('routes').where(id).increment('hits')
-    return await knexService('routes').where(id).first()
-      .then((route) => {
-        return route
-      })
+    return await knexService('routes')
+    .where(id)
+    .first()
+    .then(async(route) => {
+      if (route) {
+        const user = await knexService('users').where({ id: route.user }).select('name as userName', 'avatar').first()
+        return { ...route, ...user }
+      }
+    })
   }
   async deleteRoute(id: string): Promise<void> {
     const promises = []

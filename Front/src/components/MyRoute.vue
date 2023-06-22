@@ -28,11 +28,12 @@
       <div class="booking-form" :class="{'booking-form-mobile': !isDesktop}">
         <div class="form__header">Забронировать</div>
         <Datepicker
-          v-model="request.date"
+          v-model="request.bookDate"
           :disabled="!!route.date"
           class="form__date"
           :class="{'form__date-mobile': !isDesktop}"
           placeholder="Дата"
+          format="dd/MM/yy"
           locale="ru"
           :format-locale="ru"
           :enable-time-picker="false"
@@ -44,17 +45,21 @@
           class="form__input"
           v-model.trim="request.persons"
           type="number"
+          :disabled="!personCountAvailable"
           min="1"
-          placeholder="Сколько человек"
+          :max="personCountAvailable"
+          :placeholder="personCountAvailable ? 'Сколько человек' : 'Мест нет'"
         >
         <input
           class="form__input"
           v-model.trim="request.phone"
           placeholder="Номер телефона"
           type="tel"
+          :disabled="!personCountAvailable"
         >
         <MyButton 
           title="Забронировать"
+          :is-disabled="new Date(route.date) < new Date() || !personCountAvailable"
           @click="booking"
         />
         <div class="form__button-share">
@@ -88,6 +93,7 @@
                 v-if="field.type === 'date'"
                 v-model="route[field.fieldName]"
                 placeholder="Дата"
+                format="dd/MM/yy"
                 locale="ru"
                 :format-locale="ru"
                 :enable-time-picker="false"
@@ -183,6 +189,9 @@ computed: {
   routes() {
     return this.$store.state.placesModule.routes
   },
+  personCountAvailable(){
+    return this.routeInfo.persons - this.$store.state.placesModule.booking?.reduce((acc, el) => acc + el.persons, 0)
+  },
   isDesktop(){
     return this.$store.state.appModule.isDesktop
   },
@@ -236,7 +245,7 @@ computed: {
       this.newRoute()
     },
     booking(){
-      if (!(this.request.phone && this.request.persons && this.request.date)) {
+      if (!(this.request.phone && this.request.persons && this.request.bookDate)) {
         return showToast(toastTypes.ERROR, 'Заполните все поля формы', 'bottom', 'right')
       }
       if (validation(this.request.phone, 'phone')) {
@@ -264,7 +273,7 @@ computed: {
       reader.readAsDataURL(file)
     },
     setMapIsShowed() {
-      this.mapIsShowed = !this.mapIsShowed
+      this.mapIsShowed = true
     },
     validate(field, model){
       this.validation[field.fieldName] = validation(model[field.fieldName], field.fieldName)
@@ -276,13 +285,14 @@ computed: {
   created() {
     const ids = this.$route.query.id
     if(ids) {
-      this.$store.dispatch("getRoute", ids)
+      this.$store.dispatch('getRoute', ids)
     }
   },
   watch: {
     routeInfo() {
       this.route = this.routeInfo
-      this.request.date = this.routeInfo.date
+      this.request.bookDate = this.routeInfo.date
+      this.request.routeId = this.routeInfo.id
     }     
   }
 }

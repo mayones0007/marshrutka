@@ -1,37 +1,42 @@
 export const bookingFields = [
   {
-    fieldName: 'id',
-    name: 'ID',
-    type: 'number',
-    required: false,
-    info: true,
-  },
-  {
     fieldName: 'date',
     name: 'Дата',
-    type: 'date',
-    required: true,
-    info: false,
+  },
+  {
+    fieldName: 'name',
+    name: 'Название',
+  },
+  {
+    fieldName: 'region',
+    name: 'Регион',
+  },
+  {
+    fieldName: 'city',
+    name: 'Город',
+  },
+  {
+    fieldName: 'category',
+    name: 'Категория',
+  },
+  {
+    fieldName: 'way',
+    name: 'Тип',
   },
   {
     fieldName: 'userName',
     name: 'Имя',
-    type: 'text',
-    required: false,
-    info: false,
   },
   {
     fieldName: 'phone',
     name: 'Телефон',
-    type: 'tel',
-    required: true,
-    info: false,
   },
   {
     fieldName: 'persons',
     name: 'Кол-во человек',
-    type: 'number',
-    required: true,
-    info: false,
+  },
+  {
+    fieldName: 'price',
+    name: 'Стоимость',
   },
 ]

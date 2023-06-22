@@ -202,8 +202,18 @@ app.patch('/booking', corsMiddleware, authMiddleware, async (req: Request, res: 
   res.status(response.status).send(response.body)
 })
 
-app.get('/booking', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
+app.get('/bookings', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
   const response = await controllers.booking.getBookings(req)
+  res.status(response.status).send(response.body)
+})
+
+app.get('/booking', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
+  const response = await controllers.booking.getBooking(req)
+  res.status(response.status).send(response.body)
+})
+
+app.delete('/booking', corsMiddleware, authMiddleware, async (req: Request, res: Response) => {
+  const response = await controllers.booking.deleteBooking(req)
   res.status(response.status).send(response.body)
 })
 

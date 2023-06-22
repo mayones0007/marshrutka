@@ -1,5 +1,6 @@
 import { axiosInstance } from '../../httpClient'
 import { compressAndRenamePicture } from "../../services/file.service"
+import { router, routeNames } from '../../router'
 
 export const actions = {
 
@@ -141,6 +142,7 @@ export const actions = {
       const response = await axiosInstance.get(`routelink?id=${id}`)
       commit('setRoute', response.data)
     } catch (e) {
+      router.push({ name: routeNames.places })
       console.log("Ошибка HTTP: " + e)
     }
   },
@@ -175,8 +177,26 @@ export const actions = {
 
   async getAllBooking({ commit }) {
     try {
-      const response = await axiosInstance.get('booking')
+      const response = await axiosInstance.get('bookings')
+      commit('setBookings', response.data)
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e)
+    }
+  },
+
+  async getBooking({ commit }, params) {
+    try {
+      const response = await axiosInstance.get('booking', { params })
       commit('setBooking', response.data)
+    } catch (e) {
+      console.log("Ошибка HTTP: " + e)
+    }
+  },
+
+  async cancelBooking({ dispatch }, params) {
+    try {
+      await axiosInstance.delete('booking', { params })
+      dispatch("getAllBooking")
     } catch (e) {
       console.log("Ошибка HTTP: " + e)
     }

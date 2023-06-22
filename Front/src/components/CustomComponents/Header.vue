@@ -16,7 +16,7 @@
       <img v-if="isLogIn" :src="`${$baseUrl}/icons/arrow.png`" alt="arrow" class="user-menu__arrow" :class="{'user-menu__arrow-down': isFullMenuSize && !isDesktop}">
       <div class="user-menu__dropdown-content" v-if="isLogIn && isFullMenuSize">
         <router-link :to="{name: $options.routeNames.myRoute}" class="dropdown-content__link">Мой маршрут</router-link>
-        <router-link v-if="isGuide" :to="{name: $options.routeNames.booking}" class="dropdown-content__link">Бронирования</router-link>
+        <router-link :to="{name: $options.routeNames.booking}" class="dropdown-content__link">Бронирования</router-link>
         <router-link :to="{name: $options.routeNames.myFavorites}" class="dropdown-content__link">Избранное</router-link>
         <router-link :to="{name: $options.routeNames.newPlace}" class="dropdown-content__link">Добавить место</router-link>
         <router-link :to="{name: $options.routeNames.settings}" class="dropdown-content__link">Настройки</router-link>
@@ -62,9 +62,6 @@ export default {
     isStartPage(){
       return this.$route.fullPath  === '/'
     },
-    isGuide(){
-      return this.user.role !== "user"
-  },
   },
 
   methods: {

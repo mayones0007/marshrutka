@@ -5,8 +5,7 @@ import { AppResponse } from "./response.model"
 
 export class BookingController {
   async getBookings(req: Request): Promise<AppResponse<Booking[]>> {
-    const guideId = req.user.userId as number
-    const favorites = await models.booking.getBookings(guideId)
+    const favorites = await models.booking.getBookings({ userId: req.user.userId!, role: req.user.role })
     return {
       status: 200,
       body: favorites,
@@ -24,6 +23,22 @@ export class BookingController {
     return {
       status: 200,
       body: { message: 'Бронирование обновлено' },
+    }
+  }
+  async getBooking(req: Request): Promise<AppResponse<Booking[]>> {
+    const query = req.query
+    const favorites = await models.booking.getBooking(query)
+    return {
+      status: 200,
+      body: favorites,
+    }
+  }
+  async deleteBooking(req: Request): Promise<AppResponse> {
+    const query = req.query
+    const favorites = await models.booking.deleteBooking(query)
+    return {
+      status: 200,
+      body: { message: 'Бронирование отменено' },
     }
   }
 }

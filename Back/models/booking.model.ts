@@ -2,7 +2,7 @@ import { knexService } from '../db/index'
 
 export interface NewBooking {
   userId: number,
-  date: string,
+  bookDate: string,
   ref: string,
   persons: number,
   phone: string,
@@ -18,10 +18,23 @@ interface DbQuery {
 }
 
 export class BookingModel {
-  async getBookings(guideId: number): Promise<Booking[]> {
+  async getBookings({ userId, role }: { userId: number, role: string }): Promise<Booking[]> {
     const timeElapsed = Date.now()
     const today = new Date(timeElapsed)
-    return await knexService('bookings').where({ guideId }).orWhere({ guideId: null }).andWhere('date', '>', today.toISOString()).leftJoin('users', 'bookings.userId', 'users.id').select('bookings.*', 'users.name as userName').orderBy('date')
+    return await knexService('bookings')
+    .modify(function (query) {
+      if (role !== 'user') {
+        query.where({ guideId: userId }).orWhere({ guideId: null })
+        .andWhere('bookDate', '>', today.toISOString())
+        .leftJoin('users', 'bookings.userId', 'users.id')
+      } else {
+        query.where({ userId })
+        .leftJoin('users', 'bookings.guideId', 'users.id')
+      }
+    })
+    .leftJoin('routes', 'routes.id', 'bookings.routeId')
+    .select('routes.*', 'bookings.*', 'routes.id as routeId', 'users.name as userName', 'users.phone as userPhone')
+    .orderBy('bookDate')
       .then((bookings) => {
         return bookings
       })
@@ -44,5 +57,14 @@ export class BookingModel {
           await knexService('bookings').where({ id: Booking.id }).update({ guideId: Booking.guideId }).catch((err) => console.log(err))
         }
       })
+  }
+  async getBooking(query: DbQuery): Promise<Booking[]> {
+    return await knexService('bookings').where(query).leftJoin('users', 'users.id', 'bookings.userId').select('bookings.*', 'users.avatar', 'users.name')
+      .then((bookings) => {
+        return bookings
+      })
+  }
+  async deleteBooking(id: DbQuery): Promise<void> {
+    await knexService('bookings').where(id).del()
   }
 }

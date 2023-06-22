@@ -57,7 +57,7 @@ export default {
           return 'car'
         case 'Поход':
           return 'backpack'
-        case 'Прогулка':
+        default:
           return 'walk'
       }
     },

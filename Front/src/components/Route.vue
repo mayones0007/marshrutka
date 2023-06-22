@@ -6,16 +6,40 @@
           {{currentRouteInfo.name}}
           <div class="card__name-buttons">
             <ButtonHeart :routeId="currentRouteInfo.id"/>
-            <img v-if="isAdmin || isRouteAuthor" :src="`${$baseUrl}/icons/pensil.svg`" class="item__button" @click="editRoute">
+            <img v-if="isAdmin || isRouteAuthor" :src="`${$baseUrl}/icons/pensil.svg`" class="item__button item__button-edit" @click="editRoute">
             <img v-if="isAdmin" :src="`${$baseUrl}/icons/close-btn.png`" class="item__button" @click="deleteRoute">
           </div>
         </div>
         <div class="card__description">{{currentRouteInfo.description}}</div>
         <div class="card__footer">
           <div class="card__info">
+            <div v-if="currentRouteInfo.way" class="card__info-persons"><img :src="`${$baseUrl}/icons/${currentIcon(currentRouteInfo.way)}.svg`">{{currentRouteInfo.way}}</div>
+            <div class="card__info-persons"><img :src="`${$baseUrl}/icons/person.svg`" alt="Человек">{{currentRouteInfo.persons}}</div>
             <div>{{currentTime}}</div>
-            <div class="card__info-persons">{{currentRouteInfo.persons}}<img :src="`${$baseUrl}/icons/person.svg`" alt="Человек"></div>
             <div v-if="currentRouteInfo.price">{{currentRouteInfo.price}} &#8381;</div>
+            <Avatar
+              :userName="currentRouteInfo.userName"
+              :userImg="`${$baseUrl}/avatars/`+ currentRouteInfo.avatar"
+              :isSmall="true"
+            />
+            <div
+              v-if="bookings.length"
+              class="card__info-bookings"
+            >
+              Едут:
+              <div 
+                v-for="booking in bookings"
+                :key="booking.id"
+                class="card__info-booking"
+              >
+                <Avatar
+                  :userName="booking.name"
+                  :userImg="`${$baseUrl}/avatars/`+ booking.avatar"
+                  :isSmall="true"
+                />
+                <div v-if="booking.persons-1">+{{ booking.persons-1 }}</div>
+              </div>
+            </div>
           </div>
           <Hits :hits="currentRouteInfo.hits" color="white"/>
         </div>
@@ -30,13 +54,15 @@ import {router, routeNames} from '../router'
 import ButtonHeart from './CustomComponents/ButtonHeart.vue'
 import Hits from './CustomComponents/Hits.vue'
 import MyRoute from './MyRoute.vue'
+import Avatar from './CustomComponents/Avatar.vue'
 import { numWord } from '../services/numerals.service'
 
 export default {
   components: {
     ButtonHeart,
     MyRoute,
-    Hits
+    Hits,
+    Avatar,
   },
   computed: {
     currentRoute() {
@@ -53,6 +79,9 @@ export default {
     },
     isDesktop(){
     return this.$store.state.appModule.isDesktop
+    },
+    bookings(){
+    return this.$store.state.placesModule.booking
     },
     currentTime() {
       const time = this.currentRouteInfo.time
@@ -71,11 +100,22 @@ export default {
     },
     editRoute () {
       this.$store.commit('setPopup', 'routeSave')
-    }
+    },
+      currentIcon(iconName) {
+      switch (iconName) {
+        case 'Авто':
+          return 'car'
+        case 'Поход':
+          return 'backpack'
+        default:
+          return 'walk'
+      }
+    },
   },
   async created(){
     await this.$store.dispatch("getGuideRoute", this.currentRoute)
     this.$store.dispatch("getRoute", this.currentRouteInfo.ref)
+    this.$store.dispatch('getBooking', { ref: `route${this.currentRouteInfo.id}`, bookDate: this.currentRouteInfo.date })
   }
 }
 </script>
@@ -133,18 +173,33 @@ export default {
   line-height: 120%;
 }
 
-.card__footer{
+.card__footer {
   display: flex;
   justify-content: space-between;
   gap: 20px;
   font-size: 1.5em;
-  align-items: center;
+  align-items: flex-end;
 }
 
-.card__info{
+.card__info {
   display: flex;
   gap: 15px;
   align-items: center;
+  flex-wrap: wrap;
+  font-size: 18px;
+
+  &-bookings {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  &-booking {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 16px;
+  }
 }
 
 .card__info-persons {
@@ -155,8 +210,13 @@ export default {
 
 .item__button{
   width: 20px;
+  height: 20px;
   cursor: pointer;
-  filter: invert(1);
+  filter: contrast(3);
+  
+  &-edit {
+    filter: invert(1);
+  }
 }
 
 .card__name-buttons {
