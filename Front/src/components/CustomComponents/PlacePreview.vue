@@ -6,7 +6,7 @@
     <div class="gallery__item-container">
       <img
         class="item__image"
-        :src="`${$baseUrl}/min/` + routePoint.picture"
+        :src="`${$baseUrl}/min/${routePoint.picture}`"
         alt="avt"
       />
       <div v-if="ShowText" class="item__name">{{ routePoint.name }}</div>

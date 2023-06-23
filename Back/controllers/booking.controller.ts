@@ -12,10 +12,17 @@ export class BookingController {
     }
   }
   async createBooking(req: Request): Promise<AppResponse> {
-    await models.booking.createBooking({ ...req.body, userId: req.user.userId })
-    return {
-      status: 200,
-      body: { message: 'Бронирование добавлено' },
+    const result = await models.booking.createBooking({ ...req.body, userId: req.user.userId })
+    if (!result) {
+      return {
+        status: 200,
+        body: { message: 'Бронирование добавлено' },
+      }
+    } else {
+      return {
+        status: 400,
+        body: { message: result },
+      }
     }
   }
   async setBooking(req: Request): Promise<AppResponse> {

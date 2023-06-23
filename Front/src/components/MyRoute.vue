@@ -15,7 +15,6 @@
           :coords="coords" 
           zoom="5"
           :controls="controls"
-          :behaviors="behaviors"
           @map-was-initialized="mapInitialized"
         >
         <ymap-marker 
@@ -25,7 +24,7 @@
         />
         </yandex-map>
       </div>
-      <div class="booking-form" :class="{'booking-form-mobile': !isDesktop}">
+      <div v-if="personCountAvailable" class="booking-form" :class="{'booking-form-mobile': !isDesktop}">
         <div class="form__header">Забронировать</div>
         <Datepicker
           v-model="request.bookDate"
@@ -45,7 +44,6 @@
           class="form__input"
           v-model.trim="request.persons"
           type="number"
-          :disabled="!personCountAvailable"
           min="1"
           :max="personCountAvailable"
           :placeholder="personCountAvailable ? 'Сколько человек' : 'Мест нет'"
@@ -55,11 +53,10 @@
           v-model.trim="request.phone"
           placeholder="Номер телефона"
           type="tel"
-          :disabled="!personCountAvailable"
         >
         <MyButton 
           title="Забронировать"
-          :is-disabled="new Date(route.date) < new Date() || !personCountAvailable"
+          :is-disabled="new Date(route.date) < new Date()"
           @click="booking"
         />
         <div class="form__button-share">
@@ -171,8 +168,7 @@ data() {
       54.828966,
       39.831893,
       ],
-    behaviors: ['dblClickZoom'],
-    controls: ['fullscreenControl'],
+    controls: ['fullscreenControl', 'zoomControl'],
     request: {},
     validation: {},
     route: {},
@@ -234,11 +230,25 @@ computed: {
         routeActiveStrokeColor: "ff0000",
         pinIconFillColor: "ff0000",
         boundsAutoApply: true,
-        zoomMargin: 30
+        zoomMargin: 30,
         })
         multiRoute.model.events.add('requestsuccess', function() {
         })
         myMap.geoObjects.add(multiRoute)
+
+        this.myRoute.map((el, idx) => { multiRoute.model.events.once("requestsuccess", () => {
+          var yandexWayPoint = multiRoute.getWayPoints().get(idx)
+          window.ymaps.geoObject.addon.balloon.get(yandexWayPoint)
+          yandexWayPoint.options.set({
+            preset: "islands#blueStretchyIcon",
+            iconContentLayout: window.ymaps.templateLayoutFactory.createClass(
+              `${el.name}`
+            ),
+            balloonContentLayout: window.ymaps.templateLayoutFactory.createClass(
+              `<div class="map-baloon">${el.name}<img class="map-baloon-image" src="${process.env.VUE_APP_BASE_URL}/min/${el.picture}"></div>`
+            )
+          })
+        })})
     },
     mapInitialized(e){
       myMap = e
@@ -252,7 +262,6 @@ computed: {
         return showToast(toastTypes.ERROR, 'Введен неверный номер телефона', 'bottom', 'right')
       }
       this.$store.dispatch('addBooking', {...this.request, ref: router.currentRoute.value.params.id ? 'route' + router.currentRoute.value.params.id : 'myroute?id=' + this.routeRef})
-      this.request = {}
     },
     routeSave(){
       this.routeInfo.id ?

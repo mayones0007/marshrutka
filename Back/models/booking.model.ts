@@ -1,11 +1,12 @@
 import { knexService } from '../db/index'
-
+import { numWord } from '../services/numerals.service'
 export interface NewBooking {
   userId: number,
   bookDate: string,
   ref: string,
   persons: number,
   phone: string,
+  routeId: number,
 }
 
 export interface Booking extends NewBooking {
@@ -39,11 +40,20 @@ export class BookingModel {
         return bookings
       })
   }
-  async createBooking(NewBooking: NewBooking): Promise<void> {
-    await knexService('bookings').where(NewBooking).first()
+  async createBooking(NewBooking: NewBooking): Promise<void | string> {
+    return await knexService('bookings').where(NewBooking).first()
     .then(async(booking) => {
       if (!booking) {
-        await knexService('bookings').insert(NewBooking)
+        const route = await knexService('routes').where({ id: NewBooking.routeId }).first()
+        const bookings = await this.getBooking({ ref: NewBooking.ref, bookDate: NewBooking.bookDate })
+        const availablePersonCount = route.persons - bookings.reduce((acc, el) => acc + el.persons, 0)
+        if (availablePersonCount - NewBooking.persons >= 0) {
+          await knexService('bookings').insert(NewBooking)
+        } else {
+          return availablePersonCount ? `Доступно ${numWord(availablePersonCount, ['место', 'места', 'мест'])}` : 'Места закончились'
+        }
+      } else {
+        return 'Вы уже забронировали'
       }
     })
   }
@@ -59,7 +69,7 @@ export class BookingModel {
       })
   }
   async getBooking(query: DbQuery): Promise<Booking[]> {
-    return await knexService('bookings').where(query).leftJoin('users', 'users.id', 'bookings.userId').select('bookings.*', 'users.avatar', 'users.name')
+    return await knexService('bookings').where(query).andWhereNot({ guideId: null }).leftJoin('users', 'users.id', 'bookings.userId').select('bookings.*', 'users.avatar', 'users.name')
       .then((bookings) => {
         return bookings
       })

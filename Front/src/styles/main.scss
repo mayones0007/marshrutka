@@ -36,9 +36,14 @@ h2 {
   }
 }
 .dp__disabled {
-  background-color: rgba(239, 239, 239, 0.3);
-  color: rgb(120, 120, 120);
   font-weight: 300;
+}
+.map-baloon {
+  width: 150px;
+  display: grid;
+}
+.map-baloon-image {
+  width: 150px;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');

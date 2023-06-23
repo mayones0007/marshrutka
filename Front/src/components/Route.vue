@@ -13,20 +13,29 @@
         <div class="card__description">{{currentRouteInfo.description}}</div>
         <div class="card__footer">
           <div class="card__info">
-            <div v-if="currentRouteInfo.way" class="card__info-persons"><img :src="`${$baseUrl}/icons/${currentIcon(currentRouteInfo.way)}.svg`">{{currentRouteInfo.way}}</div>
-            <div class="card__info-persons"><img :src="`${$baseUrl}/icons/person.svg`" alt="Человек">{{currentRouteInfo.persons}}</div>
+            <div v-if="currentRouteInfo.way" class="card__info-persons">
+              <img :src="`${$baseUrl}/icons/${currentIcon(currentRouteInfo.way)}.svg`">
+              {{currentRouteInfo.way}}
+            </div>
+            <div class="card__info-persons">
+              {{currentRouteInfo.persons}}
+              <img :src="`${$baseUrl}/icons/person.svg`" alt="Человек">
+            </div>
             <div>{{currentTime}}</div>
             <div v-if="currentRouteInfo.price">{{currentRouteInfo.price}} &#8381;</div>
-            <Avatar
-              :userName="currentRouteInfo.userName"
-              :userImg="`${$baseUrl}/avatars/`+ currentRouteInfo.avatar"
-              :isSmall="true"
-            />
+            <div class="card__info-booking">
+              Организатор:
+              <Avatar
+                :userName="currentRouteInfo.userName"
+                :userImg="`${$baseUrl}/avatars/`+ currentRouteInfo.avatar"
+                :isSmall="true"
+              />
+            </div>
             <div
               v-if="bookings.length"
               class="card__info-bookings"
             >
-              Едут:
+              Путешественники:
               <div 
                 v-for="booking in bookings"
                 :key="booking.id"
@@ -183,14 +192,15 @@ export default {
 
 .card__info {
   display: flex;
-  gap: 15px;
+  gap: 5px 15px;
   align-items: center;
   flex-wrap: wrap;
-  font-size: 18px;
+  font-size: 15px;
 
   &-bookings {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 5px;
   }
 
@@ -198,7 +208,6 @@ export default {
     display: flex;
     align-items: center;
     gap: 5px;
-    font-size: 16px;
   }
 }
 
