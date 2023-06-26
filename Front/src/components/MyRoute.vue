@@ -67,9 +67,7 @@
         </div>
       </div>
       <RoutePoint
-        v-for='routePoint in myRoute'
-        :key="routePoint.id"
-        :routePoint="routePoint"
+        :route="myRoute"
         :isHideAddInRouteButton="!isNewRoute"
       />
       <MyButton
@@ -296,6 +294,9 @@ computed: {
     if(ids) {
       this.$store.dispatch('getRoute', ids)
     }
+  },
+  unmounted() {
+    this.$store.commit('setRoute', [])
   },
   watch: {
     routeInfo() {

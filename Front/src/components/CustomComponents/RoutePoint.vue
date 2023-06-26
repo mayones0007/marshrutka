@@ -1,44 +1,69 @@
 <template>
-<div>
-  <div 
-    class="route-point"
-    :class="{'route-point-full-size': isFullSize, 'route-point-mobile': !isDesktop}"
-    @click.self="toggleSize"
-  >
-    <div class="route-point__name" :class="{'route-point__name-mobile': !isDesktop}" @click.self="toggleSize">
-      <img :src="`${$baseUrl}/icons/arrow.png`" alt="star" class="route-point__arrow" :class="{'route-point__arrow-down': isFullSize}" @click="toggleSize">
-      <div @click="toggleSize">{{routePoint.name}}</div>
-      <ButtonHeart
-        :placeId="routePoint.id"
-        v-if="!isDesktop"
-      />
+  <div>
+    <div
+      class="header"
+      @click="showAll"
+    >
+      {{ isFullSize.length === route.length ? 'Свернуть все' : 'Развернуть все' }}
     </div>
-    <div v-if="isDesktop" class="route-point__info route-point__info-desktop">
-      <div class="tag">{{routePoint.region}}</div>
-      <div class="tag">{{routePoint.city}}</div>
-      <div class="tag">{{routePoint.category}}</div>
-      <ButtonHeart
-        :placeId="routePoint.id"
-      />
-    </div>
-    <PlacePreview
-      :routePoint="routePoint"
-    />
-    <div class="route-point__container">
-      <div class="route-point__description">{{routePoint.description}}</div>
-      <div v-if="!isDesktop" class="route-point__info">
+    <div
+      v-for='(routePoint, idx) in route'
+      :key="routePoint.id"
+      class="route-point"
+      :class="{'route-point-full-size': isFullSize.includes(routePoint.id), 'route-point-mobile': !isDesktop}"
+      @click.self="toggleSize(routePoint.id)"
+    >
+      <div class="route-point__name" :class="{'route-point__name-mobile': !isDesktop}" @click.self="toggleSize(routePoint.id)">
+        <img :src="`${$baseUrl}/icons/arrow.png`" alt="star" class="route-point__arrow" :class="{'route-point__arrow-down': isFullSize.includes(routePoint.id)}" @click="toggleSize(routePoint.id)">
+        <div @click="toggleSize(routePoint.id)">{{routePoint.name}}</div>
+        <ButtonHeart
+          :placeId="routePoint.id"
+          v-if="!isDesktop"
+        />
+      </div>
+      <div v-if="isDesktop" class="route-point__info route-point__info-desktop">
         <div class="tag">{{routePoint.region}}</div>
         <div class="tag">{{routePoint.city}}</div>
         <div class="tag">{{routePoint.category}}</div>
-      </div>
-      <div v-if="!isHideAddInRouteButton" class="route-point__buttons">
-        <AddInRouteButton
-        :placeId="routePoint.id"
+        <ButtonHeart
+          :placeId="routePoint.id"
         />
+      </div>
+      <PlacePreview
+        :routePoint="routePoint"
+      />
+      <div class="route-point__container">
+        <div class="route-point__description">{{routePoint.description}}</div>
+        <div v-if="!isDesktop" class="route-point__info">
+          <div class="tag">{{routePoint.region}}</div>
+          <div class="tag">{{routePoint.city}}</div>
+          <div class="tag">{{routePoint.category}}</div>
+        </div>
+        <div
+          v-if="!isHideAddInRouteButton"
+          class="route-point__buttons"
+        >
+          <div>
+            <img
+              v-if="idx"
+              :src="`${$baseUrl}/icons/arrow.png`"
+              class="route-point__buttons-arrow route-point__buttons-arrow-up"
+              @click="changeRoute(idx, -1)"
+            >
+            <img
+              v-if="idx < route.length - 1"
+              :src="`${$baseUrl}/icons/arrow.png`"
+              class="route-point__buttons-arrow"
+              @click="changeRoute(idx, +1)"
+            >
+          </div>
+          <AddInRouteButton
+            :placeId="routePoint.id"
+          />
+        </div>
       </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -49,12 +74,12 @@ export default {
   components: {
     AddInRouteButton,
     PlacePreview,
-    ButtonHeart
+    ButtonHeart,
   },
-  props: ['routePoint', 'FullSize', 'isHideAddInRouteButton'],
+  props: ['route', 'isHideAddInRouteButton'],
   data(){
     return {
-      isFullSize: this.FullSize,
+      isFullSize: [],
     }
   },
   computed: {
@@ -63,14 +88,33 @@ export default {
     },
   },
   methods: {
-    toggleSize() {
-      this.isFullSize = !this.isFullSize;
+    toggleSize(idx) {
+      this.isFullSize.indexOf(idx) < 0 ? this.isFullSize.push(idx) : this.isFullSize.splice(this.isFullSize.indexOf(idx), 1)
+    },
+    showAll() {
+      this.isFullSize = this.isFullSize.length === this.route.length ? [] : this.route.map(el => el.id)
+    },
+    changeRoute (idx, change) {
+      const route = this.route
+      const point = route.splice(idx, 1)
+      route.splice(idx + change, 0, point[0])
+      this.isHideAddInRouteButton ? this.$store.commit('setmyRoute', route) : this.$store.commit('setRoute', route)
     },
   },
 }
 </script>
 
 <style scoped lang="scss">
+.header {
+  margin: 5px 0 5px 10px;
+  font-size: 14px;
+  font-weight: 300;
+  cursor: pointer;
+
+  &:hover {
+    color: green;
+  }
+}
 
 .route-point {
   padding: 20px;
@@ -98,8 +142,27 @@ export default {
 }
 
 .route-point__buttons {
+  width: 100%;
+  display: flex;
   justify-self: end;
   align-self: end;
+  justify-content: space-between;
+  align-items: center;
+
+  &-arrow-up {
+    transform: scale(1, -1);
+  }
+
+  &-arrow {
+    margin: 5px;
+    height: 25px;
+    cursor: pointer;
+    filter: opacity(0.3);
+
+    &:hover {
+      filter: opacity(1);
+    }
+  }
 }
 .route-point__name {
   display: flex;
