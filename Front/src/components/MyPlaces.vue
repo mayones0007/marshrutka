@@ -76,7 +76,7 @@ export default {
       if (this.selectedRegion) {
         return {image: this.places[0].picture, text: this.selectedRegion}
       } else {
-        return {image: "chelovek-gora.jpeg", text: "Построй свой маршрут"}
+        return {image: this.isDesktop ? "chelovek-gora.webp" : "chelovek-gora-mobile.webp", text: "Построй свой маршрут"}
       }
     },
     isDesktop(){
