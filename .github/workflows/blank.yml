@@ -12,19 +12,17 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      # Делаем checkout текущей ветки
-      - uses: actions/checkout@v2
       # Устанавливаем Node.JS для сборки приложения
       - uses: actions/setup-node@v1
         with:
           node-version: '14'
-      - name: set Front
-        run: cd Front
       # Устанавливаем зависимости для сборки
       - name: Install Dependencies
+        working-directory: ./Front
         run: npm i
       # Собираем приложение
       - name: Build Appliction
+        working-directory: ./Front
         run: $BUILD_SCRIPT
       # Доставляем собранное приложение на сервер
       - name: Deploy to Server
