@@ -2,7 +2,7 @@
   <div class="header">
     <router-link :to="{name: $options.routeNames.places}" class="logo">
       <img class="logo__icon" :src="`${$baseUrl}/icons/logo.svg`" alt="Маршрутка">
-      <div class="logo__name">Marshrutkaaa</div>
+      <div class="logo__name">Marshrutka</div>
     </router-link>
     <Search
       v-if="isDesktop || isStartPage"
