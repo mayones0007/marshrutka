@@ -6,7 +6,7 @@ env:
   DEPLOY_PATH: /marshrutka
   # В теории можно собрать не только Vue-приложение, так как принцип сборки мало где отличается
   BUILD_SCRIPT: npm run build
-  BUILD_SCRIPT_OUTPUT: ./marshrutka
+  BUILD_SCRIPT_OUTPUT: ./
 
 jobs:
   deploy:
