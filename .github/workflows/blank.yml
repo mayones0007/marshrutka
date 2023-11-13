@@ -18,11 +18,11 @@ jobs:
           node-version: '14'
       # Устанавливаем зависимости для сборки
       - name: Install Dependencies
-        working-directory: ./Front
+        working-directory: Front
         run: npm i
       # Собираем приложение
       - name: Build Appliction
-        working-directory: ./Front
+        working-directory: Front
         run: $BUILD_SCRIPT
       # Доставляем собранное приложение на сервер
       - name: Deploy to Server
